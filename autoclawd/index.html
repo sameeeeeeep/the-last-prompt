@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autoclawd — An AI ghost on your macOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#020204;--bg2:#08080c;--bg3:#0f0f14;--bg4:#161620;
+  --border:#151520;--border-l:#222230;
+  --text:#ededf4;--dim:#8585a0;--muted:#50506a;--faint:#2a2a3a;
+  --green:#5eead4;--green-d:#5eead412;--green-m:#5eead425;
+  --purple:#a78bfa;--purple-d:#a78bfa15;
+  --cyan:#22d3ee;--cyan-d:#22d3ee15;
+  --white-g:#ffffff12;--warm:#fbbf24;
+  --g-green:linear-gradient(135deg,#5eead4,#34d399);
+  --g-mix:linear-gradient(135deg,#5eead4,#818cf8,#c4b5fd);
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'DM Sans',-apple-system,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+html{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.018'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+
+.mesh{position:fixed;inset:0;z-index:0;overflow:hidden}
+.mo{position:absolute;border-radius:50%;filter:blur(140px);animation:drift 20s ease-in-out infinite}
+.mo1{width:600px;height:600px;background:var(--green);top:-20%;left:-10%;opacity:.06}
+.mo2{width:500px;height:500px;background:var(--purple);bottom:-15%;right:-10%;opacity:.04;animation-delay:-7s}
+.mo3{width:350px;height:350px;background:var(--cyan);top:50%;left:55%;opacity:.025;animation-delay:-12s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-25px) scale(1.04)}50%{transform:translate(-20px,35px) scale(.96)}75%{transform:translate(-35px,-15px) scale(1.02)}}
+
+.particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+.particle{position:absolute;width:2px;height:2px;background:var(--green);border-radius:50%;opacity:0;animation:float 12s linear infinite}
+@keyframes float{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:.3}90%{opacity:.3}100%{opacity:0;transform:translateY(-20vh) scale(1)}}
+
+.wrap{max-width:1060px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
+
+/* reveal */
+.r{opacity:0;transform:translateY(36px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.r.v{opacity:1;transform:translateY(0)}
+.r1{transition-delay:.08s}.r2{transition-delay:.16s}.r3{transition-delay:.24s}.r4{transition-delay:.32s}.r5{transition-delay:.4s}
+.stg .r:nth-child(1){transition-delay:0s}.stg .r:nth-child(2){transition-delay:.06s}.stg .r:nth-child(3){transition-delay:.12s}.stg .r:nth-child(4){transition-delay:.18s}.stg .r:nth-child(5){transition-delay:.24s}.stg .r:nth-child(6){transition-delay:.3s}
+
+/* nav */
+nav{display:flex;align-items:center;justify-content:space-between;padding:28px 0;border-bottom:1px solid var(--border);animation:fi .6s ease both}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);transition:opacity .3s}
+.logo:hover{opacity:.5}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 14px var(--green),0 0 4px var(--green);animation:gp 3s ease-in-out infinite}
+@keyframes gp{0%,100%{opacity:1;box-shadow:0 0 14px var(--green),0 0 4px var(--green)}50%{opacity:.4;box-shadow:0 0 6px var(--green)}}
+.logo-text{font-weight:600;font-size:18px;letter-spacing:-0.02em}
+.nav-r{display:flex;align-items:center;gap:28px}
+.nav-r a{color:var(--dim);text-decoration:none;font-size:14px;transition:color .3s}
+.nav-r a:hover{color:var(--text)}
+.ctab{background:var(--text)!important;color:var(--bg)!important;padding:8px 20px;border-radius:8px;font-weight:600!important;font-size:13px!important;transition:all .3s!important}
+.ctab:hover{background:#fff!important;transform:translateY(-2px);box-shadow:0 6px 30px #fff1}
+
+/* shared */
+.sl{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;transition:all .3s cubic-bezier(.22,1,.36,1);border:none;cursor:pointer;position:relative;overflow:hidden}
+.btn-w{background:var(--text);color:var(--bg)}
+.btn-w::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,#ffffff30 50%,transparent 60%);transform:translateX(-100%);transition:transform .6s}
+.btn-w:hover::before{transform:translateX(100%)}
+.btn-w:hover{transform:translateY(-2px);box-shadow:0 10px 40px #fff1}
+.btn-g{background:transparent;color:var(--dim);border:1px solid var(--border)}
+.btn-g:hover{color:var(--text);border-color:#444}
+.key{display:inline-block;padding:3px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);font-family:var(--mono);font-size:12px;color:var(--dim)}
+.div-beam{width:1px;height:80px;margin:0 auto;position:relative}.div-beam::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent,var(--faint),transparent)}
+
+/* section titles */
+.sh2{font-family:var(--serif);font-size:clamp(32px,4.5vw,52px);font-weight:300;line-height:1.06;letter-spacing:-0.035em;margin-bottom:14px}
+.sh2 em{font-style:italic;font-weight:400}
+.sh2 .acc{background:var(--g-green);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sh2 .mix{background:var(--g-mix);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sp{font-size:16px;color:var(--dim);font-weight:300;line-height:1.6;max-width:480px}
+
+/* ── hero ── */
+.hero{padding:150px 0 120px;display:grid;grid-template-columns:1fr 340px;gap:60px;align-items:center}
+.hero-left{max-width:560px}
+.hero-tag{font-size:13px;color:var(--green);display:flex;align-items:center;gap:8px;margin-bottom:14px;animation:fu .6s .15s ease both}
+.hero-tag .gdot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:gp 3s ease-in-out infinite}
+@keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.hero h1{font-family:var(--serif);font-size:clamp(40px,5.5vw,64px);font-weight:300;line-height:1.04;letter-spacing:-0.04em;margin-bottom:20px;animation:heroR 1s .25s cubic-bezier(.16,1,.3,1) both}
+@keyframes heroR{from{opacity:0;transform:translateY(30px);filter:blur(6px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+.hero h1 em{font-style:italic;font-weight:400}
+.hero h1 .hl{background:var(--g-green);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-p{font-size:18px;color:var(--dim);line-height:1.6;font-weight:300;margin-bottom:36px;animation:fu .8s .4s ease both}
+.hero-p strong{color:var(--text);font-weight:500}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;animation:fu .8s .55s ease both}
+
+/* simulated toast mockup */
+.toast-mock{min-width:300px}
+.toast-frame{border:1px solid #2a2a3a;border-radius:16px;background:#12121a;position:relative;transition:box-shadow 1s;animation:glowCycle 6s ease-in-out infinite}
+@keyframes glowCycle{
+  0%,100%{box-shadow:0 0 40px #5eead430,0 0 100px #5eead415,inset 0 0 40px #5eead410}
+  33%{box-shadow:0 0 40px #a78bfa30,0 0 100px #a78bfa15,inset 0 0 40px #a78bfa10}
+  66%{box-shadow:0 0 40px #22d3ee30,0 0 100px #22d3ee15,inset 0 0 40px #22d3ee10}
+}
+.toast-inner{position:relative;z-index:1}
+.toast-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #2a2a3a;background:#181822;border-radius:16px 16px 0 0}
+.toast-header-left{display:flex;align-items:center;gap:8px}
+.th-dot{width:8px;height:8px;border-radius:50%;animation:glowDot 6s ease-in-out infinite}
+@keyframes glowDot{0%,100%{background:var(--green);box-shadow:0 0 8px var(--green)}33%{background:var(--purple);box-shadow:0 0 8px var(--purple)}66%{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}}
+.th-name{font-size:12px;font-weight:600;color:var(--text)}
+.th-mode{font-size:10px;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green);font-weight:600;letter-spacing:.03em;animation:modeCycle 6s ease-in-out infinite}
+@keyframes modeCycle{0%,100%{background:#5eead415;color:var(--green)}33%{background:#a78bfa15;color:var(--purple)}66%{background:#22d3ee15;color:var(--cyan)}}
+.toast-body{padding:16px 18px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:2;min-height:120px}
+.tb-line{margin-bottom:8px;opacity:0;animation:tl .4s ease forwards}
+.tb-line:nth-child(1){animation-delay:1.5s}
+.tb-line:nth-child(2){animation-delay:2.8s}
+.tb-line:nth-child(3){animation-delay:4.2s}
+.tb-line:nth-child(4){animation-delay:5.6s}
+@keyframes tl{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.tb-clip{color:var(--dim)}
+.tb-res{color:var(--green)}
+.tb-act{color:var(--purple)}
+.toast-footer{padding:12px 18px;border-top:1px solid #2a2a3a;display:flex;align-items:center;gap:8px;background:#181822;border-radius:0 0 16px 16px}
+.toast-input{flex:1;background:var(--bg2);border:1px solid var(--border-l);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--muted);font-family:var(--mono)}
+.toast-send{font-size:10px;padding:5px 12px;border-radius:6px;background:var(--green-d);color:var(--green);font-weight:600;border:1px solid #5eead420}
+
+/* ── sees everything ── */
+.sees{padding:120px 0;text-align:center}
+.sees-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border-radius:16px;overflow:hidden;background:var(--border);text-align:left;margin-top:48px}
+.sc{padding:32px 28px;background:var(--bg2);transition:background .3s;cursor:default;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--g-green);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.sc:hover::before{transform:scaleX(1)}
+.sc:hover{background:var(--bg3)}
+.sc-icon{font-size:20px;margin-bottom:12px;display:block}
+.sc h4{font-size:16px;font-weight:600;margin-bottom:5px}
+.sc p{font-size:13px;color:var(--dim);line-height:1.55;font-weight:300}
+
+/* ── how ── */
+.how{padding:120px 0}
+.steps .step{display:grid;grid-template-columns:50px 1fr;gap:22px;padding:26px 0;border-top:1px solid var(--border)}
+.steps .step:last-child{border-bottom:1px solid var(--border)}
+.sn{font-family:var(--mono);font-size:13px;color:var(--muted);padding-top:2px}
+.sc2 h3{font-size:17px;font-weight:600;margin-bottom:4px}
+.sc2 p{font-size:14px;color:var(--dim);line-height:1.6;font-weight:300}
+.sk{display:inline-flex;gap:5px;margin-top:7px}
+
+/* ── modes ── */
+.modes{padding:120px 0}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:1px;border-radius:16px;overflow:hidden;margin-top:44px;background:var(--border)}
+.md{padding:36px 32px;background:var(--bg2);transition:background .3s;position:relative;overflow:hidden}
+.md::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.md:nth-child(1)::before{background:var(--green)}.md:nth-child(2)::before{background:var(--purple)}.md:nth-child(3)::before{background:var(--cyan)}.md:nth-child(4)::before{background:var(--text)}
+.md:hover::before{transform:scaleX(1)}
+.md:hover{background:var(--bg3)}
+.mi{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-bottom:14px}
+.mi1{background:var(--green-d);color:var(--green)}.mi2{background:var(--purple-d);color:var(--purple)}.mi3{background:var(--cyan-d);color:var(--cyan)}.mi4{background:var(--white-g);color:var(--text)}
+.md h3{font-size:18px;font-weight:600;margin-bottom:3px}
+.md .mv{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--dim);margin-bottom:9px;font-weight:300}
+.md p{font-size:13px;color:var(--dim);line-height:1.55;font-weight:300}
+.perms{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px}
+.pm{font-size:10px;padding:3px 8px;border-radius:100px;border:1px solid var(--border);color:var(--muted)}
+.pm.y{border-color:var(--green-d);color:var(--green);background:var(--green-d)}.pm.n{border-color:#ff5f5715;color:#ff5f57;background:#ff5f5708}
+
+/* ── experience ── */
+.exp{padding:120px 0}
+.eg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;border-radius:16px;overflow:hidden;margin-top:44px;background:var(--border)}
+.ec{padding:28px 24px;background:var(--bg2);transition:background .3s}
+.ec:hover{background:var(--bg3)}
+.ec h4{font-size:14px;font-weight:600;margin-bottom:4px}
+.ec p{font-size:12px;color:var(--dim);line-height:1.55;font-weight:300}
+.gd-row{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap}
+.gci{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--dim)}
+.gdot2{width:10px;height:10px;border-radius:50%}
+.gd-g{background:var(--green);box-shadow:0 0 8px var(--green)}.gd-w{background:#fff8;box-shadow:0 0 8px #fff4}.gd-p{background:var(--purple);box-shadow:0 0 8px var(--purple)}.gd-c{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+
+/* ── use cases ── */
+.ucs{padding:120px 0}
+.ug{display:grid;grid-template-columns:1fr 1fr;gap:1px;border-radius:16px;overflow:hidden;margin-top:44px;background:var(--border)}
+.uc{padding:32px 28px;background:var(--bg2);transition:background .3s}
+.uc:hover{background:var(--bg3)}
+.ul{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.u1{color:var(--green)}.u2{color:var(--purple)}.u3{color:var(--cyan)}.u4{color:var(--warm)}
+.uc h4{font-size:16px;font-weight:600;margin-bottom:5px}
+.uc p{font-size:13px;color:var(--dim);line-height:1.5;font-weight:300}
+.ba{margin-top:10px;font-size:12px;line-height:1.8}
+.before{color:var(--muted);text-decoration:line-through}.after{color:var(--green);font-weight:500}
+
+/* ── connectors ── */
+.conn{padding:120px 0}
+.cg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;border-radius:16px;overflow:hidden;margin-top:44px;background:var(--border)}
+.cc{padding:28px 24px;background:var(--bg2);transition:background .3s}
+.cc:hover{background:var(--bg3)}
+.cdot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px}
+.cc h4{font-size:15px;font-weight:600;margin-bottom:4px;display:flex;align-items:center}
+.cc p{font-size:12px;color:var(--dim);line-height:1.5;font-weight:300}
+.cn-note{margin-top:24px;padding:20px 24px;border-radius:14px;border:1px solid var(--border);background:var(--bg2);display:flex;gap:14px;transition:border-color .5s,box-shadow .5s}
+.cn-note:hover{border-color:var(--green-d);box-shadow:0 0 60px var(--green-d)}
+.cn-note code{font-family:var(--mono);font-size:12px;padding:2px 7px;border-radius:4px;background:var(--bg3);border:1px solid var(--border)}
+
+/* ── keyboard ── */
+.keyboard{padding:120px 0}
+.kb{margin-top:40px;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.kr{display:grid;grid-template-columns:180px 1fr;border-bottom:1px solid var(--border);background:var(--bg2);transition:background .2s}
+.kr:last-child{border-bottom:none}.kr:hover{background:var(--bg3)}
+.kr.kh{background:var(--bg3)}
+.kr .kk{padding:16px 22px;display:flex;align-items:center;gap:6px}
+.kr .kd{padding:16px 22px;font-size:14px;color:var(--dim);font-weight:300}
+.kr.kh .kk,.kr.kh .kd{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 22px}
+
+/* ── demo ── */
+.demo{padding:120px 0;text-align:center}
+.demo-box{margin-top:44px;border:1px solid var(--border);border-radius:16px;background:var(--bg2);overflow:hidden;text-align:left;transition:border-color .6s,box-shadow .6s}
+.demo-box:hover{border-color:var(--green-d);box-shadow:0 0 100px var(--green-d)}
+.demo-bar{display:flex;align-items:center;gap:8px;padding:14px 20px;border-bottom:1px solid var(--border)}
+.dd{width:12px;height:12px;border-radius:50%}
+.dd:nth-child(1){background:#ff5f57}.dd:nth-child(2){background:#febc2e}.dd:nth-child(3){background:#28c840}
+.demo-body{padding:32px 28px;font-family:var(--mono);font-size:13px}
+.dl{margin-bottom:14px;line-height:1.8}
+.demo-body.animated .dl{opacity:0;animation:ti .4s ease forwards}
+.demo-body.animated .dl:nth-child(1){animation-delay:.3s}.demo-body.animated .dl:nth-child(2){animation-delay:1.2s}.demo-body.animated .dl:nth-child(3){animation-delay:2.4s}.demo-body.animated .dl:nth-child(4){animation-delay:3.6s}.demo-body.animated .dl:nth-child(5){animation-delay:4.8s}.demo-body.animated .dl:nth-child(6){animation-delay:6s}.demo-body.animated .dl:nth-child(7){animation-delay:7.2s}
+@keyframes ti{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.dt{color:var(--muted);margin-right:10px;font-size:11px}
+.dmb{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;margin-right:8px;letter-spacing:.04em}
+.dm-a{background:var(--white-g);color:var(--text)}.dm-t{background:var(--green-d);color:var(--green)}.dm-add{background:var(--purple-d);color:var(--purple)}.dm-q{background:var(--cyan-d);color:var(--cyan)}
+
+/* ── tech + setup ── */
+.tech{padding:100px 0}
+.tr{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.tp{padding:11px 18px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);font-size:13px;color:var(--dim);transition:all .3s}
+.tp:hover{border-color:var(--border-l);color:var(--text);transform:translateY(-1px)}
+.tp strong{color:var(--text);font-weight:600}
+.setup{padding:100px 0}
+.ss{display:grid;grid-template-columns:36px 1fr;gap:18px;padding:22px 0;border-top:1px solid var(--border)}
+.ss:last-child{border-bottom:1px solid var(--border)}
+.ss-n{font-family:var(--mono);font-size:13px;color:var(--muted);padding-top:2px}
+.ss h4{font-size:15px;font-weight:600;margin-bottom:3px}
+.ss p{font-size:13px;color:var(--dim);line-height:1.6;font-weight:300}
+.ss code{font-family:var(--mono);font-size:12px;padding:2px 7px;border-radius:4px;background:var(--bg3);border:1px solid var(--border);color:var(--text)}
+.cdb{margin-top:8px;padding:12px 16px;border-radius:10px;background:var(--bg);border:1px solid var(--border);font-family:var(--mono);font-size:13px;color:var(--dim);line-height:1.7}
+.cdb .cmd{color:var(--green)}
+
+/* ── cta ── */
+.final{padding:150px 0;text-align:center}
+.final h2{font-family:var(--serif);font-size:clamp(40px,6vw,72px);font-weight:300;line-height:1.04;letter-spacing:-0.04em;max-width:650px;margin:0 auto 20px}
+.final h2 em{font-style:italic;font-weight:400;background:var(--g-green);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.final>p{font-size:16px;color:var(--dim);font-weight:300;max-width:380px;margin:0 auto 36px;line-height:1.6}
+.final-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+footer{padding:40px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+footer span{font-size:13px;color:var(--muted);font-weight:300}
+footer a{color:var(--dim);text-decoration:none;font-size:13px;transition:color .3s}
+footer a:hover{color:var(--text)}
+.fl{display:flex;gap:24px}
+
+@media(max-width:900px){.hero{grid-template-columns:1fr;gap:48px}.toast-mock{max-width:400px;margin:0 auto}}
+@media(max-width:768px){
+  .sees-grid,.eg,.cg{grid-template-columns:1fr}
+  .mg,.ug{grid-template-columns:1fr}
+  .step{grid-template-columns:1fr!important;gap:6px!important}
+  .ss{grid-template-columns:1fr;gap:6px}
+  .kr{grid-template-columns:1fr}.kr .kd{padding-top:0}
+  nav{flex-direction:column;gap:16px}
+  .nav-r{flex-wrap:wrap;justify-content:center}
+  footer{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div class="mesh"><div class="mo mo1"></div><div class="mo mo2"></div><div class="mo mo3"></div></div>
+<div class="particles" id="particles"></div>
+
+<div class="wrap">
+
+<nav>
+  <a href="/autoclawd" class="logo"><div class="logo-dot"></div><span class="logo-text">Autoclawd</span></a>
+  <div class="nav-r">
+    <a href="#sees">What it sees</a>
+    <a href="#modes">Modes</a>
+    <a href="#usecases">Use cases</a>
+    <a href="#connectors">Connectors</a>
+    <a href="https://thelastprompt.ai">The Last Prompt</a>
+    <a href="https://github.com/thelastprompt/autoclaw" target="_blank" class="ctab">GitHub</a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag"><span class="gdot"></span> Phase 1 of The Last Prompt</div>
+    <h1>An AI ghost that <em>sees your world</em> and <span class="hl">gets things done</span></h1>
+    <p class="hero-p">Lives in your macOS menu bar. Observes everything — your apps, your clipboard, your screen. Understands what needs to happen. <strong>Then does it.</strong></p>
+    <div class="hero-actions">
+      <a href="https://github.com/thelastprompt/autoclaw" class="btn btn-w">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85 0 1.673.109 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        Clone &amp; build
+      </a>
+      <a href="#demo" class="btn btn-g">See it in action ↓</a>
+    </div>
+  </div>
+  <!-- Simulated toast -->
+  <div class="toast-mock">
+    <div class="toast-frame">
+      <div class="toast-inner">
+        <div class="toast-header">
+          <div class="toast-header-left"><div class="th-dot"></div><span class="th-name">Autoclawd</span></div>
+          <div class="th-mode">TASK ▶</div>
+        </div>
+        <div class="toast-body">
+          <div class="tb-line tb-clip">📋 "/api/v1/users throwing 500s"</div>
+          <div class="tb-line" style="color:var(--text)">⌕ Reading routes/users.ts...</div>
+          <div class="tb-line tb-res">→ Found null in getUserById():47</div>
+          <div class="tb-line" style="color:var(--green);font-weight:500">✓ Patched. 14 tests passing.</div>
+        </div>
+        <div class="toast-footer">
+          <div class="toast-input">Ask anything...</div>
+          <div class="toast-send">⌥X</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SEES EVERYTHING ═══ -->
+<section class="sees r" id="sees">
+  <h2 class="sh2">It sees <span class="acc">everything</span></h2>
+  <p class="sp" style="margin:0 auto">Your clipboard is just one signal. Autoclawd is aware of your entire desktop.</p>
+  <div class="sees-grid stg">
+    <div class="sc r"><span class="sc-icon">📋</span><h4>Clipboard</h4><p>Copy anything. Errors, messages, URLs, code. Lands in the thread instantly.</p></div>
+    <div class="sc r"><span class="sc-icon">🖥</span><h4>Active app</h4><p>Knows where you are. VS Code vs Slack vs Chrome — context shapes the response.</p></div>
+    <div class="sc r"><span class="sc-icon">📸</span><h4>Screenshots</h4><p>Option+Z. Capture what you see. UI bugs, error dialogs, designs. Visual context.</p></div>
+    <div class="sc r"><span class="sc-icon">📁</span><h4>Drag &amp; drop</h4><p>Drop files onto the toast. Images, docs, logs. Anything becomes context.</p></div>
+    <div class="sc r"><span class="sc-icon">💬</span><h4>Direct input</h4><p>Type into the toast. Questions, instructions. Sometimes words are fastest.</p></div>
+    <div class="sc r"><span class="sc-icon">🪟</span><h4>Window context</h4><p>Which file. Which tab. Which project. It builds context from your environment.</p></div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<div class="div-beam r"></div>
+<section class="how" id="how">
+  <div class="r">
+    <p class="sl">How it works</p>
+    <h2 class="sh2">Wake it. Feed it. <em>Pick the intent.</em></h2>
+  </div>
+  <div class="steps stg">
+    <div class="step r"><span class="sn">01</span><div class="sc2"><h3>Start a session</h3><p>Press Fn. Green glow. It's listening.</p><div class="sk"><span class="key">Fn</span></div></div></div>
+    <div class="step r"><span class="sn">02</span><div class="sc2"><h3>Give it context</h3><p>Copy, screenshot, drag, or type. Every input builds the picture.</p><div class="sk"><span class="key">⌘C</span><span class="key">⌥Z</span></div></div></div>
+    <div class="step r"><span class="sn">03</span><div class="sc2"><h3>Pick the intent</h3><p>Fix it. Track it. Answer it. Explain it. One hotkey, four completely different AIs.</p><div class="sk"><span class="key">⌥</span><span class="key">X</span></div></div></div>
+    <div class="step r"><span class="sn">04</span><div class="sc2"><h3>Watch it work</h3><p>Live streaming. The glow shifts — purple while working, cyan when done.</p></div></div>
+    <div class="step r"><span class="sn">05</span><div class="sc2"><h3>Resume anytime</h3><p>Sessions persist. Full context. Your ghost remembers.</p><div class="sk"><span class="key">⌥⌥</span></div></div></div>
+  </div>
+</section>
+
+<!-- ═══ MODES ═══ -->
+<section class="modes" id="modes">
+  <div class="r">
+    <p class="sl">Four modes</p>
+    <h2 class="sh2">Same hotkey. <span class="mix">Completely different AI.</span></h2>
+    <p class="sp">Each mode invokes a dedicated Claude Code skill. Different permissions. Different rules. Different boundaries.</p>
+  </div>
+  <div class="mg stg">
+    <div class="md r"><div class="mi mi1">▶</div><h3>Task</h3><div class="mv">"Fix this. Ship this."</div><p>Edits files. Runs tests. Ships code. You come back to a fixed codebase.</p><div class="perms"><span class="pm y">Filesystem</span><span class="pm y">Shell</span><span class="pm y">GitHub</span><span class="pm y">MCP</span></div></div>
+    <div class="md r"><div class="mi mi2">+</div><h3>Add to Tasks</h3><div class="mv">"Track this."</div><p>Creates ClickUp tasks from any context. Titles, priorities, assignees.</p><div class="perms"><span class="pm y">ClickUp</span><span class="pm y">MCP</span><span class="pm n">No filesystem</span><span class="pm n">No shell</span></div></div>
+    <div class="md r"><div class="mi mi3">?</div><h3>Question</h3><div class="mv">"What did we decide?"</div><p>Answers from meetings, tasks, spreadsheets, the web. Can never touch code.</p><div class="perms"><span class="pm y">Granola</span><span class="pm y">ClickUp</span><span class="pm y">Web</span><span class="pm y">Sheets</span><span class="pm n">No files</span></div></div>
+    <div class="md r"><div class="mi mi4">⌕</div><h3>Analyze</h3><div class="mv">"Explain. Change nothing."</div><p>Reads code. Traces logic. Flags issues. Never modifies a file.</p><div class="perms"><span class="pm y">Read</span><span class="pm y">MCP (read)</span><span class="pm n">No writes</span><span class="pm n">No shell</span></div></div>
+  </div>
+</section>
+
+<!-- ═══ EXPERIENCE ═══ -->
+<section class="exp">
+  <div class="r">
+    <p class="sl">The experience</p>
+    <h2 class="sh2">A ghost. <em>Not an app.</em></h2>
+  </div>
+  <div class="eg stg">
+    <div class="ec r"><h4>State at a glance</h4><p>The glow tells you everything.</p><div class="gd-row"><div class="gci"><span class="gdot2 gd-g"></span>Listening</div><div class="gci"><span class="gdot2 gd-w"></span>Paused</div><div class="gci"><span class="gdot2 gd-p"></span>Working</div><div class="gci"><span class="gdot2 gd-c"></span>Done</div></div></div>
+    <div class="ec r"><h4>Live streaming</h4><p>Real output. Files being read. Code being written. As it happens.</p></div>
+    <div class="ec r"><h4>Session thread</h4><p>Every input, result, action. Full history. Nothing lost.</p></div>
+    <div class="ec r"><h4>Pick the brain</h4><p>Haiku. Sonnet. Opus. Switch from the header.</p></div>
+    <div class="ec r"><h4>Multi-project</h4><p>Each project, its own world. Switch without mixing context.</p></div>
+    <div class="ec r"><h4>Full panel</h4><p>Home. Threads. Settings. The control room when you need it.</p></div>
+  </div>
+</section>
+
+<!-- ═══ USE CASES ═══ -->
+<section class="ucs" id="usecases">
+  <div class="r">
+    <p class="sl">Use cases</p>
+    <h2 class="sh2">Minutes → <span class="acc">seconds</span></h2>
+  </div>
+  <div class="ug stg">
+    <div class="uc r"><div class="ul u1">Bugs</div><h4>Copy an error. Come back to green.</h4><p>Finds root cause. Patches file. Runs tests.</p><div class="ba"><div class="before">ChatGPT → paste → read → editor → find → edit → test → pray</div><div class="after">Copy. Fixed.</div></div></div>
+    <div class="uc r"><div class="ul u2">Meetings</div><h4>Meeting ends. Tasks exist.</h4><p>Queries Granola. Creates ClickUp tasks. Context, assignees, deadlines.</p><div class="ba"><div class="before">Scan notes → open ClickUp → create → remember</div><div class="after">Ask. Created.</div></div></div>
+    <div class="uc r"><div class="ul u3">Code review</div><h4>Screenshot a diff. Get a review.</h4><p>Reads surrounding code. Traces logic. Flags concerns. Changes nothing.</p><div class="ba"><div class="before">Read → grep → trace → reason through it</div><div class="after">Screenshot. Read.</div></div></div>
+    <div class="uc r"><div class="ul u4">Quick answers</div><h4>"How many bugs this sprint?"</h4><p>Queries ClickUp, Granola, Sheets, web. Answer in the toast.</p><div class="ba"><div class="before">Open tool → navigate → filter → count</div><div class="after">Ask. Answered.</div></div></div>
+  </div>
+</section>
+
+<!-- ═══ CONNECTORS ═══ -->
+<section class="conn" id="connectors">
+  <div class="r">
+    <p class="sl">Connectors</p>
+    <h2 class="sh2">Talks to <span class="acc">everything</span></h2>
+    <p class="sp">Your tools stay where they are. Autoclawd acts through them via MCP.</p>
+  </div>
+  <div class="cg stg">
+    <div class="cc r"><h4><span class="cdot" style="background:var(--green);box-shadow:0 0 6px var(--green)"></span>ClickUp</h4><p>Tasks, backlogs, priorities, time tracking.</p></div>
+    <div class="cc r"><h4><span class="cdot" style="background:var(--purple);box-shadow:0 0 6px var(--purple)"></span>Granola</h4><p>Meetings, decisions, transcripts, action items.</p></div>
+    <div class="cc r"><h4><span class="cdot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></span>Sheets</h4><p>Pull numbers. Update cells. Live data.</p></div>
+    <div class="cc r"><h4><span class="cdot" style="background:var(--text);box-shadow:0 0 6px var(--dim)"></span>GitHub</h4><p>Issues. PRs. Repos. Intent → commit.</p></div>
+    <div class="cc r"><h4><span class="cdot" style="background:var(--warm);box-shadow:0 0 6px var(--warm)"></span>Web</h4><p>Docs, APIs, anything current.</p></div>
+    <div class="cc r"><h4><span class="cdot" style="background:var(--green);box-shadow:0 0 6px var(--green)"></span>Filesystem</h4><p>Reads in Analyze. Edits in Task.</p></div>
+  </div>
+  <div class="cn-note r"><div style="font-size:18px;flex-shrink:0">∞</div><div><p style="font-size:14px;color:var(--dim);line-height:1.6;font-weight:300"><strong style="color:var(--text)">Any MCP server works.</strong> Slack, Linear, Notion, Jira — add to <code>~/.claude/mcp.json</code>. Works next session.</p></div></div>
+</section>
+
+<!-- ═══ KEYBOARD ═══ -->
+<section class="keyboard r">
+  <p class="sl">Four shortcuts</p>
+  <h2 class="sh2" style="font-size:clamp(28px,3.5vw,40px)">The entire <em>control surface</em></h2>
+  <div class="kb">
+    <div class="kr kh"><div class="kk">Shortcut</div><div class="kd">Action</div></div>
+    <div class="kr"><div class="kk"><span class="key">Fn</span></div><div class="kd">Start / pause / resume</div></div>
+    <div class="kr"><div class="kk"><span class="key">⌥⌥</span></div><div class="kd">End session</div></div>
+    <div class="kr"><div class="kk"><span class="key">⌥Z</span></div><div class="kd">Screenshot → thread</div></div>
+    <div class="kr"><div class="kk"><span class="key">⌥X</span></div><div class="kd">Cycle mode</div></div>
+  </div>
+</section>
+
+<!-- ═══ DEMO ═══ -->
+<section class="demo" id="demo">
+  <div class="r">
+    <p class="sl">90 seconds</p>
+    <h2 class="sh2">Zero prompts. <span class="acc">Five actions.</span></h2>
+  </div>
+  <div class="demo-box r r1">
+    <div class="demo-bar"><div class="dd"></div><div class="dd"></div><div class="dd"></div></div>
+    <div class="demo-body" id="demoBody">
+      <div class="dl"><span class="dt">0:03</span><span style="color:var(--dim)">📋 "/api/v1/users throwing 500s in prod"</span></div>
+      <div class="dl"><span class="dt">0:12</span><span class="dmb dm-a">ANALYZE</span><span style="color:var(--green)">→ Unhandled null in getUserById() — :47</span></div>
+      <div class="dl"><span class="dt">0:30</span><span class="dmb dm-add">ADD TO TASKS</span><span style="color:var(--purple)">→ ✓ "Fix 500 on /api/v1/users" — CU-4829</span></div>
+      <div class="dl"><span class="dt">0:55</span><span class="dmb dm-t">TASK</span><span style="color:var(--green)">→ ✓ Patched. Tests passing.</span></div>
+      <div class="dl"><span class="dt">1:10</span><span class="dmb dm-q">QUESTION</span><span style="color:var(--cyan)">→ "v2 starts April 1, v1 deprecated April 30"</span></div>
+      <div class="dl"><span class="dt">1:22</span><span style="color:var(--muted)">── session ended ──</span></div>
+      <div class="dl"><span class="dt" style="visibility:hidden">.</span><span style="color:var(--green);font-weight:600">5 actions. 0 prompts.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TECH ═══ -->
+<section class="tech r">
+  <p class="sl">Under the hood</p>
+  <h2 class="sh2" style="font-size:clamp(28px,3.5vw,40px)">Native. Fast. <em>Invisible.</em></h2>
+  <div class="tr">
+    <div class="tp"><strong>Swift</strong> — native macOS</div>
+    <div class="tp"><strong>SwiftUI</strong> — toast + panel</div>
+    <div class="tp"><strong>Claude Code</strong> — stream-json</div>
+    <div class="tp"><strong>MCP</strong> — connectors</div>
+    <div class="tp"><strong>Skills</strong> — per-mode rules</div>
+  </div>
+</section>
+
+<!-- ═══ SETUP ═══ -->
+<section class="setup" id="setup">
+  <div class="r">
+    <p class="sl">Get started</p>
+    <h2 class="sh2" style="font-size:clamp(28px,3.5vw,40px)">Five minutes to <em>an AI ghost</em></h2>
+  </div>
+  <div class="stg">
+    <div class="ss r"><span class="ss-n">01</span><div><h4>Install Claude Code</h4><div class="cdb"><span class="cmd">npm install -g</span> @anthropic-ai/claude-code</div></div></div>
+    <div class="ss r"><span class="ss-n">02</span><div><h4>Clone &amp; build</h4><div class="cdb"><span class="cmd">git clone</span> https://github.com/thelastprompt/autoclaw.git<br><span class="cmd">cd</span> autoclaw && <span class="cmd">make run</span></div></div></div>
+    <div class="ss r"><span class="ss-n">03</span><div><h4>API key + project</h4><p>Menu bar → Settings. Add key. Point at a directory.</p></div></div>
+    <div class="ss r"><span class="ss-n">04</span><div><h4>Wire up tools</h4><p>Add MCP servers to <code>~/.claude/mcp.json</code>.</p></div></div>
+    <div class="ss r"><span class="ss-n">05</span><div><h4>Press Fn</h4><p>Grant Accessibility. Press Fn. You have a ghost.</p></div></div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="final">
+  <div class="r">
+    <h2>Stop prompting.<br><em>Start living.</em></h2>
+    <p>The ghost that does the work.</p>
+    <div class="final-btns">
+      <a href="https://github.com/thelastprompt/autoclaw" class="btn btn-w">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85 0 1.673.109 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        Get started
+      </a>
+      <a href="https://thelastprompt.ai" class="btn btn-g">The Last Prompt →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Autoclawd — built with Claude Code, powered by ARIA</span>
+  <div class="fl"><a href="https://thelastprompt.ai">The Last Prompt</a><a href="https://github.com/thelastprompt/autoclaw">GitHub</a><a href="https://x.com/thelastprompt">X</a></div>
+</footer>
+
+</div>
+
+<script>
+// Reveals
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('v');if(x.target.querySelector('#demoBody')||x.target.closest('.demo-box')){const d=document.getElementById('demoBody');if(d)d.classList.add('animated')}obs.unobserve(x.target)}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.r').forEach(el=>obs.observe(el));
+
+// Particles
+const pc=document.getElementById('particles');
+for(let i=0;i<25;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*12+'s';p.style.animationDuration=(8+Math.random()*8)+'s';p.style.width=p.style.height=(1+Math.random()*2)+'px';if(Math.random()>.7)p.style.background='var(--purple)';else if(Math.random()>.5)p.style.background='var(--cyan)';pc.appendChild(p)}
+
+// Parallax
+let t=false;
+window.addEventListener('scroll',()=>{if(!t){requestAnimationFrame(()=>{const y=window.scrollY;document.querySelectorAll('.mo').forEach((o,i)=>{const s=[.06,-.04,.03][i]||.02;o.style.transform=`translateY(${y*s}px)`});t=false});t=true}});
+</script>
+</body>
+</html>
