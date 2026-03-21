@@ -3,510 +3,516 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Autoclawd — An AI ghost on your macOS</title>
+<title>Autoclawd — Ambient AI for macOS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#020204;--bg2:#08080c;--bg3:#0f0f14;--bg4:#161620;
-  --border:#151520;--border-l:#222230;
-  --text:#ededf4;--dim:#8585a0;--muted:#50506a;--faint:#2a2a3a;
-  --green:#5eead4;--green-d:#5eead412;--green-m:#5eead425;
-  --purple:#a78bfa;--purple-d:#a78bfa15;
-  --cyan:#22d3ee;--cyan-d:#22d3ee15;
-  --white-g:#ffffff12;--warm:#fbbf24;
-  --g-green:linear-gradient(135deg,#5eead4,#34d399);
-  --g-mix:linear-gradient(135deg,#5eead4,#818cf8,#c4b5fd);
-  --serif:'Newsreader',Georgia,serif;
-  --sans:'DM Sans',-apple-system,sans-serif;
-  --mono:'JetBrains Mono',monospace;
+  --bg:#08080f;--dark:#0e0e16;--dark2:#141420;--dark3:#1a1a28;
+  --border:rgba(255,255,255,.11);--border-h:rgba(255,255,255,.20);
+  --glass:rgba(10,10,18,.94);--glass-s:rgba(255,255,255,.07);--glass-su:rgba(255,255,255,.11);
+  --white:#fff;--light:#F6F6F6;
+  --t1:rgba(255,255,255,.92);--t2:rgba(255,255,255,.52);--t3:rgba(255,255,255,.28);--t4:rgba(255,255,255,.14);
+  --tb:#111;--tb2:#666;--tb3:#999;
+  --green:#34d399;--green-d:rgba(52,211,153,.18);
+  --purple:#a78bfa;--purple-d:rgba(167,139,250,.18);
+  --cyan:#22d3ee;--cyan-d:rgba(34,211,238,.18);
+  --amber:#fbbf24;--amber-d:rgba(251,191,36,.18);
+  --red:#f87171;--red-d:rgba(248,113,113,.18);
+  --blue:#60a5fa;--blue-d:rgba(96,165,250,.18);
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --sans:'Inter',-apple-system,system-ui,sans-serif;
+  --sf:-apple-system,"SF Pro Text","SF Pro Display",system-ui,sans-serif;
 }
-html{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
-body{overflow-x:hidden}
-body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.018'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+html{font-family:var(--sans);-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{overflow-x:hidden;background:var(--bg);color:var(--t1)}
 
-.mesh{position:fixed;inset:0;z-index:0;overflow:hidden}
+/* ── MESH BG ── */
+.mesh{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
 .mo{position:absolute;border-radius:50%;filter:blur(140px);animation:drift 20s ease-in-out infinite}
-.mo1{width:600px;height:600px;background:var(--green);top:-20%;left:-10%;opacity:.06}
-.mo2{width:500px;height:500px;background:var(--purple);bottom:-15%;right:-10%;opacity:.04;animation-delay:-7s}
-.mo3{width:350px;height:350px;background:var(--cyan);top:50%;left:55%;opacity:.025;animation-delay:-12s}
-@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-25px) scale(1.04)}50%{transform:translate(-20px,35px) scale(.96)}75%{transform:translate(-35px,-15px) scale(1.02)}}
+.mo1{width:500px;height:500px;background:var(--green);top:-15%;left:-8%;opacity:.04}
+.mo2{width:400px;height:400px;background:var(--purple);bottom:-10%;right:-8%;opacity:.03;animation-delay:-7s}
+.mo3{width:300px;height:300px;background:var(--cyan);top:50%;left:55%;opacity:.02;animation-delay:-13s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(25px,-20px) scale(1.03)}66%{transform:translate(-20px,30px) scale(.97)}}
 
-.particles{position:fixed;inset:0;z-index:0;pointer-events:none}
-.particle{position:absolute;width:2px;height:2px;background:var(--green);border-radius:50%;opacity:0;animation:float 12s linear infinite}
-@keyframes float{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:.3}90%{opacity:.3}100%{opacity:0;transform:translateY(-20vh) scale(1)}}
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(8,8,15,.88);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--t1)}
+.logo img{width:24px;height:24px}
+.logo span{font-family:var(--mono);font-weight:700;font-size:14px;letter-spacing:-.01em}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{color:var(--t2);text-decoration:none;font-family:var(--mono);font-size:11px;padding:7px 12px;transition:color .15s;letter-spacing:.02em;text-transform:uppercase}
+.nav-links a:hover{color:var(--t1)}
+.nav-cta{border:1px solid var(--border)!important;color:var(--t1)!important;font-weight:600!important;padding:6px 16px!important;transition:all .15s!important}
+.nav-cta:hover{background:var(--white)!important;color:var(--bg)!important;border-color:var(--white)!important}
 
-.wrap{max-width:1060px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
+/* ── SHARED ── */
+.wrap{max-width:1280px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border:1px solid var(--border);margin-bottom:20px}
+.badge-light{color:var(--tb2);border-color:#ddd}
+h2{font-size:clamp(32px,5vw,52px);font-weight:700;line-height:.94;letter-spacing:-.04em}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;padding:11px 24px;border:1px solid var(--border);cursor:pointer;text-decoration:none;transition:all .15s;background:transparent;color:var(--t1)}
+.btn:hover{background:var(--white);color:var(--bg);border-color:var(--white)}
+.btn-solid{background:var(--bg);color:var(--white);border-color:var(--bg)}
+.btn-solid:hover{background:#222;border-color:#222}
+.btn-light{color:var(--tb);border-color:#ccc;background:transparent}
+.btn-light:hover{background:var(--bg);color:var(--white);border-color:var(--bg)}
 
-/* reveal */
-.r{opacity:0;transform:translateY(36px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
-.r.v{opacity:1;transform:translateY(0)}
-.r1{transition-delay:.08s}.r2{transition-delay:.16s}.r3{transition-delay:.24s}.r4{transition-delay:.32s}.r5{transition-delay:.4s}
-.stg .r:nth-child(1){transition-delay:0s}.stg .r:nth-child(2){transition-delay:.06s}.stg .r:nth-child(3){transition-delay:.12s}.stg .r:nth-child(4){transition-delay:.18s}.stg .r:nth-child(5){transition-delay:.24s}.stg .r:nth-child(6){transition-delay:.3s}
+/* ── HERO ── */
+.hero{padding:100px 0 60px;text-align:center}
+.hero-ghost{width:100px;height:100px;margin:0 auto 28px;filter:drop-shadow(0 0 50px rgba(52,211,153,.4)) drop-shadow(0 0 100px rgba(52,211,153,.15));animation:ghostFloat 4s ease-in-out infinite}
+@keyframes ghostFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.hero h1{font-size:clamp(40px,6.5vw,68px);font-weight:800;line-height:.9;letter-spacing:-.05em;margin-bottom:24px}
+.hero-sub{font-size:17px;color:var(--t2);max-width:540px;margin:0 auto 44px;line-height:1.65;font-weight:400}
+.hero-sub strong{color:var(--t1);font-weight:600}
 
-/* nav */
-nav{display:flex;align-items:center;justify-content:space-between;padding:28px 0;border-bottom:1px solid var(--border);animation:fi .6s ease both}
-@keyframes fi{from{opacity:0}to{opacity:1}}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);transition:opacity .3s}
-.logo:hover{opacity:.5}
-.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 14px var(--green),0 0 4px var(--green);animation:gp 3s ease-in-out infinite}
-@keyframes gp{0%,100%{opacity:1;box-shadow:0 0 14px var(--green),0 0 4px var(--green)}50%{opacity:.4;box-shadow:0 0 6px var(--green)}}
-.logo-text{font-weight:600;font-size:18px;letter-spacing:-0.02em}
-.nav-r{display:flex;align-items:center;gap:28px}
-.nav-r a{color:var(--dim);text-decoration:none;font-size:14px;transition:color .3s}
-.nav-r a:hover{color:var(--text)}
-.ctab{background:var(--text)!important;color:var(--bg)!important;padding:8px 20px;border-radius:8px;font-weight:600!important;font-size:13px!important;transition:all .3s!important}
-.ctab:hover{background:#fff!important;transform:translateY(-2px);box-shadow:0 6px 30px #fff1}
+/* ── SCROLLING LOGOS ── */
+.logos{padding:44px 0;border-top:1px solid var(--border);overflow:hidden;position:relative}
+.logos::before,.logos::after{content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2}
+.logos::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.logos::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
+.logo-track{display:flex;gap:56px;align-items:center;animation:scrollLogos 22s linear infinite;width:max-content}
+.logo-track span{font-family:var(--mono);font-size:12px;color:var(--t3);white-space:nowrap;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+@keyframes scrollLogos{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* shared */
-.sl{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;transition:all .3s cubic-bezier(.22,1,.36,1);border:none;cursor:pointer;position:relative;overflow:hidden}
-.btn-w{background:var(--text);color:var(--bg)}
-.btn-w::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,#ffffff30 50%,transparent 60%);transform:translateX(-100%);transition:transform .6s}
-.btn-w:hover::before{transform:translateX(100%)}
-.btn-w:hover{transform:translateY(-2px);box-shadow:0 10px 40px #fff1}
-.btn-g{background:transparent;color:var(--dim);border:1px solid var(--border)}
-.btn-g:hover{color:var(--text);border-color:#444}
-.key{display:inline-block;padding:3px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);font-family:var(--mono);font-size:12px;color:var(--dim)}
-.div-beam{width:1px;height:80px;margin:0 auto;position:relative}.div-beam::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent,var(--faint),transparent)}
+/* ── DEMO: 3 GLASS CARDS ── */
+.demo{padding:20px 0 100px}
+.demo-grid{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:14px}
 
-/* section titles */
-.sh2{font-family:var(--serif);font-size:clamp(32px,4.5vw,52px);font-weight:300;line-height:1.06;letter-spacing:-0.035em;margin-bottom:14px}
-.sh2 em{font-style:italic;font-weight:400}
-.sh2 .acc{background:var(--g-green);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.sh2 .mix{background:var(--g-mix);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.sp{font-size:16px;color:var(--dim);font-weight:300;line-height:1.6;max-width:480px}
+/* Glass card base */
+.gc{background:var(--glass);border:.5px solid var(--border);border-radius:18px;backdrop-filter:blur(60px) saturate(2.4);-webkit-backdrop-filter:blur(60px) saturate(2.4);box-shadow:0 18px 52px rgba(0,0,0,.72),inset 0 1px 0 rgba(255,255,255,.10);overflow:hidden;position:relative}
+.gc::before{content:'';position:absolute;inset:0;border-radius:18px;border:.5px solid rgba(255,255,255,.055);pointer-events:none}
+.gc-hdr{padding:11px 14px;border-bottom:.5px solid var(--border);font-family:var(--sf);font-size:10px;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;font-weight:600}
+.gc-body{padding:14px}
 
-/* ── hero ── */
-.hero{padding:150px 0 120px;display:grid;grid-template-columns:1fr 340px;gap:60px;align-items:center}
-.hero-left{max-width:560px}
-.hero-tag{font-size:13px;color:var(--green);display:flex;align-items:center;gap:8px;margin-bottom:14px;animation:fu .6s .15s ease both}
-.hero-tag .gdot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:gp 3s ease-in-out infinite}
-@keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.hero h1{font-family:var(--serif);font-size:clamp(40px,5.5vw,64px);font-weight:300;line-height:1.04;letter-spacing:-0.04em;margin-bottom:20px;animation:heroR 1s .25s cubic-bezier(.16,1,.3,1) both}
-@keyframes heroR{from{opacity:0;transform:translateY(30px);filter:blur(6px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
-.hero h1 em{font-style:italic;font-weight:400}
-.hero h1 .hl{background:var(--g-green);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-p{font-size:18px;color:var(--dim);line-height:1.6;font-weight:300;margin-bottom:36px;animation:fu .8s .4s ease both}
-.hero-p strong{color:var(--text);font-weight:500}
-.hero-actions{display:flex;gap:14px;flex-wrap:wrap;animation:fu .8s .55s ease both}
+/* Tool list */
+.tl-row{padding:8px 0;border-bottom:.5px solid var(--border);display:flex;align-items:center;gap:8px;font-family:var(--sf);font-size:11px}
+.tl-row:last-child{border-bottom:none}
+.tl-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.tl-name{color:var(--t1);font-weight:600;font-size:11px}
+.tl-desc{color:var(--t3);margin-left:auto;font-size:10px}
 
-/* simulated toast mockup */
-.toast-mock{min-width:300px}
-.toast-frame{border:1px solid #2a2a3a;border-radius:16px;background:#12121a;position:relative;transition:box-shadow 1s;animation:glowCycle 6s ease-in-out infinite}
-@keyframes glowCycle{
-  0%,100%{box-shadow:0 0 40px #5eead430,0 0 100px #5eead415,inset 0 0 40px #5eead410}
-  33%{box-shadow:0 0 40px #a78bfa30,0 0 100px #a78bfa15,inset 0 0 40px #a78bfa10}
-  66%{box-shadow:0 0 40px #22d3ee30,0 0 100px #22d3ee15,inset 0 0 40px #22d3ee10}
+/* Toast mockup — the real deal */
+.toast{background:var(--glass);border:.5px solid var(--border);border-radius:18px;backdrop-filter:blur(60px) saturate(2.4);box-shadow:0 18px 52px rgba(0,0,0,.72),inset 0 1px 0 rgba(255,255,255,.1);overflow:hidden;position:relative;margin:0 auto}
+.toast::before{content:'';position:absolute;inset:0;border-radius:18px;border:.5px solid rgba(255,255,255,.055);pointer-events:none;z-index:2}
+/* Glow border */
+.toast::after{content:'';position:absolute;inset:-2px;border-radius:20px;border:1.5px solid var(--green);opacity:.15;filter:blur(3px);animation:glowPulse 2.6s ease-in-out infinite;pointer-events:none;z-index:3}
+@keyframes glowPulse{0%,100%{opacity:.15}50%{opacity:.4}}
+.toast-hdr{padding:10px 13px;border-bottom:.5px solid var(--border);display:flex;align-items:center;gap:7px}
+.toast-hdr img{width:16px;height:16px}
+.toast-hdr .name{font-family:var(--sf);font-size:11px;font-weight:600;color:var(--t1)}
+.toast-hdr .mode-badge{margin-left:auto;font-family:var(--sf);font-size:9px;padding:2px 7px;border-radius:7px;font-weight:600;letter-spacing:.04em}
+.badge-task{background:var(--green-d);color:var(--green)}
+.toast-body{padding:11px 13px;font-family:var(--sf);font-size:12px;color:var(--t2);line-height:1.9}
+.toast-body .detect{color:var(--t2);margin-bottom:6px}
+.toast-body .result{color:var(--t1)}
+.toast-body .good{color:var(--green)}
+.toast-body .action{color:var(--purple)}
+.toast-body .info{color:var(--cyan)}
+.toast-ftr{padding:9px 13px;border-top:.5px solid var(--border);display:flex;gap:7px;align-items:center}
+.toast-btn-p{font-family:var(--sf);font-size:11px;padding:5px 13px;border-radius:8px;background:rgba(255,255,255,.88);color:#09090f;font-weight:600;border:none;cursor:pointer}
+.toast-btn-s{font-family:var(--sf);font-size:11px;padding:5px 10px;border-radius:8px;background:transparent;color:var(--t2);border:.5px solid var(--border);cursor:pointer}
+.toast-btn-x{font-family:var(--sf);font-size:11px;padding:5px 8px;border-radius:8px;background:transparent;color:var(--t3);border:.5px solid var(--border);margin-left:auto;cursor:pointer}
+.toast-time{font-family:var(--sf);font-size:10px;color:var(--t3);margin-left:auto}
+
+/* Config card */
+.cfg-row{padding:7px 0;border-bottom:.5px solid var(--border);display:flex;justify-content:space-between;font-family:var(--sf);font-size:11px}
+.cfg-row:last-child{border-bottom:none}
+.cfg-k{color:var(--t3)}.cfg-v{color:var(--t1)}
+
+/* Execution log */
+.exec-log{margin-top:14px;padding-top:12px;border-top:.5px solid var(--border);font-family:var(--sf);font-size:11px;color:var(--t2);line-height:2}
+
+/* ── WHY AUTOCLAWD ── */
+.why{padding:120px 0}
+.why-layout{display:grid;grid-template-columns:260px 1fr;gap:48px;margin-top:56px}
+.why-tabs{position:sticky;top:76px;align-self:start}
+.why-tab{padding:12px 14px;font-family:var(--mono);font-size:11px;color:var(--t3);cursor:pointer;border:1px solid transparent;margin-bottom:4px;display:flex;align-items:center;gap:8px;transition:all .15s;letter-spacing:.02em;text-transform:uppercase}
+.why-tab.active{color:var(--t1);border-color:var(--border);background:var(--dark2)}
+.why-tab .tn{color:var(--cyan);font-size:10px}
+.why-tab:hover{color:var(--t2)}
+.wp{display:none}.wp.active{display:block}
+.wp h3{font-size:28px;font-weight:700;margin-bottom:14px;letter-spacing:-.03em}
+.wp>p{font-size:15px;color:var(--t2);line-height:1.65;margin-bottom:24px}
+.wp ul{list-style:none}
+.wp li{padding:10px 0;border-left:2px solid var(--border);padding-left:16px;font-size:13px;color:var(--t1);margin-bottom:6px;line-height:1.5}
+
+/* ── MODES (light) ── */
+.modes-section{padding:120px 0;background:var(--light);color:var(--tb)}
+.modes-section h2{color:var(--tb)}
+.modes-layout{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:56px}
+.ml{padding:48px 40px;border:1px solid #ddd;display:flex;flex-direction:column;justify-content:space-between}
+.ml-title{font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.ml-title img{width:24px;height:24px}
+.ml-title .tag{font-family:var(--mono);font-size:9px;border:1px solid #ddd;padding:2px 8px;font-weight:600;letter-spacing:.04em}
+.ml>p{font-size:14px;color:var(--tb2);line-height:1.6;margin-bottom:20px}
+.mode-code{font-family:var(--mono);font-size:11px;background:#fff;border:1px solid #ddd;padding:14px;color:var(--tb2);line-height:2;margin-bottom:20px}
+.mode-code .kw{color:#0d9488;font-weight:600}
+.mr{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.ma{padding:24px;border:1px solid #ddd;border-left:none;border-top:none;transition:background .15s;display:flex;flex-direction:column}
+.ma:nth-child(-n+2){border-top:1px solid #ddd}
+.ma:hover{background:#fff}
+.ma h4{font-family:var(--mono);font-size:12px;font-weight:700;margin-bottom:3px}
+.ma .mq{font-size:11px;color:var(--tb3);font-style:italic;margin-bottom:6px}
+.ma p{font-size:11px;color:var(--tb2);line-height:1.5;flex:1}
+.perms{display:flex;flex-wrap:wrap;gap:3px;margin-top:8px}
+.pm{font-family:var(--mono);font-size:9px;padding:2px 6px;border:1px solid #ddd;color:var(--tb3)}
+.pm.y{border-color:rgba(52,211,153,.4);color:#0d9488;background:rgba(52,211,153,.08)}
+.pm.n{border-color:rgba(248,113,113,.2);color:#dc2626;background:rgba(248,113,113,.04)}
+
+/* ── SDK (dark) ── */
+.sdk{padding:120px 0}
+.sdk-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:48px}
+.sdk-card{border:1px solid var(--border);padding:32px;display:flex;flex-direction:column}
+.sdk-card:nth-child(2n){border-left:none}
+.sdk-card:nth-child(n+3){border-top:none}
+.sdk-card h3{font-size:20px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em}
+.sdk-card>p{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:14px;flex:1}
+.sdk-card .btn{margin-top:auto;align-self:flex-start;font-size:10px;padding:7px 14px}
+.sdk-code{font-family:var(--mono);font-size:11px;background:rgba(0,0,0,.3);border:1px solid var(--border);padding:12px;color:var(--t2);line-height:1.8;border-radius:11px;margin-bottom:14px}
+.sdk-code .kw{color:var(--green)}
+
+/* ── SECURITY (dark) ── */
+.security{padding:120px 0;border-top:1px solid var(--border)}
+.sec-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;margin-top:48px}
+.sec-visual{border:1px solid var(--border);border-radius:18px;padding:64px;display:flex;align-items:center;justify-content:center;min-height:320px;position:relative;overflow:hidden;background:var(--glass)}
+.sec-visual::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(52,211,153,.06),transparent 60%)}
+.sec-ghost{width:140px;height:140px;filter:drop-shadow(0 0 40px rgba(52,211,153,.2));position:relative;z-index:1}
+.sec-item{border-bottom:1px solid var(--border);padding:20px 0;cursor:pointer}
+.sec-item:first-child{border-top:1px solid var(--border)}
+.sec-hdr{display:flex;justify-content:space-between;align-items:center}
+.sec-item h4{font-size:18px;font-weight:600}
+.sec-item .tog{font-size:18px;color:var(--t3);transition:transform .2s}
+.sec-item.open .tog{transform:rotate(45deg)}
+.sec-item-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.sec-item.open .sec-item-body{max-height:200px}
+.sec-item-body p{padding-top:12px;font-size:14px;color:var(--t2);line-height:1.6}
+
+/* ── VISION (light) ── */
+.vision{padding:120px 0;background:var(--light);color:var(--tb)}
+.vision h2{color:var(--tb);text-align:center;margin-bottom:56px}
+.vis-layout{display:grid;grid-template-columns:260px 1fr;gap:0}
+.vis-tabs{display:flex;flex-direction:column;border:1px solid #ddd}
+.vis-tab{padding:16px 20px;border-bottom:1px solid #ddd;font-size:14px;color:var(--tb2);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .15s}
+.vis-tab:last-child{border-bottom:none}
+.vis-tab:hover,.vis-tab.active{color:var(--tb);background:#fff}
+.vis-tab.active{border-left:3px solid var(--green)}
+.vis-quote{padding:48px;border:1px solid #ddd;border-left:none;display:flex;flex-direction:column;justify-content:center}
+.vis-quote blockquote{font-size:22px;font-weight:600;color:var(--tb);line-height:1.35;letter-spacing:-.02em;margin-bottom:20px}
+.vis-quote cite{font-size:13px;color:var(--tb2);font-style:normal;font-family:var(--mono)}
+
+/* ── CTA ── */
+.final-cta{padding:100px 0;text-align:center;background:var(--light);border-top:1px solid #eee;color:var(--tb)}
+.final-cta h2{color:var(--tb);margin-bottom:32px}
+.cta-ghost{width:56px;height:56px;margin:0 auto 20px;filter:drop-shadow(0 0 20px rgba(52,211,153,.2))}
+
+/* ── FOOTER ── */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:56px 0 36px}
+.ft-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.ft-brand{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ft-brand img{width:20px;height:20px}
+.ft-brand span{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--t1)}
+.ft-col h5{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:14px}
+.ft-col a{display:block;font-family:var(--mono);font-size:11px;color:var(--t2);text-decoration:none;padding:3px 0;transition:color .15s;text-transform:uppercase}
+.ft-col a:hover{color:var(--t1)}
+.ft-bottom{border-top:1px solid var(--border);padding-top:20px;display:flex;justify-content:space-between;align-items:center}
+.ft-bottom span{font-family:var(--mono);font-size:10px;color:var(--t3)}
+.ft-socials{display:flex;gap:16px}
+.ft-socials a{color:var(--t3);text-decoration:none;font-family:var(--mono);font-size:10px;transition:color .15s;text-transform:uppercase}
+.ft-socials a:hover{color:var(--t1)}
+
+/* ── REVEAL ── */
+.rv{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease}
+.rv.vis{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .demo-grid{grid-template-columns:1fr}.demo-grid>.gc:first-child,.demo-grid>.gc:last-child{display:none}
+  .why-layout{grid-template-columns:1fr}.why-tabs{position:static;display:flex;flex-wrap:wrap;gap:4px;margin-bottom:24px}
+  .modes-layout{grid-template-columns:1fr}.mr{grid-template-columns:1fr 1fr}
+  .sdk-grid{grid-template-columns:1fr}.sdk-card{border-left:1px solid var(--border)!important}.sdk-card:nth-child(2n){border-left:1px solid var(--border)!important}.sdk-card:nth-child(n+2){border-top:none}
+  .sec-layout{grid-template-columns:1fr}.sec-visual{min-height:200px}
+  .vis-layout{grid-template-columns:1fr}
+  .ft-top{grid-template-columns:1fr 1fr}
 }
-.toast-inner{position:relative;z-index:1}
-.toast-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #2a2a3a;background:#181822;border-radius:16px 16px 0 0}
-.toast-header-left{display:flex;align-items:center;gap:8px}
-.th-dot{width:8px;height:8px;border-radius:50%;animation:glowDot 6s ease-in-out infinite}
-@keyframes glowDot{0%,100%{background:var(--green);box-shadow:0 0 8px var(--green)}33%{background:var(--purple);box-shadow:0 0 8px var(--purple)}66%{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}}
-.th-name{font-size:12px;font-weight:600;color:var(--text)}
-.th-mode{font-size:10px;padding:3px 10px;border-radius:4px;background:var(--green-d);color:var(--green);font-weight:600;letter-spacing:.03em;animation:modeCycle 6s ease-in-out infinite}
-@keyframes modeCycle{0%,100%{background:#5eead415;color:var(--green)}33%{background:#a78bfa15;color:var(--purple)}66%{background:#22d3ee15;color:var(--cyan)}}
-.toast-body{padding:16px 18px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:2;min-height:120px}
-.tb-line{margin-bottom:8px;opacity:0;animation:tl .4s ease forwards}
-.tb-line:nth-child(1){animation-delay:1.5s}
-.tb-line:nth-child(2){animation-delay:2.8s}
-.tb-line:nth-child(3){animation-delay:4.2s}
-.tb-line:nth-child(4){animation-delay:5.6s}
-@keyframes tl{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
-.tb-clip{color:var(--dim)}
-.tb-res{color:var(--green)}
-.tb-act{color:var(--purple)}
-.toast-footer{padding:12px 18px;border-top:1px solid #2a2a3a;display:flex;align-items:center;gap:8px;background:#181822;border-radius:0 0 16px 16px}
-.toast-input{flex:1;background:var(--bg2);border:1px solid var(--border-l);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--muted);font-family:var(--mono)}
-.toast-send{font-size:10px;padding:5px 12px;border-radius:6px;background:var(--green-d);color:var(--green);font-weight:600;border:1px solid #5eead420}
-
-/* ── sees everything ── */
-.sees{padding:120px 0;text-align:center}
-.sees-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border-radius:16px;overflow:hidden;background:var(--border);text-align:left;margin-top:48px}
-.sc{padding:32px 28px;background:var(--bg2);transition:background .3s;cursor:default;position:relative;overflow:hidden}
-.sc::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--g-green);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.22,1,.36,1)}
-.sc:hover::before{transform:scaleX(1)}
-.sc:hover{background:var(--bg3)}
-.sc-icon{font-size:20px;margin-bottom:12px;display:block}
-.sc h4{font-size:16px;font-weight:600;margin-bottom:5px}
-.sc p{font-size:13px;color:var(--dim);line-height:1.55;font-weight:300}
-
-/* ── how ── */
-.how{padding:120px 0}
-.steps .step{display:grid;grid-template-columns:50px 1fr;gap:22px;padding:26px 0;border-top:1px solid var(--border)}
-.steps .step:last-child{border-bottom:1px solid var(--border)}
-.sn{font-family:var(--mono);font-size:13px;color:var(--muted);padding-top:2px}
-.sc2 h3{font-size:17px;font-weight:600;margin-bottom:4px}
-.sc2 p{font-size:14px;color:var(--dim);line-height:1.6;font-weight:300}
-.sk{display:inline-flex;gap:5px;margin-top:7px}
-
-/* ── modes ── */
-.modes{padding:120px 0}
-.mg{display:grid;grid-template-columns:1fr 1fr;gap:1px;border-radius:16px;overflow:hidden;margin-top:44px;background:var(--border)}
-.md{padding:36px 32px;background:var(--bg2);transition:background .3s;position:relative;overflow:hidden}
-.md::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.22,1,.36,1)}
-.md:nth-child(1)::before{background:var(--green)}.md:nth-child(2)::before{background:var(--purple)}.md:nth-child(3)::before{background:var(--cyan)}.md:nth-child(4)::before{background:var(--text)}
-.md:hover::before{transform:scaleX(1)}
-.md:hover{background:var(--bg3)}
-.mi{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-bottom:14px}
-.mi1{background:var(--green-d);color:var(--green)}.mi2{background:var(--purple-d);color:var(--purple)}.mi3{background:var(--cyan-d);color:var(--cyan)}.mi4{background:var(--white-g);color:var(--text)}
-.md h3{font-size:18px;font-weight:600;margin-bottom:3px}
-.md .mv{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--dim);margin-bottom:9px;font-weight:300}
-.md p{font-size:13px;color:var(--dim);line-height:1.55;font-weight:300}
-.perms{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px}
-.pm{font-size:10px;padding:3px 8px;border-radius:100px;border:1px solid var(--border);color:var(--muted)}
-.pm.y{border-color:var(--green-d);color:var(--green);background:var(--green-d)}.pm.n{border-color:#ff5f5715;color:#ff5f57;background:#ff5f5708}
-
-/* ── experience ── */
-.exp{padding:120px 0}
-.eg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;border-radius:16px;overflow:hidden;margin-top:44px;background:var(--border)}
-.ec{padding:28px 24px;background:var(--bg2);transition:background .3s}
-.ec:hover{background:var(--bg3)}
-.ec h4{font-size:14px;font-weight:600;margin-bottom:4px}
-.ec p{font-size:12px;color:var(--dim);line-height:1.55;font-weight:300}
-.gd-row{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap}
-.gci{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--dim)}
-.gdot2{width:10px;height:10px;border-radius:50%}
-.gd-g{background:var(--green);box-shadow:0 0 8px var(--green)}.gd-w{background:#fff8;box-shadow:0 0 8px #fff4}.gd-p{background:var(--purple);box-shadow:0 0 8px var(--purple)}.gd-c{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
-
-/* ── use cases ── */
-.ucs{padding:120px 0}
-.ug{display:grid;grid-template-columns:1fr 1fr;gap:1px;border-radius:16px;overflow:hidden;margin-top:44px;background:var(--border)}
-.uc{padding:32px 28px;background:var(--bg2);transition:background .3s}
-.uc:hover{background:var(--bg3)}
-.ul{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
-.u1{color:var(--green)}.u2{color:var(--purple)}.u3{color:var(--cyan)}.u4{color:var(--warm)}
-.uc h4{font-size:16px;font-weight:600;margin-bottom:5px}
-.uc p{font-size:13px;color:var(--dim);line-height:1.5;font-weight:300}
-.ba{margin-top:10px;font-size:12px;line-height:1.8}
-.before{color:var(--muted);text-decoration:line-through}.after{color:var(--green);font-weight:500}
-
-/* ── connectors ── */
-.conn{padding:120px 0}
-.cg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;border-radius:16px;overflow:hidden;margin-top:44px;background:var(--border)}
-.cc{padding:28px 24px;background:var(--bg2);transition:background .3s}
-.cc:hover{background:var(--bg3)}
-.cdot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px}
-.cc h4{font-size:15px;font-weight:600;margin-bottom:4px;display:flex;align-items:center}
-.cc p{font-size:12px;color:var(--dim);line-height:1.5;font-weight:300}
-.cn-note{margin-top:24px;padding:20px 24px;border-radius:14px;border:1px solid var(--border);background:var(--bg2);display:flex;gap:14px;transition:border-color .5s,box-shadow .5s}
-.cn-note:hover{border-color:var(--green-d);box-shadow:0 0 60px var(--green-d)}
-.cn-note code{font-family:var(--mono);font-size:12px;padding:2px 7px;border-radius:4px;background:var(--bg3);border:1px solid var(--border)}
-
-/* ── keyboard ── */
-.keyboard{padding:120px 0}
-.kb{margin-top:40px;border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.kr{display:grid;grid-template-columns:180px 1fr;border-bottom:1px solid var(--border);background:var(--bg2);transition:background .2s}
-.kr:last-child{border-bottom:none}.kr:hover{background:var(--bg3)}
-.kr.kh{background:var(--bg3)}
-.kr .kk{padding:16px 22px;display:flex;align-items:center;gap:6px}
-.kr .kd{padding:16px 22px;font-size:14px;color:var(--dim);font-weight:300}
-.kr.kh .kk,.kr.kh .kd{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 22px}
-
-/* ── demo ── */
-.demo{padding:120px 0;text-align:center}
-.demo-box{margin-top:44px;border:1px solid var(--border);border-radius:16px;background:var(--bg2);overflow:hidden;text-align:left;transition:border-color .6s,box-shadow .6s}
-.demo-box:hover{border-color:var(--green-d);box-shadow:0 0 100px var(--green-d)}
-.demo-bar{display:flex;align-items:center;gap:8px;padding:14px 20px;border-bottom:1px solid var(--border)}
-.dd{width:12px;height:12px;border-radius:50%}
-.dd:nth-child(1){background:#ff5f57}.dd:nth-child(2){background:#febc2e}.dd:nth-child(3){background:#28c840}
-.demo-body{padding:32px 28px;font-family:var(--mono);font-size:13px}
-.dl{margin-bottom:14px;line-height:1.8}
-.demo-body.animated .dl{opacity:0;animation:ti .4s ease forwards}
-.demo-body.animated .dl:nth-child(1){animation-delay:.3s}.demo-body.animated .dl:nth-child(2){animation-delay:1.2s}.demo-body.animated .dl:nth-child(3){animation-delay:2.4s}.demo-body.animated .dl:nth-child(4){animation-delay:3.6s}.demo-body.animated .dl:nth-child(5){animation-delay:4.8s}.demo-body.animated .dl:nth-child(6){animation-delay:6s}.demo-body.animated .dl:nth-child(7){animation-delay:7.2s}
-@keyframes ti{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.dt{color:var(--muted);margin-right:10px;font-size:11px}
-.dmb{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;margin-right:8px;letter-spacing:.04em}
-.dm-a{background:var(--white-g);color:var(--text)}.dm-t{background:var(--green-d);color:var(--green)}.dm-add{background:var(--purple-d);color:var(--purple)}.dm-q{background:var(--cyan-d);color:var(--cyan)}
-
-/* ── tech + setup ── */
-.tech{padding:100px 0}
-.tr{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
-.tp{padding:11px 18px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);font-size:13px;color:var(--dim);transition:all .3s}
-.tp:hover{border-color:var(--border-l);color:var(--text);transform:translateY(-1px)}
-.tp strong{color:var(--text);font-weight:600}
-.setup{padding:100px 0}
-.ss{display:grid;grid-template-columns:36px 1fr;gap:18px;padding:22px 0;border-top:1px solid var(--border)}
-.ss:last-child{border-bottom:1px solid var(--border)}
-.ss-n{font-family:var(--mono);font-size:13px;color:var(--muted);padding-top:2px}
-.ss h4{font-size:15px;font-weight:600;margin-bottom:3px}
-.ss p{font-size:13px;color:var(--dim);line-height:1.6;font-weight:300}
-.ss code{font-family:var(--mono);font-size:12px;padding:2px 7px;border-radius:4px;background:var(--bg3);border:1px solid var(--border);color:var(--text)}
-.cdb{margin-top:8px;padding:12px 16px;border-radius:10px;background:var(--bg);border:1px solid var(--border);font-family:var(--mono);font-size:13px;color:var(--dim);line-height:1.7}
-.cdb .cmd{color:var(--green)}
-
-/* ── cta ── */
-.final{padding:150px 0;text-align:center}
-.final h2{font-family:var(--serif);font-size:clamp(40px,6vw,72px);font-weight:300;line-height:1.04;letter-spacing:-0.04em;max-width:650px;margin:0 auto 20px}
-.final h2 em{font-style:italic;font-weight:400;background:var(--g-green);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.final>p{font-size:16px;color:var(--dim);font-weight:300;max-width:380px;margin:0 auto 36px;line-height:1.6}
-.final-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-
-footer{padding:40px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-footer span{font-size:13px;color:var(--muted);font-weight:300}
-footer a{color:var(--dim);text-decoration:none;font-size:13px;transition:color .3s}
-footer a:hover{color:var(--text)}
-.fl{display:flex;gap:24px}
-
-@media(max-width:900px){.hero{grid-template-columns:1fr;gap:48px}.toast-mock{max-width:400px;margin:0 auto}}
 @media(max-width:768px){
-  .sees-grid,.eg,.cg{grid-template-columns:1fr}
-  .mg,.ug{grid-template-columns:1fr}
-  .step{grid-template-columns:1fr!important;gap:6px!important}
-  .ss{grid-template-columns:1fr;gap:6px}
-  .kr{grid-template-columns:1fr}.kr .kd{padding-top:0}
-  nav{flex-direction:column;gap:16px}
-  .nav-r{flex-wrap:wrap;justify-content:center}
-  footer{flex-direction:column;text-align:center}
+  .nav-links{display:none}
+  .hero h1{font-size:clamp(30px,8vw,44px)}
+  .hero-ghost{width:72px;height:72px}
+  .mr{grid-template-columns:1fr}.ma{border-left:none;border-right:1px solid #ddd}
+  .ft-top{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
 <div class="mesh"><div class="mo mo1"></div><div class="mo mo2"></div><div class="mo mo3"></div></div>
-<div class="particles" id="particles"></div>
 
-<div class="wrap">
-
+<!-- NAV -->
 <nav>
-  <a href="/autoclawd" class="logo"><div class="logo-dot"></div><span class="logo-text">Autoclawd</span></a>
-  <div class="nav-r">
-    <a href="#sees">What it sees</a>
-    <a href="#modes">Modes</a>
-    <a href="#usecases">Use cases</a>
-    <a href="#connectors">Connectors</a>
-    <a href="https://thelastprompt.ai">The Last Prompt</a>
-    <a href="https://github.com/thelastprompt/autoclaw" target="_blank" class="ctab">GitHub</a>
+  <div class="nav-inner">
+    <a href="/autoclawd" class="logo"><img src="/img/ghost-sm.png" alt=""><span>Autoclawd</span></a>
+    <div class="nav-links">
+      <a href="#why">Why Autoclawd</a>
+      <a href="#modes">Modes</a>
+      <a href="#builders">For Builders</a>
+      <a href="https://thelastprompt.ai">The Last Prompt</a>
+      <a href="https://github.com/sameeeeeeep/autoclaw" target="_blank" class="nav-cta">Get Started</a>
+    </div>
   </div>
 </nav>
 
-<!-- ═══ HERO ═══ -->
+<!-- HERO -->
 <section class="hero">
-  <div class="hero-left">
-    <div class="hero-tag"><span class="gdot"></span> Phase 1 of The Last Prompt</div>
-    <h1>An AI ghost that <em>sees your world</em> and <span class="hl">gets things done</span></h1>
-    <p class="hero-p">Lives in your macOS menu bar. Observes everything — your apps, your clipboard, your screen. Understands what needs to happen. <strong>Then does it.</strong></p>
-    <div class="hero-actions">
-      <a href="https://github.com/thelastprompt/autoclaw" class="btn btn-w">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85 0 1.673.109 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-        Clone &amp; build
-      </a>
-      <a href="#demo" class="btn btn-g">See it in action ↓</a>
+  <div class="wrap">
+    <img src="/img/ghost-green.png" alt="Autoclawd" class="hero-ghost">
+    <h1>AI that watches<br>your screen and acts.</h1>
+    <p class="hero-sub">No prompts. No tab-switching. An ambient macOS agent that sees what you're doing, detects the friction, and <strong>fixes it before you ask.</strong></p>
+    <a href="https://github.com/sameeeeeeep/autoclaw" class="btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85 0 1.673.109 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+      Clone &amp; Build
+    </a>
+  </div>
+</section>
+
+<!-- LOGOS -->
+<section class="logos">
+  <div class="logo-track">
+    <span>Claude Code</span><span>ClickUp</span><span>Granola</span><span>Google Sheets</span><span>GitHub</span><span>MCP Protocol</span><span>SwiftUI</span><span>Apple Neural Engine</span><span>Anthropic</span>
+    <span>Claude Code</span><span>ClickUp</span><span>Granola</span><span>Google Sheets</span><span>GitHub</span><span>MCP Protocol</span><span>SwiftUI</span><span>Apple Neural Engine</span><span>Anthropic</span>
+  </div>
+</section>
+
+<!-- DEMO: 3 GLASS CARDS -->
+<section class="demo">
+  <div class="wrap">
+    <div class="demo-grid">
+
+      <!-- Left: Tools -->
+      <div class="gc rv">
+        <div class="gc-hdr">Connected Tools</div>
+        <div class="gc-body">
+          <div class="tl-row"><span class="tl-dot" style="background:var(--green)"></span><span class="tl-name">ClickUp</span><span class="tl-desc">Tasks &amp; backlogs</span></div>
+          <div class="tl-row"><span class="tl-dot" style="background:var(--purple)"></span><span class="tl-name">Granola</span><span class="tl-desc">Meeting notes</span></div>
+          <div class="tl-row"><span class="tl-dot" style="background:var(--cyan)"></span><span class="tl-name">Sheets</span><span class="tl-desc">Live data</span></div>
+          <div class="tl-row"><span class="tl-dot" style="background:var(--white)"></span><span class="tl-name">GitHub</span><span class="tl-desc">Issues &amp; PRs</span></div>
+          <div class="tl-row"><span class="tl-dot" style="background:var(--amber)"></span><span class="tl-name">Web</span><span class="tl-desc">Search &amp; docs</span></div>
+          <div class="tl-row"><span class="tl-dot" style="background:var(--green)"></span><span class="tl-name">Filesystem</span><span class="tl-desc">Read &amp; write</span></div>
+          <div style="margin-top:14px;padding-top:10px;border-top:.5px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.06em">+ ANY MCP SERVER</div>
+        </div>
+      </div>
+
+      <!-- Center: Toast (the product) -->
+      <div class="rv" style="padding:14px 0">
+        <div class="toast">
+          <div class="toast-hdr">
+            <img src="/img/ghost-sm.png" alt="">
+            <span class="name">Autoclawd</span>
+            <span class="mode-badge badge-task">TASK &#9654;</span>
+          </div>
+          <div class="toast-body">
+            <div class="detect">&#128203; "500 error on /api/users — check prod logs"</div>
+            <div class="result">&#8981; Reading routes/users.ts...</div>
+            <div class="good">&#8594; Null ref at getUserById():47 — missing optional chain</div>
+            <div class="good" style="font-weight:600">&#10003; Patched. Tests passing. 14/14.</div>
+          </div>
+          <div class="toast-ftr">
+            <button class="toast-btn-p">Approve</button>
+            <button class="toast-btn-s">View diff</button>
+            <button class="toast-btn-x">&#10005;</button>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:10px;font-family:var(--sf);font-size:10px;color:var(--t3)">Sonnet 4.6 &#8250;</div>
+      </div>
+
+      <!-- Right: Config -->
+      <div class="gc rv">
+        <div class="gc-hdr"><span>Session Config</span><span style="color:var(--green)"><span class="status-dot"></span>Active</span></div>
+        <div class="gc-body">
+          <div class="cfg-row"><span class="cfg-k">MODE</span><span class="cfg-v" style="color:var(--green)">Task</span></div>
+          <div class="cfg-row"><span class="cfg-k">MODEL</span><span class="cfg-v">Sonnet 4.6</span></div>
+          <div class="cfg-row"><span class="cfg-k">PROJECT</span><span class="cfg-v">~/dev/api</span></div>
+          <div class="cfg-row"><span class="cfg-k">TOOLS</span><span class="cfg-v">6 connected</span></div>
+          <div class="cfg-row"><span class="cfg-k">PERMS</span><span class="cfg-v">FS + Shell + MCP</span></div>
+          <div class="exec-log">
+            <div><span style="color:var(--green)">&#10003;</span> Read routes/users.ts</div>
+            <div><span style="color:var(--green)">&#10003;</span> Edited line 47</div>
+            <div><span style="color:var(--green)">&#10003;</span> npm test — 14/14</div>
+            <div><span class="status-dot"></span>Done in 42s</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
-  <!-- Simulated toast -->
-  <div class="toast-mock">
-    <div class="toast-frame">
-      <div class="toast-inner">
-        <div class="toast-header">
-          <div class="toast-header-left"><div class="th-dot"></div><span class="th-name">Autoclawd</span></div>
-          <div class="th-mode">TASK ▶</div>
+</section>
+
+<!-- WHY -->
+<section class="why" id="why">
+  <div class="wrap">
+    <div class="rv">
+      <div class="badge"><span class="badge-dot" style="background:var(--green)"></span> Why Autoclawd</div>
+      <h2>Every AI tool lives inside an app.<br>This one lives inside your Mac.</h2>
+    </div>
+    <div class="why-layout">
+      <div class="why-tabs">
+        <div class="why-tab active" data-tab="0"><span class="tn">01</span>Friction Detection</div>
+        <div class="why-tab" data-tab="1"><span class="tn">02</span>Screen Intelligence</div>
+        <div class="why-tab" data-tab="2"><span class="tn">03</span>Tool Orchestration</div>
+        <div class="why-tab" data-tab="3"><span class="tn">04</span>Native Performance</div>
+      </div>
+      <div>
+        <div class="wp active" data-panel="0">
+          <h3>Spots friction before you feel it</h3>
+          <p>Watches your live activity — app switches, clipboard copies, file moves — and pattern-matches against known friction signals. When it finds one, it checks its capability map and offers to fix it. You never typed a word.</p>
+          <ul><li>Cross-app data transfers — copy from one app, paste into another</li><li>File shuttles — download from Slack, upload to Google Drive, repeat</li><li>Manual lookups — switching to a reference app, copying a value, switching back</li></ul>
         </div>
-        <div class="toast-body">
-          <div class="tb-line tb-clip">📋 "/api/v1/users throwing 500s"</div>
-          <div class="tb-line" style="color:var(--text)">⌕ Reading routes/users.ts...</div>
-          <div class="tb-line tb-res">→ Found null in getUserById():47</div>
-          <div class="tb-line" style="color:var(--green);font-weight:500">✓ Patched. 14 tests passing.</div>
+        <div class="wp" data-panel="1">
+          <h3>Neural Engine vision, not OCR</h3>
+          <p>Apple's VNGenerateImageFeaturePrintRequest embeds screen frames as 768-dim vectors on-device. Cosine distance detects semantic changes. Only meaningful frames hit Sonnet — with active window crops at 1440px. It doesn't see "Chrome." It sees "editing row 3 of Q1 Budget in Google Sheets."</p>
+          <ul><li>On-device frame embeddings via Apple Neural Engine</li><li>Adaptive thresholding — only meaningful changes trigger analysis</li><li>Web app resolution — browser URLs become semantic app identities</li></ul>
         </div>
-        <div class="toast-footer">
-          <div class="toast-input">Ask anything...</div>
-          <div class="toast-send">⌥X</div>
+        <div class="wp" data-panel="2">
+          <h3>Your tools stay where they are</h3>
+          <p>Autoclawd spawns Claude Code sessions with access to your MCP servers. It indexes every installed tool into a searchable capability registry. When friction is detected and no tool fits, it searches the web for MCP servers that could.</p>
+          <ul><li>ClickUp, Granola, Sheets, GitHub connected out of the box</li><li>Any MCP server — add to ~/.claude/mcp.json, works next session</li><li>Capability discovery — web search for new integrations when needed</li></ul>
+        </div>
+        <div class="wp" data-panel="3">
+          <h3>Native Swift. No Electron.</h3>
+          <p>Pure Swift + SwiftUI. Menu bar pill with intelligence glow. Glass-material toast overlays. Sub-100ms hotkey response. No browser. No web wrapper. The ghost stays invisible until you need it.</p>
+          <ul><li>Apple frameworks — Vision, AVFoundation, Combine, FSEvents</li><li>Menu bar pill with 5 collapse levels — from full panel to 44px icon</li><li>Four keyboard shortcuts are the entire control surface</li></ul>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ SEES EVERYTHING ═══ -->
-<section class="sees r" id="sees">
-  <h2 class="sh2">It sees <span class="acc">everything</span></h2>
-  <p class="sp" style="margin:0 auto">Your clipboard is just one signal. Autoclawd is aware of your entire desktop.</p>
-  <div class="sees-grid stg">
-    <div class="sc r"><span class="sc-icon">📋</span><h4>Clipboard</h4><p>Copy anything. Errors, messages, URLs, code. Lands in the thread instantly.</p></div>
-    <div class="sc r"><span class="sc-icon">🖥</span><h4>Active app</h4><p>Knows where you are. VS Code vs Slack vs Chrome — context shapes the response.</p></div>
-    <div class="sc r"><span class="sc-icon">📸</span><h4>Screenshots</h4><p>Option+Z. Capture what you see. UI bugs, error dialogs, designs. Visual context.</p></div>
-    <div class="sc r"><span class="sc-icon">📁</span><h4>Drag &amp; drop</h4><p>Drop files onto the toast. Images, docs, logs. Anything becomes context.</p></div>
-    <div class="sc r"><span class="sc-icon">💬</span><h4>Direct input</h4><p>Type into the toast. Questions, instructions. Sometimes words are fastest.</p></div>
-    <div class="sc r"><span class="sc-icon">🪟</span><h4>Window context</h4><p>Which file. Which tab. Which project. It builds context from your environment.</p></div>
-  </div>
-</section>
-
-<!-- ═══ HOW IT WORKS ═══ -->
-<div class="div-beam r"></div>
-<section class="how" id="how">
-  <div class="r">
-    <p class="sl">How it works</p>
-    <h2 class="sh2">Wake it. Feed it. <em>Pick the intent.</em></h2>
-  </div>
-  <div class="steps stg">
-    <div class="step r"><span class="sn">01</span><div class="sc2"><h3>Start a session</h3><p>Press Fn. Green glow. It's listening.</p><div class="sk"><span class="key">Fn</span></div></div></div>
-    <div class="step r"><span class="sn">02</span><div class="sc2"><h3>Give it context</h3><p>Copy, screenshot, drag, or type. Every input builds the picture.</p><div class="sk"><span class="key">⌘C</span><span class="key">⌥Z</span></div></div></div>
-    <div class="step r"><span class="sn">03</span><div class="sc2"><h3>Pick the intent</h3><p>Fix it. Track it. Answer it. Explain it. One hotkey, four completely different AIs.</p><div class="sk"><span class="key">⌥</span><span class="key">X</span></div></div></div>
-    <div class="step r"><span class="sn">04</span><div class="sc2"><h3>Watch it work</h3><p>Live streaming. The glow shifts — purple while working, cyan when done.</p></div></div>
-    <div class="step r"><span class="sn">05</span><div class="sc2"><h3>Resume anytime</h3><p>Sessions persist. Full context. Your ghost remembers.</p><div class="sk"><span class="key">⌥⌥</span></div></div></div>
-  </div>
-</section>
-
-<!-- ═══ MODES ═══ -->
-<section class="modes" id="modes">
-  <div class="r">
-    <p class="sl">Four modes</p>
-    <h2 class="sh2">Same hotkey. <span class="mix">Completely different AI.</span></h2>
-    <p class="sp">Each mode invokes a dedicated Claude Code skill. Different permissions. Different rules. Different boundaries.</p>
-  </div>
-  <div class="mg stg">
-    <div class="md r"><div class="mi mi1">▶</div><h3>Task</h3><div class="mv">"Fix this. Ship this."</div><p>Edits files. Runs tests. Ships code. You come back to a fixed codebase.</p><div class="perms"><span class="pm y">Filesystem</span><span class="pm y">Shell</span><span class="pm y">GitHub</span><span class="pm y">MCP</span></div></div>
-    <div class="md r"><div class="mi mi2">+</div><h3>Add to Tasks</h3><div class="mv">"Track this."</div><p>Creates ClickUp tasks from any context. Titles, priorities, assignees.</p><div class="perms"><span class="pm y">ClickUp</span><span class="pm y">MCP</span><span class="pm n">No filesystem</span><span class="pm n">No shell</span></div></div>
-    <div class="md r"><div class="mi mi3">?</div><h3>Question</h3><div class="mv">"What did we decide?"</div><p>Answers from meetings, tasks, spreadsheets, the web. Can never touch code.</p><div class="perms"><span class="pm y">Granola</span><span class="pm y">ClickUp</span><span class="pm y">Web</span><span class="pm y">Sheets</span><span class="pm n">No files</span></div></div>
-    <div class="md r"><div class="mi mi4">⌕</div><h3>Analyze</h3><div class="mv">"Explain. Change nothing."</div><p>Reads code. Traces logic. Flags issues. Never modifies a file.</p><div class="perms"><span class="pm y">Read</span><span class="pm y">MCP (read)</span><span class="pm n">No writes</span><span class="pm n">No shell</span></div></div>
-  </div>
-</section>
-
-<!-- ═══ EXPERIENCE ═══ -->
-<section class="exp">
-  <div class="r">
-    <p class="sl">The experience</p>
-    <h2 class="sh2">A ghost. <em>Not an app.</em></h2>
-  </div>
-  <div class="eg stg">
-    <div class="ec r"><h4>State at a glance</h4><p>The glow tells you everything.</p><div class="gd-row"><div class="gci"><span class="gdot2 gd-g"></span>Listening</div><div class="gci"><span class="gdot2 gd-w"></span>Paused</div><div class="gci"><span class="gdot2 gd-p"></span>Working</div><div class="gci"><span class="gdot2 gd-c"></span>Done</div></div></div>
-    <div class="ec r"><h4>Live streaming</h4><p>Real output. Files being read. Code being written. As it happens.</p></div>
-    <div class="ec r"><h4>Session thread</h4><p>Every input, result, action. Full history. Nothing lost.</p></div>
-    <div class="ec r"><h4>Pick the brain</h4><p>Haiku. Sonnet. Opus. Switch from the header.</p></div>
-    <div class="ec r"><h4>Multi-project</h4><p>Each project, its own world. Switch without mixing context.</p></div>
-    <div class="ec r"><h4>Full panel</h4><p>Home. Threads. Settings. The control room when you need it.</p></div>
-  </div>
-</section>
-
-<!-- ═══ USE CASES ═══ -->
-<section class="ucs" id="usecases">
-  <div class="r">
-    <p class="sl">Use cases</p>
-    <h2 class="sh2">Minutes → <span class="acc">seconds</span></h2>
-  </div>
-  <div class="ug stg">
-    <div class="uc r"><div class="ul u1">Bugs</div><h4>Copy an error. Come back to green.</h4><p>Finds root cause. Patches file. Runs tests.</p><div class="ba"><div class="before">ChatGPT → paste → read → editor → find → edit → test → pray</div><div class="after">Copy. Fixed.</div></div></div>
-    <div class="uc r"><div class="ul u2">Meetings</div><h4>Meeting ends. Tasks exist.</h4><p>Queries Granola. Creates ClickUp tasks. Context, assignees, deadlines.</p><div class="ba"><div class="before">Scan notes → open ClickUp → create → remember</div><div class="after">Ask. Created.</div></div></div>
-    <div class="uc r"><div class="ul u3">Code review</div><h4>Screenshot a diff. Get a review.</h4><p>Reads surrounding code. Traces logic. Flags concerns. Changes nothing.</p><div class="ba"><div class="before">Read → grep → trace → reason through it</div><div class="after">Screenshot. Read.</div></div></div>
-    <div class="uc r"><div class="ul u4">Quick answers</div><h4>"How many bugs this sprint?"</h4><p>Queries ClickUp, Granola, Sheets, web. Answer in the toast.</p><div class="ba"><div class="before">Open tool → navigate → filter → count</div><div class="after">Ask. Answered.</div></div></div>
-  </div>
-</section>
-
-<!-- ═══ CONNECTORS ═══ -->
-<section class="conn" id="connectors">
-  <div class="r">
-    <p class="sl">Connectors</p>
-    <h2 class="sh2">Talks to <span class="acc">everything</span></h2>
-    <p class="sp">Your tools stay where they are. Autoclawd acts through them via MCP.</p>
-  </div>
-  <div class="cg stg">
-    <div class="cc r"><h4><span class="cdot" style="background:var(--green);box-shadow:0 0 6px var(--green)"></span>ClickUp</h4><p>Tasks, backlogs, priorities, time tracking.</p></div>
-    <div class="cc r"><h4><span class="cdot" style="background:var(--purple);box-shadow:0 0 6px var(--purple)"></span>Granola</h4><p>Meetings, decisions, transcripts, action items.</p></div>
-    <div class="cc r"><h4><span class="cdot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></span>Sheets</h4><p>Pull numbers. Update cells. Live data.</p></div>
-    <div class="cc r"><h4><span class="cdot" style="background:var(--text);box-shadow:0 0 6px var(--dim)"></span>GitHub</h4><p>Issues. PRs. Repos. Intent → commit.</p></div>
-    <div class="cc r"><h4><span class="cdot" style="background:var(--warm);box-shadow:0 0 6px var(--warm)"></span>Web</h4><p>Docs, APIs, anything current.</p></div>
-    <div class="cc r"><h4><span class="cdot" style="background:var(--green);box-shadow:0 0 6px var(--green)"></span>Filesystem</h4><p>Reads in Analyze. Edits in Task.</p></div>
-  </div>
-  <div class="cn-note r"><div style="font-size:18px;flex-shrink:0">∞</div><div><p style="font-size:14px;color:var(--dim);line-height:1.6;font-weight:300"><strong style="color:var(--text)">Any MCP server works.</strong> Slack, Linear, Notion, Jira — add to <code>~/.claude/mcp.json</code>. Works next session.</p></div></div>
-</section>
-
-<!-- ═══ KEYBOARD ═══ -->
-<section class="keyboard r">
-  <p class="sl">Four shortcuts</p>
-  <h2 class="sh2" style="font-size:clamp(28px,3.5vw,40px)">The entire <em>control surface</em></h2>
-  <div class="kb">
-    <div class="kr kh"><div class="kk">Shortcut</div><div class="kd">Action</div></div>
-    <div class="kr"><div class="kk"><span class="key">Fn</span></div><div class="kd">Start / pause / resume</div></div>
-    <div class="kr"><div class="kk"><span class="key">⌥⌥</span></div><div class="kd">End session</div></div>
-    <div class="kr"><div class="kk"><span class="key">⌥Z</span></div><div class="kd">Screenshot → thread</div></div>
-    <div class="kr"><div class="kk"><span class="key">⌥X</span></div><div class="kd">Cycle mode</div></div>
-  </div>
-</section>
-
-<!-- ═══ DEMO ═══ -->
-<section class="demo" id="demo">
-  <div class="r">
-    <p class="sl">90 seconds</p>
-    <h2 class="sh2">Zero prompts. <span class="acc">Five actions.</span></h2>
-  </div>
-  <div class="demo-box r r1">
-    <div class="demo-bar"><div class="dd"></div><div class="dd"></div><div class="dd"></div></div>
-    <div class="demo-body" id="demoBody">
-      <div class="dl"><span class="dt">0:03</span><span style="color:var(--dim)">📋 "/api/v1/users throwing 500s in prod"</span></div>
-      <div class="dl"><span class="dt">0:12</span><span class="dmb dm-a">ANALYZE</span><span style="color:var(--green)">→ Unhandled null in getUserById() — :47</span></div>
-      <div class="dl"><span class="dt">0:30</span><span class="dmb dm-add">ADD TO TASKS</span><span style="color:var(--purple)">→ ✓ "Fix 500 on /api/v1/users" — CU-4829</span></div>
-      <div class="dl"><span class="dt">0:55</span><span class="dmb dm-t">TASK</span><span style="color:var(--green)">→ ✓ Patched. Tests passing.</span></div>
-      <div class="dl"><span class="dt">1:10</span><span class="dmb dm-q">QUESTION</span><span style="color:var(--cyan)">→ "v2 starts April 1, v1 deprecated April 30"</span></div>
-      <div class="dl"><span class="dt">1:22</span><span style="color:var(--muted)">── session ended ──</span></div>
-      <div class="dl"><span class="dt" style="visibility:hidden">.</span><span style="color:var(--green);font-weight:600">5 actions. 0 prompts.</span></div>
+<!-- MODES (light) -->
+<section class="modes-section" id="modes">
+  <div class="wrap">
+    <div class="rv">
+      <div class="badge badge-light">Zero prompts to full control</div>
+      <h2>One ghost,<br>every workflow</h2>
+    </div>
+    <div class="modes-layout rv">
+      <div class="ml">
+        <div>
+          <div class="ml-title"><img src="/img/ghost-sm.png" alt="">Autoclawd <span class="tag">MODES</span></div>
+          <p>Each mode invokes a dedicated Claude Code skill with its own permissions, rules, and boundaries. Task mode can write files. Question mode can't open one. They never cross.</p>
+        </div>
+        <div class="mode-code"><span class="kw">Fn</span>       &#8594; start session
+<span class="kw">&#8984;C</span>       &#8594; feed context
+<span class="kw">&#8997;X</span>       &#8594; cycle mode
+<span class="kw">&#8997;Z</span>       &#8594; screenshot
+<span class="kw">&#8997;&#8997;</span>       &#8594; end session</div>
+        <a href="https://github.com/sameeeeeeep/autoclaw" class="btn btn-light">Learn More</a>
+      </div>
+      <div class="mr">
+        <div class="ma"><h4>&#9654; Task</h4><div class="mq">"Fix this. Ship this."</div><p>Full filesystem, shell, and GitHub. Edits code, runs tests, commits.</p><div class="perms"><span class="pm y">FS</span><span class="pm y">Shell</span><span class="pm y">GitHub</span><span class="pm y">MCP</span></div></div>
+        <div class="ma"><h4>+ Add to Tasks</h4><div class="mq">"Track this."</div><p>Creates ClickUp tasks from any context. Titles, priorities, assignees.</p><div class="perms"><span class="pm y">ClickUp</span><span class="pm y">MCP</span><span class="pm n">No FS</span><span class="pm n">No shell</span></div></div>
+        <div class="ma"><h4>? Question</h4><div class="mq">"What did we decide?"</div><p>Queries Granola, ClickUp, Sheets, web. Can never touch code.</p><div class="perms"><span class="pm y">Granola</span><span class="pm y">Sheets</span><span class="pm y">Web</span><span class="pm n">No files</span></div></div>
+        <div class="ma"><h4>&#8981; Analyze</h4><div class="mq">"Explain. Change nothing."</div><p>Reads code, traces logic. Never writes a byte.</p><div class="perms"><span class="pm y">Read</span><span class="pm y">MCP</span><span class="pm n">No writes</span><span class="pm n">No shell</span></div></div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ TECH ═══ -->
-<section class="tech r">
-  <p class="sl">Under the hood</p>
-  <h2 class="sh2" style="font-size:clamp(28px,3.5vw,40px)">Native. Fast. <em>Invisible.</em></h2>
-  <div class="tr">
-    <div class="tp"><strong>Swift</strong> — native macOS</div>
-    <div class="tp"><strong>SwiftUI</strong> — toast + panel</div>
-    <div class="tp"><strong>Claude Code</strong> — stream-json</div>
-    <div class="tp"><strong>MCP</strong> — connectors</div>
-    <div class="tp"><strong>Skills</strong> — per-mode rules</div>
-  </div>
-</section>
-
-<!-- ═══ SETUP ═══ -->
-<section class="setup" id="setup">
-  <div class="r">
-    <p class="sl">Get started</p>
-    <h2 class="sh2" style="font-size:clamp(28px,3.5vw,40px)">Five minutes to <em>an AI ghost</em></h2>
-  </div>
-  <div class="stg">
-    <div class="ss r"><span class="ss-n">01</span><div><h4>Install Claude Code</h4><div class="cdb"><span class="cmd">npm install -g</span> @anthropic-ai/claude-code</div></div></div>
-    <div class="ss r"><span class="ss-n">02</span><div><h4>Clone &amp; build</h4><div class="cdb"><span class="cmd">git clone</span> https://github.com/thelastprompt/autoclaw.git<br><span class="cmd">cd</span> autoclaw && <span class="cmd">make run</span></div></div></div>
-    <div class="ss r"><span class="ss-n">03</span><div><h4>API key + project</h4><p>Menu bar → Settings. Add key. Point at a directory.</p></div></div>
-    <div class="ss r"><span class="ss-n">04</span><div><h4>Wire up tools</h4><p>Add MCP servers to <code>~/.claude/mcp.json</code>.</p></div></div>
-    <div class="ss r"><span class="ss-n">05</span><div><h4>Press Fn</h4><p>Grant Accessibility. Press Fn. You have a ghost.</p></div></div>
-  </div>
-</section>
-
-<!-- ═══ CTA ═══ -->
-<section class="final">
-  <div class="r">
-    <h2>Stop prompting.<br><em>Start living.</em></h2>
-    <p>The ghost that does the work.</p>
-    <div class="final-btns">
-      <a href="https://github.com/thelastprompt/autoclaw" class="btn btn-w">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85 0 1.673.109 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-        Get started
-      </a>
-      <a href="https://thelastprompt.ai" class="btn btn-g">The Last Prompt →</a>
+<!-- SDK -->
+<section class="sdk" id="builders">
+  <div class="wrap">
+    <div class="rv">
+      <div class="badge"><span class="badge-dot" style="background:var(--green)"></span> For Builders</div>
+      <h2>Open source. Fork it.<br>Break it. Make it yours.</h2>
+    </div>
+    <div class="sdk-grid">
+      <div class="sdk-card rv"><h3>Custom Skills</h3><p>Write a Claude Code skill file. Define the system prompt, allowed tools, and permissions. Autoclawd loads it on next session.</p><div class="sdk-code"><span class="kw">---</span>
+name: deploy
+<span class="kw">allowed-tools:</span> Bash, GitHub
+<span class="kw">---</span>
+Run tests. Build. Push to staging.</div><a href="https://github.com/sameeeeeeep/autoclaw" class="btn">Learn More</a></div>
+      <div class="sdk-card rv"><h3>MCP Connectors</h3><p>Every integration runs on the Model Context Protocol. Slack, Linear, Notion — one JSON file, infinite reach.</p><div class="sdk-code">{
+  <span class="kw">"mcpServers"</span>: {
+    <span class="kw">"slack"</span>: {
+      "command": "npx",
+      "args": ["slack-mcp"]
+    }
+  }
+}</div><a href="https://github.com/sameeeeeeep/autoclaw" class="btn">Learn More</a></div>
+      <div class="sdk-card rv"><h3>Persistent Sessions</h3><p>Every session carries full context — clipboard history, tool results, file changes, execution logs. Your ghost never forgets.</p><a href="https://github.com/sameeeeeeep/autoclaw" class="btn">Learn More</a></div>
+      <div class="sdk-card rv"><h3>Model Agnostic</h3><p>Switch between Haiku, Sonnet, and Opus from the toast header. Optimize for speed or depth. Tools carry over.</p><a href="https://github.com/sameeeeeeep/autoclaw" class="btn">Learn More</a></div>
     </div>
   </div>
 </section>
 
+<!-- SECURITY -->
+<section class="security">
+  <div class="wrap">
+    <div class="rv"><h2>Protected from every angle.</h2></div>
+    <div class="sec-layout">
+      <div class="sec-visual rv"><img src="/img/ghost-glass.png" alt="" class="sec-ghost"></div>
+      <div class="rv">
+        <div class="sec-item open"><div class="sec-hdr"><h4>Mode-level isolation</h4><span class="tog">+</span></div><div class="sec-item-body"><p>Each mode defines explicit tool access in its skill file. Task mode can write files and run shell. Question mode queries Granola and Sheets but can't open a file. Analyze is strictly read-only. Permissions are structural, not suggestions.</p></div></div>
+        <div class="sec-item"><div class="sec-hdr"><h4>Local-first architecture</h4><span class="tog">+</span></div><div class="sec-item-body"><p>Everything runs on your machine. No cloud relay. No telemetry. Your clipboard, screen captures, and file contents never leave your laptop except as direct API calls to Anthropic and your connected tools.</p></div></div>
+        <div class="sec-item"><div class="sec-hdr"><h4>Fully open source</h4><span class="tog">+</span></div><div class="sec-item-body"><p>Every line of Swift is on GitHub. Read the perception pipeline. Inspect the MCP wiring. Verify the permission model. Fork it, modify it, audit it. No black boxes.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISION (light) -->
+<section class="vision">
+  <div class="wrap">
+    <div class="rv">
+      <div class="badge badge-light">The Vision</div>
+      <h2>Phase 1 of<br>The Last Prompt</h2>
+    </div>
+    <div class="vis-layout rv">
+      <div class="vis-tabs">
+        <div class="vis-tab active">The Problem <span>&#8594;</span></div>
+        <div class="vis-tab">ARIA <span>&#8594;</span></div>
+        <div class="vis-tab">The Future <span>&#8594;</span></div>
+      </div>
+      <div class="vis-quote">
+        <blockquote>"Every AI tool today lives inside an app. You copy context out, paste it into a chatbot, figure out the right prompt, get a result, then carry it back. The human is the integration layer. The human is the bottleneck."</blockquote>
+        <cite>readme.md &mdash; sameeeeeeep/autoclaw</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="final-cta">
+  <div class="wrap rv">
+    <img src="/img/ghost-green.png" alt="" class="cta-ghost">
+    <h2>Your ghost is ready.<br>Are you?</h2>
+    <a href="https://github.com/sameeeeeeep/autoclaw" class="btn btn-solid">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85 0 1.673.109 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+      Try Autoclawd Today
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer>
-  <span>Autoclawd — built with Claude Code, powered by ARIA</span>
-  <div class="fl"><a href="https://thelastprompt.ai">The Last Prompt</a><a href="https://github.com/thelastprompt/autoclaw">GitHub</a><a href="https://x.com/thelastprompt">X</a></div>
+  <div class="wrap">
+    <div class="ft-top">
+      <div class="ft-col"><div class="ft-brand"><img src="/img/ghost-sm.png" alt=""><span>Autoclawd</span></div><p style="font-size:11px;color:var(--t3);line-height:1.6;font-family:var(--mono)">Phase 1 of The Last Prompt.<br>Built with Claude Code.<br>Powered by ARIA.</p></div>
+      <div class="ft-col"><h5>Product</h5><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="#modes">Modes</a><a href="#builders">For Builders</a></div>
+      <div class="ft-col"><h5>Resources</h5><a href="https://thelastprompt.ai">The Last Prompt</a><a href="#why">Why Autoclawd</a><a href="https://github.com/sameeeeeeep/autoclaw#readme">Docs</a></div>
+      <div class="ft-col"><h5>Community</h5><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="https://x.com/thelastprompt">X / Twitter</a></div>
+    </div>
+    <div class="ft-bottom"><span>&copy; 2025 The Last Prompt</span><div class="ft-socials"><a href="https://x.com/thelastprompt">X</a><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a></div></div>
+  </div>
 </footer>
 
-</div>
-
 <script>
-// Reveals
-const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('v');if(x.target.querySelector('#demoBody')||x.target.closest('.demo-box')){const d=document.getElementById('demoBody');if(d)d.classList.add('animated')}obs.unobserve(x.target)}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
-document.querySelectorAll('.r').forEach(el=>obs.observe(el));
-
-// Particles
-const pc=document.getElementById('particles');
-for(let i=0;i<25;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*12+'s';p.style.animationDuration=(8+Math.random()*8)+'s';p.style.width=p.style.height=(1+Math.random()*2)+'px';if(Math.random()>.7)p.style.background='var(--purple)';else if(Math.random()>.5)p.style.background='var(--cyan)';pc.appendChild(p)}
-
-// Parallax
-let t=false;
-window.addEventListener('scroll',()=>{if(!t){requestAnimationFrame(()=>{const y=window.scrollY;document.querySelectorAll('.mo').forEach((o,i)=>{const s=[.06,-.04,.03][i]||.02;o.style.transform=`translateY(${y*s}px)`});t=false});t=true}});
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('vis');obs.unobserve(x.target)}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+document.querySelectorAll('.why-tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.why-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.wp').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.querySelector(`[data-panel="${t.dataset.tab}"]`).classList.add('active')})});
+document.querySelectorAll('.sec-hdr').forEach(h=>{h.addEventListener('click',()=>{const i=h.parentElement;document.querySelectorAll('.sec-item').forEach(x=>{if(x!==i)x.classList.remove('open')});i.classList.toggle('open')})});
+document.querySelectorAll('.vis-tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.vis-tab').forEach(x=>x.classList.remove('active'));t.classList.add('active')})});
 </script>
 </body>
 </html>
