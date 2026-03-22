@@ -14,7 +14,7 @@ html,body{width:100%;overflow-x:hidden;background:#030305;color:#e2ddd3;font-fam
 ::selection{background:rgba(201,169,110,0.25)}
 #canvas-container{position:fixed;inset:0;z-index:0}
 canvas{display:block}
-#scroll-spacer{position:relative;z-index:1;pointer-events:none;height:1200vh}
+#scroll-spacer{position:relative;z-index:1;pointer-events:none;height:1800vh}
 .scene{position:fixed;inset:0;z-index:2;display:none;align-items:center;justify-content:center;pointer-events:none;opacity:0}
 .scene.active{display:flex;opacity:1;animation:sceneIn 0.6s ease forwards}
 @keyframes sceneIn{from{opacity:0}to{opacity:1}}
@@ -55,6 +55,21 @@ canvas{display:block}
 .apps-text h2 em,.interface-text h2 em{font-style:italic;color:#c9a96e}
 .apps-text p,.interface-text p{font-size:0.95rem;line-height:1.8;color:#8a847a}
 .interface-text p strong{color:#e2ddd3;font-weight:400}
+/* SENSE SCENES */
+.sense-scene{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:0 24px}
+.sense-icon-lg{width:64px;height:64px;color:rgba(126,184,168,0.5);margin-bottom:8px}
+.sense-icon-lg svg{width:100%;height:100%}
+.sense-icon-voice{color:rgba(201,169,110,0.5)}
+.sense-icon-vision{color:rgba(167,139,250,0.5)}
+.sense-icon-neural{color:rgba(90,86,79,0.4)}
+.sense-num-lg{font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;color:#3d3a36}
+.sense-title{font-family:'Newsreader',serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:300;letter-spacing:-0.02em}
+.sense-desc{font-size:clamp(0.9rem,1.6vw,1.05rem);color:#8a847a;max-width:400px;line-height:1.7}
+.sense-status{font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;margin-top:8px}
+.sense-st-live{color:#28c840}
+.sense-st-soon{color:#c9a96e}
+.sense-st-future{color:#3d3a36}
+
 /* POV HUD */
 .pov-hud{width:100%;height:100%;display:flex;align-items:center;justify-content:center;perspective:800px}
 .hud-frame{position:relative;width:min(800px,92vw);height:min(500px,75vh);border:1px solid rgba(126,184,168,0.15);border-radius:4px;display:flex;flex-direction:column;justify-content:space-between;padding:20px 28px;background:rgba(3,3,5,0.4);backdrop-filter:blur(4px);transform:rotateX(1deg)}
@@ -119,22 +134,11 @@ canvas{display:block}
 <div class="scene" id="scene-2"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
 <div class="scene" id="scene-3"><div class="prose-float"><h2>What if agentic intelligence became <em>ambient?</em></h2></div></div>
 <div class="scene" id="scene-4"><div class="interface-text"><h2>Introducing <span class="purple">ARIA.</span></h2><p><strong>Agentic Reality Interface Architecture.</strong> Intelligence at the interface between you and everything. One continuous layer. Always present. Never in the way.</p></div></div>
-<div class="scene" id="scene-5"><div class="pov-hud">
-  <div class="hud-frame">
-    <div class="hud-corner hud-tl"></div><div class="hud-corner hud-tr"></div>
-    <div class="hud-corner hud-bl"></div><div class="hud-corner hud-br"></div>
-    <div class="hud-top"><span class="hud-tag">ARIA v0.1</span><span class="hud-tag">AMBIENT MODE</span><span class="hud-tag hud-live">ACTIVE</span></div>
-    <div class="hud-center-label">Your world. Augmented.</div>
-    <div class="hud-senses">
-      <div class="hud-sense hud-s-active"><div class="hud-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="hud-s-info"><span class="hud-s-name">Screen</span><span class="hud-s-desc">Sees what you see</span></div><span class="hud-s-status hud-st-live">LIVE</span></div>
-      <div class="hud-sense"><div class="hud-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1v4M12 19v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M1 12h4M19 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="4"/></svg></div><div class="hud-s-info"><span class="hud-s-name">Voice</span><span class="hud-s-desc">Hears what you hear</span></div><span class="hud-s-status hud-st-soon">SOON</span></div>
-      <div class="hud-sense"><div class="hud-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/></svg></div><div class="hud-s-info"><span class="hud-s-name">Vision</span><span class="hud-s-desc">Sees through your eyes</span></div><span class="hud-s-status hud-st-soon">SOON</span></div>
-      <div class="hud-sense"><div class="hud-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a7 7 0 017 7c0 3-2 5-4 7l-1 2h-4l-1-2c-2-2-4-4-4-7a7 7 0 017-7z"/><line x1="10" y1="22" x2="14" y2="22"/></svg></div><div class="hud-s-info"><span class="hud-s-name">Neural</span><span class="hud-s-desc">Thinks what you think</span></div><span class="hud-s-status hud-st-future">UNPLANNED</span></div>
-    </div>
-    <div class="hud-bottom"><span class="hud-coord">40.7128 N, 74.0060 W</span><span class="hud-coord">CONTEXT: 127 SIGNALS</span><span class="hud-coord">LATENCY: 12ms</span></div>
-  </div>
-</div></div>
-<div class="scene" id="scene-6"><div class="final-cta">
+<div class="scene" id="scene-5"><div class="sense-scene"><div class="sense-icon-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="sense-num-lg">01</div><h2 class="sense-title">Screen</h2><p class="sense-desc">AI on your screen. Sees what you see. Acts before you ask.</p><span class="sense-status sense-st-live">Phase 1 -- Live</span></div></div>
+<div class="scene" id="scene-6"><div class="sense-scene"><div class="sense-icon-lg sense-icon-voice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 1a3 3 0 00-3 3v7a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="18" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><div class="sense-num-lg">02</div><h2 class="sense-title">Voice</h2><p class="sense-desc">A second voice. Hears what you hear. Responds in real time.</p><span class="sense-status sense-st-soon">Coming soon</span></div></div>
+<div class="scene" id="scene-7"><div class="sense-scene"><div class="sense-icon-lg sense-icon-vision"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/></svg></div><div class="sense-num-lg">03</div><h2 class="sense-title">Vision</h2><p class="sense-desc">AI through your eyes. Sees the world you walk through.</p><span class="sense-status sense-st-soon">Coming soon</span></div></div>
+<div class="scene" id="scene-8"><div class="sense-scene"><div class="sense-icon-lg sense-icon-neural"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2a7 7 0 017 7c0 3-2 5-4 7l-1 2h-4l-1-2c-2-2-4-4-4-7a7 7 0 017-7z"/><line x1="10" y1="22" x2="14" y2="22"/></svg></div><div class="sense-num-lg">04</div><h2 class="sense-title">Neural</h2><p class="sense-desc">Thought to thought. No interface left. Just intelligence.</p><span class="sense-status sense-st-future">Unplanned</span></div></div>
+<div class="scene" id="scene-9"><div class="final-cta">
   <img src="/img/ghost-green.png" alt="" class="ghost-img">
   <div class="phase-tag">Phase 1 -- Live on macOS</div>
   <h2>Autoclaw</h2>
@@ -219,12 +223,16 @@ function T_Apps(){const bx=[{x:-200,y:80,w:100,h:70},{x:0,y:80,w:100,h:70},{x:20
 function T_Interface(){for(let i=0;i<PC;i++){const i3=i*3;tgt[i3]=(Math.random()-0.5)*800;tgt[i3+1]=(Math.random()-0.5)*40;tgt[i3+2]=(Math.random()-0.5)*300}}
 let interfaceActive=false;
 function flowInterface(t){if(!interfaceActive)return;for(let i=0;i<PC;i++){const i3=i*3;const px=ph[i];tgt[i3]+=Math.sin(t*0.4+px)*0.8;tgt[i3+1]+=Math.cos(t*0.3+px*1.5)*0.3;if(tgt[i3]>400)tgt[i3]=-400;if(tgt[i3]<-400)tgt[i3]=400}}
+function T_Screen(){const w=180,h=120;for(let i=0;i<PC;i++){const i3=i*3;const f=Math.floor(Math.random()*4);let x,y;switch(f){case 0:x=-w/2;y=(Math.random()-0.5)*h;break;case 1:x=w/2;y=(Math.random()-0.5)*h;break;case 2:x=(Math.random()-0.5)*w;y=-h/2;break;case 3:x=(Math.random()-0.5)*w;y=h/2;break}tgt[i3]=x;tgt[i3+1]=y;tgt[i3+2]=(Math.random()-0.5)*8}}
+function T_Wave(){for(let i=0;i<PC;i++){const i3=i*3;const x=(Math.random()-0.5)*500;const freq=0.02+Math.random()*0.01;const amp=40+Math.random()*30;tgt[i3]=x;tgt[i3+1]=Math.sin(x*freq)*amp+(Math.random()-0.5)*8;tgt[i3+2]=(Math.random()-0.5)*20}}
+function T_Eye(){for(let i=0;i<PC;i++){const i3=i*3;const r2=Math.random();if(r2<0.3){const a=Math.random()*Math.PI*2;const r=30+Math.random()*5;tgt[i3]=Math.cos(a)*r;tgt[i3+1]=Math.sin(a)*r}else{const a=Math.random()*Math.PI*2;const r=80+Math.random()*15;const sq=Math.abs(Math.cos(a));tgt[i3]=Math.cos(a)*r;tgt[i3+1]=Math.sin(a)*r*0.5*sq}tgt[i3+2]=(Math.random()-0.5)*10}}
+function T_Neural(){const nodes=[];for(let l=0;l<5;l++){const cnt=6+Math.floor(Math.random()*4);for(let n=0;n<cnt;n++){nodes.push({x:(l-2)*100,y:(n-cnt/2)*45+(Math.random()-0.5)*15,z:(Math.random()-0.5)*60})}}for(let i=0;i<PC;i++){const i3=i*3;const nd=nodes[Math.floor(Math.random()*nodes.length)];tgt[i3]=nd.x+(Math.random()-0.5)*30;tgt[i3+1]=nd.y+(Math.random()-0.5)*30;tgt[i3+2]=nd.z+(Math.random()-0.5)*30}}
 function T_Ambient(){for(let i=0;i<PC;i++){const i3=i*3;const r=200+Math.random()*500;const t=Math.random()*Math.PI*2;const p=Math.acos(2*Math.random()-1);tgt[i3]=r*Math.sin(p)*Math.cos(t);tgt[i3+1]=r*Math.sin(p)*Math.sin(t);tgt[i3+2]=r*Math.cos(p)-100}}
 T_Dense();
-const sIds=['scene-0','scene-1','scene-2','scene-3','scene-4','scene-5','scene-6'];
-const sR=[[0,0.06],[0.06,0.22],[0.22,0.40],[0.40,0.55],[0.55,0.70],[0.70,0.85],[0.85,1.0]];
+const sIds=['scene-0','scene-1','scene-2','scene-3','scene-4','scene-5','scene-6','scene-7','scene-8','scene-9'];
+const sR=[[0,0.05],[0.05,0.15],[0.15,0.28],[0.28,0.38],[0.38,0.48],[0.48,0.58],[0.58,0.68],[0.68,0.78],[0.78,0.88],[0.88,1.0]];
 function getS(p){for(let i=0;i<sR.length;i++)if(p>=sR[i][0]&&p<sR[i][1])return i;return sR.length-1}
-function updateScenes(){const s=getS(scrollPct);if(s===lastScene)return;lastScene=s;sIds.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===s));document.getElementById('nav').classList.toggle('show',s>0);document.getElementById('scroll-hint').classList.toggle('show',s===0);interfaceActive=false;switch(s){case 0:T_Dense();lmat.opacity=0.12;recolor(C.gold);break;case 1:T_Apps();lmat.opacity=0.10;recolor(C.red);break;case 2:T_Dense();lmat.opacity=0.08;recolor(C.gold);const term=document.querySelector('.terminal-3d');if(term)term.classList.remove('dissolving');runTerm();break;case 3:T_Release();lmat.opacity=0.02;recolor(C.teal);break;case 4:T_Interface();lmat.opacity=0.04;recolor(C.purple);interfaceActive=true;break;case 5:T_Ambient();lmat.opacity=0.03;recolor(C.green);break;case 6:T_Ambient();lmat.opacity=0.02;recolor(C.teal);break}}
+function updateScenes(){const s=getS(scrollPct);if(s===lastScene)return;lastScene=s;sIds.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===s));document.getElementById('nav').classList.toggle('show',s>0);document.getElementById('scroll-hint').classList.toggle('show',s===0);interfaceActive=false;switch(s){case 0:T_Dense();lmat.opacity=0.12;recolor(C.gold);break;case 1:T_Apps();lmat.opacity=0.10;recolor(C.red);break;case 2:T_Dense();lmat.opacity=0.08;recolor(C.gold);const term=document.querySelector('.terminal-3d');if(term)term.classList.remove('dissolving');runTerm();break;case 3:T_Release();lmat.opacity=0.02;recolor(C.teal);break;case 4:T_Interface();lmat.opacity=0.04;recolor(C.purple);interfaceActive=true;break;case 5:T_Screen();lmat.opacity=0.08;recolor(C.green);break;case 6:T_Wave();lmat.opacity=0.06;recolor(C.gold);break;case 7:T_Eye();lmat.opacity=0.06;recolor(C.purple);break;case 8:T_Neural();lmat.opacity=0.08;recolor(C.dim);break;case 9:T_Ambient();lmat.opacity=0.02;recolor(C.teal);break}}
 
 function runTerm(){
   const body=document.getElementById('term-body');
