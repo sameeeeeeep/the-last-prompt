@@ -236,7 +236,7 @@ function runTerm(){
       }
       body.appendChild(div);
       requestAnimationFrame(()=>div.classList.add('on'));
-      if(line.last){setTimeout(()=>{const term=document.querySelector('.terminal-3d');if(term)term.classList.add('dissolving');T_Release();recolor(C.teal);lmat.opacity=0.02},2500)}
+      if(line.last){setTimeout(()=>{const term=document.querySelector('.terminal-3d');if(term)term.classList.add('dissolving');T_Release();recolor(C.teal);lmat.opacity=0.02;const mx=document.getElementById('scroll-spacer').offsetHeight-window.innerHeight;const targetScroll=sR[3][0]*mx;window.scrollTo({top:targetScroll,behavior:'smooth'})},2500)}
     },delay);
   });
 }
