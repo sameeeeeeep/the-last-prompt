@@ -13,7 +13,7 @@ html,body{width:100%;overflow-x:hidden;background:#030305;color:#e2ddd3;font-fam
 ::selection{background:rgba(201,169,110,0.25)}
 #canvas-container{position:fixed;inset:0;z-index:0}
 canvas{display:block}
-#scroll-spacer{position:relative;z-index:1;pointer-events:none;height:1600vh}
+#scroll-spacer{position:relative;z-index:1;pointer-events:none;height:1200vh}
 .scene{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity 0.8s ease}
 .scene.active{opacity:1}
 .scene.active .clickable{pointer-events:auto}
@@ -84,19 +84,17 @@ canvas{display:block}
 <div id="scroll-spacer"></div>
 <nav id="nav"><a href="#" class="nav-mark">The Last Prompt</a><div class="nav-r"><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="/autoclawd">Autoclaw</a><a href="https://x.com/sameeprehlan">X</a></div></nav>
 <div class="scene" id="scene-0"></div>
-<div class="scene" id="scene-1"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
-<div class="scene" id="scene-2"><div class="prose-float"><h2>You talk to AI through <span class="teal">a text box.</span></h2><p>You copy context. You describe what you already see. You wait. You carry the answer back. <strong>You are the integration layer.</strong></p><p>The model isn't the bottleneck. <strong>The prompt is.</strong></p></div></div>
-<div class="scene" id="scene-3"><div class="constraint-text"><p>Every AI interaction still lives inside <span class="gold">a box.</span></p><p style="margin-top:0.8em">We're <span class="gold">dissolving</span> the box.</p></div></div>
-<div class="scene" id="scene-4"><div class="prose-float"><h2>Intelligence becomes <em>ambient.</em></h2><p>Not inside an app. Not behind a prompt. <strong>Everywhere.</strong> Watching what you watch. Knowing what you need. Acting before you ask.</p></div></div>
-<div class="scene" id="scene-5"><div class="apps-text"><h2>This is AI today. Trapped in <span class="red">apps.</span></h2><p>ChatGPT. Claude. Copilot. Gemini. Each one a silo. Each one waiting for you to switch to it, describe what you need, carry the answer back. Intelligence boxed. Context lost between every tab.</p></div></div>
-<div class="scene" id="scene-6"><div class="interface-text"><h2>This is <span class="purple">ARIA.</span></h2><p><strong>Agentic Reality Interface Architecture.</strong> Intelligence at the interface between you and everything. One continuous layer. Always present. Never in the way.</p></div></div>
-<div class="scene" id="scene-7"><div class="senses-float"><h2>Building the <em>senses.</em></h2>
+<div class="scene" id="scene-1"><div class="apps-text"><h2>Intelligence is trapped in boxes. Inside individual <span class="red">apps.</span></h2><p>You copy context out. Paste it into a chatbot. Describe what you already see. Wait. Carry the answer back. <strong>You are the integration layer.</strong></p><p>The model isn't the bottleneck. <strong>The prompt is.</strong></p></div></div>
+<div class="scene" id="scene-2"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
+<div class="scene" id="scene-3"><div class="prose-float"><h2>Intelligence becomes <em>ambient.</em></h2><p>Not inside an app. Not behind a prompt. <strong>Everywhere.</strong> Watching what you watch. Knowing what you need. Acting before you ask.</p></div></div>
+<div class="scene" id="scene-4"><div class="interface-text"><h2>This is <span class="purple">ARIA.</span></h2><p><strong>Agentic Reality Interface Architecture.</strong> Intelligence at the interface between you and everything. One continuous layer. Always present. Never in the way.</p></div></div>
+<div class="scene" id="scene-5"><div class="senses-float"><h2>Building the <em>senses.</em></h2>
   <div class="sense-item"><span class="sense-num">01</span><span class="sense-name">Autoclaw</span><span class="sense-sub">AI on your screen</span><span class="sense-badge badge-live">Live</span></div>
   <div class="sense-item"><span class="sense-num">02</span><span class="sense-name">ARIA Voice</span><span class="sense-sub">Second voice in your head</span><span class="sense-badge badge-soon">Soon</span></div>
   <div class="sense-item"><span class="sense-num">03</span><span class="sense-name">ARIA Vision</span><span class="sense-sub">AI through your eyes</span><span class="sense-badge badge-soon">Soon</span></div>
   <div class="sense-item"><span class="sense-num">04</span><span class="sense-name">ARIA Neural</span><span class="sense-sub">Thought to thought</span><span class="sense-badge badge-future">Unplanned</span></div>
 </div></div>
-<div class="scene" id="scene-8"><div class="final-cta">
+<div class="scene" id="scene-6"><div class="final-cta">
   <img src="/img/ghost-green.png" alt="" class="ghost-img">
   <div class="phase-tag">Phase 1 -- Live on macOS</div>
   <h2>Autoclaw</h2>
@@ -141,10 +139,10 @@ function T_Apps(){const bx=[{x:-200,y:80,w:100,h:70},{x:0,y:80,w:100,h:70},{x:20
 function T_Interface(){for(let i=0;i<PC;i++){const i3=i*3;tgt[i3]=(Math.random()-0.5)*800;tgt[i3+1]=(Math.random()-0.5)*40;tgt[i3+2]=(Math.random()-0.5)*300}}
 function T_Ambient(){for(let i=0;i<PC;i++){const i3=i*3;const r=200+Math.random()*500;const t=Math.random()*Math.PI*2;const p=Math.acos(2*Math.random()-1);tgt[i3]=r*Math.sin(p)*Math.cos(t);tgt[i3+1]=r*Math.sin(p)*Math.sin(t);tgt[i3+2]=r*Math.cos(p)-100}}
 T_Dense();
-const sIds=['scene-0','scene-1','scene-2','scene-3','scene-4','scene-5','scene-6','scene-7','scene-8'];
-const sR=[[0,0.05],[0.05,0.16],[0.16,0.28],[0.28,0.38],[0.38,0.50],[0.50,0.62],[0.62,0.74],[0.74,0.86],[0.86,1.0]];
+const sIds=['scene-0','scene-1','scene-2','scene-3','scene-4','scene-5','scene-6'];
+const sR=[[0,0.06],[0.06,0.22],[0.22,0.40],[0.40,0.55],[0.55,0.70],[0.70,0.85],[0.85,1.0]];
 function getS(p){for(let i=0;i<sR.length;i++)if(p>=sR[i][0]&&p<sR[i][1])return i;return sR.length-1}
-function updateScenes(){const s=getS(scrollPct);if(s===lastScene)return;lastScene=s;sIds.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===s));document.getElementById('nav').classList.toggle('show',s>0);document.getElementById('scroll-hint').classList.toggle('show',s===0);switch(s){case 0:T_Dense();lmat.opacity=0.12;recolor(C.gold);break;case 1:T_Dense();lmat.opacity=0.08;recolor(C.gold);runTerm();break;case 2:T_Vibrate();lmat.opacity=0.06;recolor(C.teal);break;case 3:T_Box();lmat.opacity=0.14;recolor(C.gold);break;case 4:T_Release();lmat.opacity=0.02;recolor(C.teal);break;case 5:T_Apps();lmat.opacity=0.10;recolor(C.red);break;case 6:T_Interface();lmat.opacity=0.04;recolor(C.purple);break;case 7:T_Ambient();lmat.opacity=0.03;recolor(C.green);document.querySelectorAll('.sense-item').forEach((el,i)=>{el.classList.remove('on');setTimeout(()=>el.classList.add('on'),200+i*150)});break;case 8:T_Ambient();lmat.opacity=0.02;recolor(C.teal);break}}
+function updateScenes(){const s=getS(scrollPct);if(s===lastScene)return;lastScene=s;sIds.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===s));document.getElementById('nav').classList.toggle('show',s>0);document.getElementById('scroll-hint').classList.toggle('show',s===0);switch(s){case 0:T_Dense();lmat.opacity=0.12;recolor(C.gold);break;case 1:T_Apps();lmat.opacity=0.10;recolor(C.red);break;case 2:T_Dense();lmat.opacity=0.08;recolor(C.gold);runTerm();break;case 3:T_Release();lmat.opacity=0.02;recolor(C.teal);break;case 4:T_Interface();lmat.opacity=0.04;recolor(C.purple);break;case 5:T_Ambient();lmat.opacity=0.03;recolor(C.green);document.querySelectorAll('.sense-item').forEach((el,i)=>{el.classList.remove('on');setTimeout(()=>el.classList.add('on'),200+i*150)});break;case 6:T_Ambient();lmat.opacity=0.02;recolor(C.teal);break}}
 
 function runTerm(){
   const body=document.getElementById('term-body');
