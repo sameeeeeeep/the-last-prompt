@@ -14,8 +14,8 @@ html,body{width:100%;overflow-x:hidden;background:#030305;color:#e2ddd3;font-fam
 #canvas-container{position:fixed;inset:0;z-index:0}
 canvas{display:block}
 #scroll-spacer{position:relative;z-index:1;pointer-events:none;height:1200vh}
-.scene{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity 0.8s ease}
-.scene.active{opacity:1}
+.scene{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity 0.8s ease,visibility 0s 0.8s}
+.scene.active{opacity:1;visibility:visible;transition:opacity 0.8s ease,visibility 0s 0s}
 .scene.active .clickable{pointer-events:auto}
 .opening{position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
 .adam-img{width:min(720px,88vw);height:auto;opacity:0.85;pointer-events:none}
