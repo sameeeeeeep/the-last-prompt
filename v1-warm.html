@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Last Prompt — Warm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&family=Space+Mono&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --paper:#f2ede4;
+  --paper2:#ebe5db;
+  --ink:#1c1a17;
+  --ink2:#6b6558;
+  --ink3:#a09887;
+  --rule:rgba(28,26,23,0.1);
+  --accent:#2d5a3d;   /* forest green — an earthy contrast */
+  --serif:'Instrument Serif',serif;
+  --sans:'Inter',sans-serif;
+  --mono:'Space Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+
+/* NAV */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:99;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 40px;
+  border-bottom:1px solid var(--rule);
+  background:rgba(242,237,228,.9);
+  backdrop-filter:blur(8px);
+}
+.logo{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--ink);text-decoration:none}
+.logo em{font-style:normal;color:var(--ink3)}
+nav a{font-size:13px;color:var(--ink3);text-decoration:none;margin-left:32px;transition:color .15s}
+nav a:hover{color:var(--ink)}
+.nav-cta{
+  font-size:13px;font-weight:500;
+  padding:7px 16px;
+  background:var(--ink);color:var(--paper);
+  border-radius:3px;text-decoration:none;
+  transition:opacity .15s;
+}
+.nav-cta:hover{opacity:.82}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:grid;grid-template-rows:1fr auto;
+  padding:0 40px;
+  border-bottom:1px solid var(--rule);
+}
+.hero-main{
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding-bottom:56px;padding-top:140px;
+}
+.hero-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:40px}
+.eyebrow-line{width:32px;height:1px;background:var(--ink3)}
+.hero-h1{
+  font-family:var(--serif);
+  font-size:clamp(68px,9.5vw,140px);
+  font-weight:400;line-height:.92;
+  letter-spacing:-.02em;max-width:14ch;
+  color:var(--ink);
+}
+.hero-h1 .ital{font-style:italic;color:var(--ink3)}
+.hero-footer-row{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  border-top:1px solid var(--rule);
+  padding:28px 0;gap:40px;
+}
+.hero-footer-cell p{font-size:14px;color:var(--ink2);line-height:1.65;max-width:28ch}
+.hero-footer-cell p strong{color:var(--ink);font-weight:500}
+.hero-footer-cell .mono{display:block;margin-bottom:12px}
+
+/* SECTION */
+.section{
+  display:grid;grid-template-columns:220px 1fr;
+  gap:40px;padding:100px 40px;
+  border-bottom:1px solid var(--rule);
+}
+.section-label-col{padding-top:4px}
+
+/* MANIFESTO */
+.manifesto-block{max-width:52ch;margin-bottom:64px}
+.manifesto-block p{
+  font-family:var(--serif);
+  font-size:clamp(26px,3.2vw,44px);
+  line-height:1.2;font-weight:400;color:var(--ink);margin-bottom:.6em;
+}
+.manifesto-block p.dim{color:var(--ink3)}
+
+/* PROBLEM */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.col-inner{background:var(--paper);padding:32px}
+.col-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  margin-bottom:24px;display:flex;align-items:center;gap:8px;
+}
+.col-label.human{color:#8b4a2e}
+.col-label.ai{color:var(--accent)}
+.dot-live{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 2s infinite}
+
+.chat{display:flex;flex-direction:column;gap:8px}
+.bubble{font-size:13px;line-height:1.5;padding:9px 13px;border-radius:10px;max-width:75%}
+.bubble.out{
+  align-self:flex-end;
+  background:var(--ink);color:var(--paper);
+  border-bottom-right-radius:2px;
+}
+.bubble.in{
+  align-self:flex-start;
+  background:var(--paper2);color:var(--ink2);
+  border:1px solid var(--rule);border-bottom-left-radius:2px;
+}
+.bubble.gap{
+  background:transparent;border:none;
+  color:var(--ink3);font-style:italic;font-size:12px;padding:0 4px;
+}
+.prompt-line{margin-bottom:16px}
+.prompt-line .role{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink3);margin-bottom:5px}
+.prompt-line .text{font-size:13px;color:var(--ink);line-height:1.5}
+.prompt-line .text.muted{color:var(--ink2)}
+
+/* ARCH */
+.arch-list{border:1px solid var(--rule)}
+.arch-item{
+  display:grid;grid-template-columns:48px 1fr auto;
+  align-items:center;gap:20px;
+  padding:20px 24px;border-bottom:1px solid var(--rule);
+  transition:background .15s;
+}
+.arch-item:last-child{border-bottom:none}
+.arch-item:hover{background:rgba(28,26,23,.03)}
+.arch-n{font-family:var(--mono);font-size:10px;color:var(--ink3)}
+.arch-name{font-size:15px;font-weight:500;margin-bottom:3px;color:var(--ink)}
+.arch-desc{font-size:13px;color:var(--ink2)}
+.arch-tag{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;
+  padding:4px 10px;border:1px solid var(--rule);color:var(--ink3);white-space:nowrap;
+}
+
+/* PRODUCTS */
+.product-item{
+  display:grid;grid-template-columns:48px 1fr auto;
+  align-items:start;gap:24px;
+  padding:36px 0;border-bottom:1px solid var(--rule);
+}
+.product-item:last-child{border-bottom:none}
+.product-n{font-family:var(--mono);font-size:11px;color:var(--ink3);padding-top:4px}
+.product-name{font-family:var(--serif);font-size:clamp(22px,2.5vw,32px);font-weight:400;margin-bottom:6px;color:var(--ink)}
+.product-sub{font-size:13px;color:var(--ink3);margin-bottom:14px}
+.product-desc{font-size:14px;color:var(--ink2);line-height:1.65;max-width:56ch}
+.product-meta{text-align:right;padding-top:4px}
+.status{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+.status.live{color:var(--accent)}
+.status.soon{color:var(--ink3)}
+.status.tbd{color:rgba(28,26,23,.2)}
+.product-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tag{
+  font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+  padding:3px 8px;border:1px solid var(--rule);color:var(--ink3);
+}
+
+/* CLOSING */
+.closing{padding:120px 40px;display:flex;flex-direction:column;align-items:flex-start;gap:40px}
+.closing-line{
+  font-family:var(--serif);font-size:clamp(36px,5.5vw,76px);
+  font-weight:400;line-height:1.05;max-width:16ch;color:var(--ink);
+}
+.closing-line em{font-style:italic;color:var(--ink3)}
+.btn{
+  font-size:14px;font-weight:500;padding:12px 28px;border-radius:2px;
+  cursor:pointer;text-decoration:none;display:inline-block;transition:all .15s;
+}
+.btn-fill{background:var(--ink);color:var(--paper);border:1px solid var(--ink)}
+.btn-fill:hover{background:#2d2b27}
+.btn-outline{background:transparent;color:var(--ink);border:1px solid rgba(28,26,23,.25)}
+.btn-outline:hover{background:rgba(28,26,23,.05)}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+
+footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:24px 40px;border-top:1px solid var(--rule);
+}
+footer span{font-size:12px;color:var(--ink3)}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+@media(max-width:768px){
+  header{padding:16px 20px}nav{display:none}
+  .hero,.section,.closing{padding-left:20px;padding-right:20px}
+  .hero-h1{font-size:clamp(52px,13vw,80px)}
+  .hero-footer-row,.section{grid-template-columns:1fr}
+  .two-col{grid-template-columns:1fr}
+  .product-item{grid-template-columns:32px 1fr}
+  .product-meta{display:none}
+  footer{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="#" class="logo">the last prompt <em>/ thelastprompt.ai</em></a>
+  <nav>
+    <a href="#problem">The problem</a>
+    <a href="#vision">Vision</a>
+    <a href="#products">Products</a>
+  </nav>
+  <a href="#products" class="nav-cta">Get Autoclawd</a>
+</header>
+
+<section class="hero">
+  <div class="hero-main">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-line"></div>
+      <span class="mono">Ambient AI</span>
+    </div>
+    <h1 class="hero-h1">
+      AI that works<br><span class="ital">without</span><br>being asked.
+    </h1>
+  </div>
+  <div class="hero-footer-row">
+    <div class="hero-footer-cell">
+      <span class="mono">The idea</span>
+      <p>Ambient AI = AI that completes work <strong>without the need to prompt.</strong> No chat. No commands. It just knows.</p>
+    </div>
+    <div class="hero-footer-cell">
+      <span class="mono">The product</span>
+      <p>Introducing <strong>ARIA</strong> — Artificial Reality Interface Agent. A family of interfaces for the virtual world and the real one.</p>
+    </div>
+    <div class="hero-footer-cell">
+      <span class="mono">The mission</span>
+      <p>There will be a point where AI and humans experience the world as one. Our mission is to write <strong>that last prompt.</strong></p>
+    </div>
+  </div>
+</section>
+
+<div class="section" id="problem">
+  <div class="section-label-col"><span class="mono">The problem</span></div>
+  <div>
+    <div class="manifesto-block">
+      <p>We live in two worlds — the real and the virtual.</p>
+      <p class="dim">We interface well with neither.</p>
+    </div>
+    <div class="two-col">
+      <div class="col-inner">
+        <div class="col-label human"><span class="dot-live"></span>How humans actually talk</div>
+        <div class="chat">
+          <div class="bubble out">hey are we still on for tonight?</div>
+          <div class="bubble gap">— read 3:42pm —</div>
+          <div class="bubble out">hello??</div>
+          <div class="bubble out" style="margin-top:-4px">ok fine nvm 😐</div>
+          <div class="bubble in" style="margin-top:12px">omg sorry yes!! 7pm works</div>
+          <div class="bubble in" style="margin-top:-4px">also did you see what happened</div>
+          <div class="bubble in" style="margin-top:-4px">actually tell you later</div>
+          <div class="bubble out">lol ok</div>
+        </div>
+      </div>
+      <div class="col-inner">
+        <div class="col-label ai"><span class="dot-live"></span>How we talk to AI</div>
+        <div>
+          <div class="prompt-line">
+            <div class="role">Human:</div>
+            <div class="text">You are a helpful assistant. Please write an email to my team about Q2 launch. Keep it concise but professional, the date is June 15th, and also—</div>
+          </div>
+          <div class="prompt-line">
+            <div class="role">AI:</div>
+            <div class="text muted">Subject: Q2 Launch Update — June 15th. Hi team, I hope this message finds you well…</div>
+          </div>
+          <div class="prompt-line">
+            <div class="role">Human:</div>
+            <div class="text">Actually make it less formal. Also I forgot to mention—</div>
+          </div>
+          <div style="margin-top:24px;font-size:13px;color:var(--ink3);font-style:italic">↑ and so it goes</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:56px;max-width:52ch">
+      <p style="font-family:var(--serif);font-size:clamp(20px,2.2vw,28px);line-height:1.4;color:var(--ink)">Reality has the same problem. There's no interface at all — just a voice in your head you reason with and mostly ignore.</p>
+      <p style="font-family:var(--serif);font-size:clamp(20px,2.2vw,28px);line-height:1.4;color:var(--ink3);margin-top:20px">Both worlds deserve a better interface.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="vision">
+  <div class="section-label-col"><span class="mono">The vision</span></div>
+  <div>
+    <div class="manifesto-block">
+      <p>This is not a model intelligence problem.</p>
+      <p class="dim">It is an architecture and orchestration problem.</p>
+    </div>
+    <div class="arch-list">
+      <div class="arch-item">
+        <div class="arch-n">01</div>
+        <div><div class="arch-name">Ambient sensing</div><div class="arch-desc">Always-on local intelligence. Your world, understood in real time.</div></div>
+        <div class="arch-tag">always local</div>
+      </div>
+      <div class="arch-item">
+        <div class="arch-n">02</div>
+        <div><div class="arch-name">Invoked cloud intelligence</div><div class="arch-desc">Heavy reasoning, invoked only when needed. Privacy preserved.</div></div>
+        <div class="arch-tag">on demand</div>
+      </div>
+      <div class="arch-item">
+        <div class="arch-n">03</div>
+        <div><div class="arch-name">Autonomous capability building</div><div class="arch-desc">Agentic teams that build and execute skills on your behalf.</div></div>
+        <div class="arch-tag">agentic</div>
+      </div>
+      <div class="arch-item">
+        <div class="arch-n">04</div>
+        <div><div class="arch-name">Twin reality model</div><div class="arch-desc">A personalised model of your world — to help you see further.</div></div>
+        <div class="arch-tag">persistent</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--ink2);line-height:1.65;margin-top:40px;max-width:52ch">For the virtual world, this looks like voice assistants, widgets, and apps. For the real world: smart glasses, and eventually, neural interfaces. Built by humans and AI together, until there is no need for code or prompts at all.</p>
+  </div>
+</div>
+
+<div class="section" id="products" style="padding-bottom:60px">
+  <div class="section-label-col"><span class="mono">Products</span></div>
+  <div>
+    <div style="margin-bottom:48px">
+      <p class="mono" style="margin-bottom:16px">ARIA — Artificial Reality Interface Agent</p>
+      <p style="font-family:var(--serif);font-size:clamp(22px,2.5vw,32px);color:var(--ink2)">Four interfaces. One direction.</p>
+    </div>
+    <div>
+      <div class="product-item">
+        <div class="product-n">I</div>
+        <div>
+          <div class="product-name">Autoclawd</div>
+          <div class="product-sub">AI interface for macOS &amp; iOS</div>
+          <div class="product-desc">Ambient AI that lives on your Apple device. Uses local Apple models alongside agentic teams to sense your world — tasks, decisions, reminders. Completes work autonomously. Builds a personalised world model. Gamifies what it can't yet finish alone.</div>
+          <div class="product-pills">
+            <span class="tag">local apple intelligence</span>
+            <span class="tag">claude agents</span>
+            <span class="tag">ambient sensing</span>
+            <span class="tag">world model</span>
+          </div>
+        </div>
+        <div class="product-meta"><span class="status live">● Live</span></div>
+      </div>
+      <div class="product-item">
+        <div class="product-n">II</div>
+        <div>
+          <div class="product-name">ARIA Voice</div>
+          <div class="product-sub">The second voice</div>
+          <div class="product-desc">A calmer, more rational second voice in your head. Always on. Surfaces the right thought at the right moment — not because you asked, but because it knew.</div>
+        </div>
+        <div class="product-meta"><span class="status soon">Coming soon</span></div>
+      </div>
+      <div class="product-item">
+        <div class="product-n">III</div>
+        <div>
+          <div class="product-name">ARIA Vision</div>
+          <div class="product-sub">For Meta Ray-Bans</div>
+          <div class="product-desc">AI layered over your physical world. The virtual world bled into reality — through the lenses you're already wearing.</div>
+        </div>
+        <div class="product-meta"><span class="status soon">Coming soon</span></div>
+      </div>
+      <div class="product-item">
+        <div class="product-n">IV</div>
+        <div>
+          <div class="product-name">ARIA Neural</div>
+          <div class="product-sub">Brain-computer interface</div>
+          <div class="product-desc">Where the boundary between human thought and machine intelligence disappears entirely. Not an interface you use — one you are.</div>
+        </div>
+        <div class="product-meta"><span class="status tbd">Unplanned</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="closing">
+  <p class="closing-line">There will be a point where we write<br><em>the last prompt.</em></p>
+  <p style="font-size:15px;color:var(--ink2);max-width:44ch;line-height:1.6">Start with Autoclawd — ambient AI for macOS. No prompting required.</p>
+  <div class="cta-row">
+    <a href="#" class="btn btn-fill">Download for macOS</a>
+    <a href="#problem" class="btn btn-outline">Read the case</a>
+  </div>
+</div>
+
+<footer>
+  <span>thelastprompt.ai</span>
+  <span>© 2025 The Last Prompt</span>
+</footer>
+
+<script>
+const items=document.querySelectorAll('.product-item,.arch-item,.two-col,.manifesto-block');
+items.forEach(el=>{el.style.cssText+='opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease'});
+const io=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.style.opacity='1';x.target.style.transform='translateY(0)'}})},{threshold:.08});
+items.forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
