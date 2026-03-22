@@ -122,6 +122,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(8,8,15,.88);border-bottom:
 .pipeline-sub{color:var(--t2);font-size:16px;max-width:560px;line-height:1.6;margin-bottom:64px}
 .pipe-row{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}
 .pipe-node{display:flex;flex-direction:column;align-items:center;gap:12px;position:relative}
+.pipe-glyph{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--t3);transition:color .3s}
+.pipe-node.active .pipe-glyph{color:var(--green)}
 .pipe-circle{width:72px;height:72px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;position:relative;transition:all .3s}
 .pipe-circle::after{content:'';position:absolute;inset:-4px;border:1px solid transparent;transition:border-color .3s}
 .pipe-node.active .pipe-circle{border-color:var(--green);box-shadow:0 0 24px var(--green-d)}
@@ -225,7 +227,7 @@ footer .desc{color:var(--t3);font-size:13px;line-height:1.6}
 
 <section class="hero" id="top"><div class="hero-orb"></div><div class="wrap">
   <h1>It's already<br><em>watching.</em></h1>
-  <p class="hero-sub">An ambient macOS agent that sees your screen, detects friction, and fixes it — <strong>without a single prompt.</strong></p>
+  <p class="hero-sub">Sees your screen. Detects the friction. Fixes it. <strong>You never typed a thing.</strong></p>
   <div class="hero-ctas"><a href="https://github.com/sameeeeeeep/autoclaw" class="btn btn-w">Clone &amp; Build</a><a href="#how" class="btn btn-g">How it works</a></div>
 </div></section>
 
@@ -246,38 +248,42 @@ footer .desc{color:var(--t3);font-size:13px;line-height:1.6}
     <div class="gc" id="demoConfig"><div class="gc-hdr"><span>Session Config</span><span class="status on" id="demoStatus">Active</span></div><div id="demoCfgBody"></div><div style="margin-top:20px" id="demoExec"></div></div>
   </div>
   <div class="demo-dots" id="demoDots"></div>
+  <div style="display:flex;gap:16px;justify-content:center;margin-top:40px">
+    <a href="https://github.com/sameeeeeeep/autoclaw" class="btn btn-w" style="font-size:12px;padding:10px 24px">Clone &amp; Build</a>
+    <a href="#how" class="btn btn-g" style="font-size:12px;padding:10px 24px">See the pipeline</a>
+  </div>
 </div></section>
 
 <section class="pipeline" id="how"><div class="wrap">
   <div class="badge">How it works</div>
-  <h2>The 60-second loop.</h2>
-  <p class="pipeline-sub">Every minute, Autoclaw captures your screen. Apple's Neural Engine compares frames. When it spots friction, it acts.</p>
+  <h2>You work. It learns.<br>Then it takes over.</h2>
+  <p class="pipeline-sub">Every 60 seconds. Neural Engine compares frames. Friction detected. Action offered. No prompt required.</p>
   <div class="pipe-row">
-    <div class="pipe-node active" data-pipe="0"><div class="pipe-circle">📸</div><div class="pipe-label">Screen</div></div><div class="pipe-arrow"></div>
-    <div class="pipe-node" data-pipe="1"><div class="pipe-circle">🧠</div><div class="pipe-label">Neural Engine</div></div><div class="pipe-arrow"></div>
-    <div class="pipe-node" data-pipe="2"><div class="pipe-circle">🔍</div><div class="pipe-label">Friction Match</div></div><div class="pipe-arrow"></div>
-    <div class="pipe-node" data-pipe="3"><div class="pipe-circle">💬</div><div class="pipe-label">Toast</div></div><div class="pipe-arrow"></div>
-    <div class="pipe-node" data-pipe="4"><div class="pipe-circle">⚡</div><div class="pipe-label">Action</div></div>
+    <div class="pipe-node active" data-pipe="0"><div class="pipe-circle"><span class="pipe-glyph">S</span></div><div class="pipe-label">Screen</div></div><div class="pipe-arrow"></div>
+    <div class="pipe-node" data-pipe="1"><div class="pipe-circle"><span class="pipe-glyph">N</span></div><div class="pipe-label">Neural Engine</div></div><div class="pipe-arrow"></div>
+    <div class="pipe-node" data-pipe="2"><div class="pipe-circle"><span class="pipe-glyph">F</span></div><div class="pipe-label">Friction</div></div><div class="pipe-arrow"></div>
+    <div class="pipe-node" data-pipe="3"><div class="pipe-circle"><span class="pipe-glyph">T</span></div><div class="pipe-label">Toast</div></div><div class="pipe-arrow"></div>
+    <div class="pipe-node" data-pipe="4"><div class="pipe-circle"><span class="pipe-glyph">X</span></div><div class="pipe-label">Execute</div></div>
   </div>
-  <div class="pipe-desc"><p>Autoclaw watches for <strong>cross-app data transfers</strong>, <strong>file shuttles</strong>, <strong>manual lookups</strong>, and <strong>repetitive navigation</strong>. When it recognizes a pattern — a toast appears. Approve or dismiss. That's it.</p></div>
+  <div class="pipe-desc"><p><strong>Cross-app data transfers.</strong> File shuttles. Manual lookups. Repetitive navigation. Autoclaw spots the pattern, offers to handle it. You approve or dismiss. That's the entire interface.</p></div>
 </div></section>
 
 <section class="modes-section" id="modes"><div class="wrap">
   <div class="badge">Modes</div>
-  <h2>Four modes.<br>One ghost.</h2>
-  <p class="sub">Cycle with <code style="font-family:var(--mono);background:#eee;padding:2px 8px;font-size:13px">Option + X</code>. Each mode has hard boundaries. Task can write files. Question can't open one.</p>
+  <h2>Same ghost.<br>Different teeth.</h2>
+  <p class="sub">Cycle with <code style="font-family:var(--mono);background:#eee;padding:2px 8px;font-size:13px">Option + X</code>. Hard permission boundaries. Task ships code. Question can't touch a file. They never cross.</p>
   <div class="modes-layout">
-    <div class="mode-card"><h3>▸ Task</h3><div class="mode-quote">"Fix this. Ship this."</div><p>Full filesystem, shell, and GitHub. Edits code, runs tests, commits.</p><div class="mode-perms"><span class="perm allow">FS</span><span class="perm allow">Shell</span><span class="perm allow">GitHub</span><span class="perm allow">MCP</span></div></div>
-    <div class="mode-card"><h3>? Question</h3><div class="mode-quote">"What did we decide?"</div><p>Queries Granola meetings, ClickUp tasks, Sheets data, web. Can never touch a file.</p><div class="mode-perms"><span class="perm allow">Granola</span><span class="perm allow">Sheets</span><span class="perm allow">Web</span><span class="perm deny">No FS</span></div></div>
-    <div class="mode-card"><h3>⊙ Analyze</h3><div class="mode-quote">"Explain. Change nothing."</div><p>Reads code, traces logic, maps architecture. Never writes a byte.</p><div class="mode-perms"><span class="perm allow">Read</span><span class="perm allow">MCP</span><span class="perm deny">No writes</span><span class="perm deny">No shell</span></div></div>
-    <div class="mode-card"><h3>⊕ Learn</h3><div class="mode-quote">"Watch me do this once."</div><p>Records your workflow — screen, clicks, DOM events. Extracts steps. Replays it next time.</p><div class="mode-perms"><span class="perm allow">Screen</span><span class="perm allow">Chrome</span><span class="perm allow">OCR</span><span class="perm allow">Record</span></div></div>
+    <div class="mode-card"><h3>▸ Task</h3><div class="mode-quote">"Fix this. Ship this."</div><p>Full filesystem, shell, GitHub. Reads your code, finds the bug, patches it, runs the tests, opens the PR. You watch.</p><div class="mode-perms"><span class="perm allow">FS</span><span class="perm allow">Shell</span><span class="perm allow">GitHub</span><span class="perm allow">MCP</span></div></div>
+    <div class="mode-card"><h3>? Question</h3><div class="mode-quote">"What did we decide?"</div><p>Queries your meetings, tasks, spreadsheets, the entire web. Can't touch a file. Can't open a terminal. By design.</p><div class="mode-perms"><span class="perm allow">Granola</span><span class="perm allow">Sheets</span><span class="perm allow">Web</span><span class="perm deny">No FS</span></div></div>
+    <div class="mode-card"><h3>⊙ Analyze</h3><div class="mode-quote">"Explain. Change nothing."</div><p>Reads everything. Writes nothing. Traces the full call chain, maps dependencies, explains the architecture. You get the answer without the risk.</p><div class="mode-perms"><span class="perm allow">Read</span><span class="perm allow">MCP</span><span class="perm deny">No writes</span><span class="perm deny">No shell</span></div></div>
+    <div class="mode-card"><h3>⊕ Learn</h3><div class="mode-quote">"Watch me do this once."</div><p>Do it once in front of Autoclaw. It records your screen, captures DOM events from Chrome, extracts the steps with Sonnet. Next time it sees the pattern, it runs it for you.</p><div class="mode-perms"><span class="perm allow">Screen</span><span class="perm allow">Chrome</span><span class="perm allow">OCR</span><span class="perm allow">Record</span></div></div>
   </div>
 </div></section>
 
 <section class="connectors" id="connectors"><div class="wrap">
   <div class="badge">Connectors</div>
-  <h2>Every MCP server.<br>Instantly.</h2>
-  <p class="sub">If it's in your <code style="font-family:var(--mono);color:var(--green)">~/.claude/mcp.json</code>, Autoclaw can use it. No config. No setup.</p>
+  <h2>Plug in once.<br>Autoclaw handles the rest.</h2>
+  <p class="sub">If it's in <code style="font-family:var(--mono);color:var(--green)">~/.claude/mcp.json</code>, Autoclaw already has it. Zero config. Infinite reach.</p>
   <div class="conn-grid">
     <div class="conn-card"><div class="conn-dot" style="background:var(--cyan)"></div><span class="conn-name">ClickUp</span><span class="conn-type">Tasks</span></div>
     <div class="conn-card"><div class="conn-dot" style="background:var(--purple)"></div><span class="conn-name">Granola</span><span class="conn-type">Meetings</span></div>
@@ -295,8 +301,8 @@ footer .desc{color:var(--t3);font-size:13px;line-height:1.6}
 
 <section class="arch"><div class="wrap">
   <div class="badge">Architecture</div>
-  <h2>Pure Swift.<br>Apple Neural Engine.<br>Open source.</h2>
-  <p class="sub">No Electron. No cloud relay. No telemetry. Everything runs on your machine.</p>
+  <h2>Built different.<br>Literally.</h2>
+  <p class="sub">Pure Swift. Apple Neural Engine. No Electron. No cloud relay. No telemetry. Your machine, your data, your code to audit.</p>
   <div class="arch-grid">
     <div class="arch-card"><h3>Vision Pipeline</h3><p>Apple VNFeaturePrint generates neural embeddings on-device. Zero API cost. Only meaningful screen changes trigger analysis.</p><div class="arch-code"><span class="kw">let</span> request = VNGenerateImageFeaturePrintRequest()<br><span class="cm">// On-device. Neural Engine. Zero cost.</span></div></div>
     <div class="arch-card"><h3>Claude Code CLI</h3><p>Tasks execute through Claude Code's CLI with streaming JSON. Every MCP server, skill, and permission — inherited automatically.</p><div class="arch-code"><span class="kw">claude</span> -p <span class="str">"fix the null ref"</span> \<br>  --output-format stream-json</div></div>
@@ -306,7 +312,7 @@ footer .desc{color:var(--t3);font-size:13px;line-height:1.6}
 </div></section>
 
 <section class="security"><div class="wrap">
-  <h2>Protected from<br>every angle.</h2>
+  <h2>It watches your screen.<br>Nobody else does.</h2>
   <div class="sec-layout">
     <div class="sec-visual"><img src="/img/ghost-glass.png" alt="" class="ghost"></div>
     <div>
