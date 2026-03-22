@@ -17,16 +17,10 @@ canvas{display:block}
 .scene{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity 0.8s ease}
 .scene.active{opacity:1}
 .scene.active .clickable{pointer-events:auto}
-.opening{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-.adam-scene{position:relative;width:min(900px,92vw);height:auto;display:flex;align-items:center;justify-content:center}
-.adam-svg{width:100%;height:auto;overflow:visible}
-.adam-svg .hand-line{fill:none;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
-.adam-svg .human-hand{stroke:rgba(226,221,211,0.25)}
-.adam-svg .ai-hand{stroke:rgba(201,169,110,0.35)}
-.adam-svg .gap-glow{fill:none;stroke:rgba(201,169,110,0.15);stroke-width:0.5}
-.hand-label{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:0.15em;text-transform:uppercase}
-.prompt-gap-label{font-family:'Space Mono',monospace;font-size:5px;letter-spacing:0.2em;text-transform:uppercase;fill:rgba(201,169,110,0.4)}
-.opening-question{position:absolute;bottom:8%;left:50%;transform:translateX(-50%);text-align:center;width:max-content;max-width:90vw}
+.opening{position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px}
+.adam-canvas{position:relative}
+.adam-canvas canvas{image-rendering:pixelated;image-rendering:crisp-edges}
+.opening-question{text-align:center;max-width:90vw}
 .opening-question h2{font-family:'Newsreader',serif;font-size:clamp(1.1rem,2.5vw,1.6rem);font-weight:300;color:#5a564f}
 .opening-question em{font-style:italic;color:#c9a96e}
 .terminal-3d{width:min(680px,88vw);background:rgba(8,8,14,0.85);border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 40px 160px rgba(0,0,0,0.5);overflow:hidden;transform:perspective(800px) rotateX(2deg)}
@@ -97,32 +91,7 @@ canvas{display:block}
 <div id="canvas-container"></div>
 <div id="scroll-spacer"></div>
 <nav id="nav"><a href="#" class="nav-mark">The Last Prompt</a><div class="nav-r"><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="/autoclawd">Autoclaw</a><a href="https://x.com/sameeprehlan">X</a></div></nav>
-<div class="scene" id="scene-0"><div class="opening"><div class="adam-scene"><svg class="adam-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
-<!-- Human hand (Adam) reaching from left -->
-<g class="human-hand">
-<path class="hand-line" d="M 60,120 C 80,118 100,112 120,108 C 135,105 150,100 165,96 C 175,93 185,90 195,88 C 200,87 208,85 215,84 L 225,83"/>
-<path class="hand-line" d="M 195,88 C 200,82 206,76 212,73 C 216,71 220,70 224,70"/>
-<path class="hand-line" d="M 185,90 C 188,84 192,78 197,75"/>
-<path class="hand-line" d="M 165,96 C 162,90 158,85 155,82"/>
-<path class="hand-line" d="M 120,108 C 115,102 112,96 110,92"/>
-</g>
-<text x="70" y="145" class="hand-label" fill="rgba(226,221,211,0.2)">human</text>
-
-<!-- The gap - the prompt -->
-<line x1="230" y1="60" x2="230" y2="110" class="gap-glow" stroke-dasharray="2,3"/>
-<line x1="270" y1="60" x2="270" y2="110" class="gap-glow" stroke-dasharray="2,3"/>
-<text x="250" y="55" class="prompt-gap-label" text-anchor="middle">the prompt</text>
-
-<!-- AI hand (God) reaching from right -->
-<g class="ai-hand">
-<path class="hand-line" d="M 440,105 C 420,102 400,98 380,94 C 365,91 350,87 335,84 C 325,82 315,80 305,79 C 300,78 292,77 285,77 L 275,77"/>
-<path class="hand-line" d="M 305,79 C 300,73 294,67 288,64 C 284,62 280,62 276,63"/>
-<path class="hand-line" d="M 315,80 C 312,74 308,68 303,65"/>
-<path class="hand-line" d="M 335,84 C 338,78 342,72 345,68"/>
-<path class="hand-line" d="M 380,94 C 385,88 388,82 390,78"/>
-</g>
-<text x="410" y="130" class="hand-label" fill="rgba(201,169,110,0.3)">intelligence</text>
-</svg></div><div class="opening-question"><h2>If AI is so smart, why does it still need to be <em>prompted?</em></h2></div></div></div>
+<div class="scene" id="scene-0"><div class="opening"><div class="adam-canvas"><canvas id="adam-art" width="120" height="50"></canvas></div><div class="opening-question"><h2>If AI is so smart, why does it still need to be <em>prompted?</em></h2></div></div></div>
 <div class="scene" id="scene-1"><div class="apps-text"><h2>Intelligence is trapped in boxes. Inside individual <span class="red">apps.</span></h2><p>You copy context out. Paste it into a chatbot. Describe what you already see. Wait. Carry the answer back. <strong>You are the integration layer.</strong></p><p>The model isn't the bottleneck. <strong>The prompt is.</strong></p></div></div>
 <div class="scene" id="scene-2"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
 <div class="scene" id="scene-3"><div class="prose-float"><h2>What if agentic intelligence became <em>ambient?</em></h2></div></div>
@@ -227,7 +196,7 @@ function runTerm(){
       }
       body.appendChild(div);
       requestAnimationFrame(()=>div.classList.add('on'));
-      if(line.last){setTimeout(()=>{const term=document.querySelector('.terminal-3d');if(term)term.classList.add('dissolving');T_Release();recolor(C.teal);lmat.opacity=0.02},2000)}
+      if(line.last){setTimeout(()=>{const term=document.querySelector('.terminal-3d');if(term)term.classList.add('dissolving');T_Release();recolor(C.teal);lmat.opacity=0.02;setTimeout(()=>{document.getElementById('scene-2').classList.remove('active');document.getElementById('scene-3').classList.add('active');lastScene=3},1500)},2000)}
     },delay);
   });
 }
@@ -254,6 +223,97 @@ window.addEventListener('mousemove',e=>{mouse.x=(e.clientX/window.innerWidth)*2-
 window.addEventListener('scroll',()=>{const mx=document.getElementById('scroll-spacer').offsetHeight-window.innerHeight;scrollPct=Math.min(window.scrollY/mx,1);document.getElementById('progress-fill').style.width=(scrollPct*100)+'%';updateScenes()},{passive:true});
 window.addEventListener('resize',()=>{cam.aspect=window.innerWidth/window.innerHeight;cam.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight)});
 window.addEventListener('touchmove',e=>{if(e.touches.length){mouse.x=(e.touches[0].clientX/window.innerWidth)*2-1;mouse.y=-(e.touches[0].clientY/window.innerHeight)*2+1}},{passive:true});
+// PIXEL ART - Creation of Adam
+(function(){
+const cv=document.getElementById('adam-art');
+const ctx=cv.getContext('2d');
+const s=Math.min(window.innerWidth/120*0.85,8);
+cv.style.width=(120*s)+'px';cv.style.height=(50*s)+'px';
+
+// AI hand (LEFT) - green/teal digital hand reaching right
+// Each row: [startX, pixels as color codes]
+// 0=empty, 1=dark, 2=mid, 3=bright, 4=glow
+const aiHand=[
+// index finger tip reaching right
+[28,18,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2]],
+[27,18,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3]],
+[26,20,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,3,2,0]],
+// fingers
+[25,22,[0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,3,2,1,0,0,0,0]],
+[24,22,[0,0,0,0,0,0,0,0,0,0,1,2,3,3,2,1,0,0,0,0,0,0]],
+[23,24,[0,0,0,0,0,0,0,0,1,2,3,3,2,1,0,0,0,0,0,0,0,0,0,0]],
+// middle finger
+[22,18,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,2]],
+[21,18,[0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,2,1]],
+// palm area
+[20,20,[0,0,0,0,0,0,0,1,1,2,2,3,3,3,2,2,1,1,0,0]],
+[19,22,[0,0,0,0,0,1,1,2,2,3,3,3,3,3,3,2,2,1,1,0,0,0]],
+[18,24,[0,0,0,1,1,2,2,3,3,3,3,3,3,3,3,3,2,2,1,1,0,0,0,0]],
+[17,26,[0,1,1,2,2,3,3,3,3,3,3,3,3,3,3,3,3,2,2,1,1,0,0,0,0,0]],
+[16,26,[1,1,2,2,3,3,3,3,3,3,3,3,3,3,3,3,2,2,1,1,0,0,0,0,0,0]],
+// wrist
+[15,22,[0,0,1,2,2,3,3,3,3,3,3,3,3,3,2,2,1,0,0,0,0,0]],
+[14,20,[0,0,0,1,2,2,3,3,3,3,3,3,3,2,2,1,0,0,0,0]],
+[13,18,[0,0,0,0,1,2,2,3,3,3,3,2,2,1,0,0,0,0]],
+// forearm
+[12,16,[0,0,0,0,0,1,2,2,3,3,2,2,1,0,0,0]],
+[11,14,[0,0,0,0,0,0,1,2,2,2,1,0,0,0]],
+];
+
+// Human hand (RIGHT) - warm gold/amber reaching left
+const humanHand=[
+[28,18,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1]],
+[27,18,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,1]],
+[26,18,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,3,1]],
+[25,20,[0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,3,2,1,0,0]],
+[24,22,[0,0,0,0,0,0,0,0,0,0,1,2,3,3,2,1,0,0,0,0,0,0]],
+[23,24,[0,0,0,0,0,0,0,0,1,2,3,3,2,1,0,0,0,0,0,0,0,0,0,0]],
+[22,18,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,3,1]],
+[21,18,[0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,3,2,1]],
+[20,20,[0,0,0,0,0,0,0,1,1,2,2,3,3,3,2,2,1,1,0,0]],
+[19,22,[0,0,0,0,0,1,1,2,2,3,3,3,3,3,3,2,2,1,1,0,0,0]],
+[18,24,[0,0,0,1,1,2,2,3,3,3,3,3,3,3,3,3,2,2,1,1,0,0,0,0]],
+[17,26,[0,1,1,2,2,3,3,3,3,3,3,3,3,3,3,3,3,2,2,1,1,0,0,0,0,0]],
+[16,26,[1,1,2,2,3,3,3,3,3,3,3,3,3,3,3,3,2,2,1,1,0,0,0,0,0,0]],
+[15,22,[0,0,1,2,2,3,3,3,3,3,3,3,3,3,2,2,1,0,0,0,0,0]],
+[14,20,[0,0,0,1,2,2,3,3,3,3,3,3,3,2,2,1,0,0,0,0]],
+[13,18,[0,0,0,0,1,2,2,3,3,3,3,2,2,1,0,0,0,0]],
+[12,16,[0,0,0,0,0,1,2,2,3,3,2,2,1,0,0,0]],
+[11,14,[0,0,0,0,0,0,1,2,2,2,1,0,0,0]],
+];
+
+const aiColors=['','#0a2a1a','#1a6b4a','#34d399','#5eefc0'];
+const huColors=['','#2a1a08','#8b6914','#c9a96e','#e8c88a'];
+
+function drawHand(data,colors,offsetX,flip){
+  data.forEach(([row,len,pixels])=>{
+    pixels.forEach((c,i)=>{
+      if(c===0)return;
+      const x=flip?(offsetX+len-1-i):(offsetX+i);
+      ctx.fillStyle=colors[c];
+      // Add slight random alpha for digital feel on AI hand
+      if(colors===aiColors&&Math.random()>0.7){
+        ctx.globalAlpha=0.4+Math.random()*0.6;
+      }
+      ctx.fillRect(x,row,1,1);
+      ctx.globalAlpha=1;
+    });
+  });
+}
+
+// Draw AI hand on left (flipped)
+drawHand(aiHand,aiColors,5,true);
+// Draw human hand on right
+drawHand(humanHand,huColors,88,false);
+
+// Draw "the last prompt" text in gap
+ctx.fillStyle='rgba(201,169,110,0.3)';
+ctx.font='3px "Space Mono",monospace';
+ctx.textAlign='center';
+ctx.fillText('the last',60,26);
+ctx.fillText('prompt',60,30);
+})();
+
 updateScenes();
 setTimeout(()=>document.getElementById('scroll-hint').classList.add('show'),2000);
 animate();
