@@ -150,15 +150,19 @@ function runTerm(){
   const body=document.getElementById('term-body');
   body.textContent='';
   const lines=[
-    {cls:['tp','tc'],texts:['$ ','aria'],d:400},
-    {cls:[],texts:[],d:500},
-    {cls:['ta'],texts:['observing...'],d:500},
-    {cls:['ta'],texts:['understanding...'],d:500},
-    {cls:['ta'],texts:['acting...'],d:600},
-    {cls:[],texts:[],d:300},
-    {cls:['to'],texts:['// the prompt after which no prompt'],d:500},
-    {cls:['to'],texts:['// will ever need to be written.'],d:700},
+    {cls:['to'],texts:['// this is the last prompt'],d:400},
+    {cls:['to'],texts:['// after which no prompt will ever need to be written'],d:600},
     {cls:[],texts:[],d:400},
+    {cls:['tp','tc'],texts:['$ ','build agentic-reality-interface'],d:500},
+    {cls:[],texts:[],d:400},
+    {cls:['ta'],texts:['building...'],d:800},
+    {cls:[],texts:[],d:300},
+    {cls:['ta'],texts:['testing'],d:400},
+    {cls:['ts','ta'],texts:['sensing and observing... ','check'],d:500},
+    {cls:['ts','ta'],texts:['analysing and understanding... ','check'],d:500},
+    {cls:['ts','ta'],texts:['autonomous execution... ','check'],d:500},
+    {cls:[],texts:[],d:400},
+    {cls:['ts'],texts:['agentic reality interface is now live.'],d:600},
     {cls:['ts'],texts:['intelligence is now ambient.'],d:0,blink:true},
   ];
   let delay=200;
