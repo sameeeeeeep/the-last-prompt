@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Last Prompt</title>
 <meta name="description" content="Building the intelligent layer between humans and reality. So you never have to prompt AI again.">
+<link rel="icon" type="image/png" href="/favicon.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Newsreader:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
@@ -48,21 +49,43 @@ canvas{display:block}
 .constraint-text{text-align:center;max-width:500px;padding:0 24px}
 .constraint-text p{font-family:'Newsreader',serif;font-size:clamp(1.3rem,3vw,1.8rem);font-weight:300;line-height:1.5;color:#8a847a;font-style:italic}
 .constraint-text .gold{color:#c9a96e;font-style:normal;font-weight:400}
-.senses-float{display:flex;flex-direction:column;align-items:center;gap:0;padding:0 24px}
-.senses-float h2{font-family:'Newsreader',serif;font-size:clamp(1.6rem,4vw,2.6rem);font-weight:300;margin-bottom:48px;letter-spacing:-0.01em}
-.senses-float h2 em{font-style:italic;color:#c9a96e}
-.sense-item{display:flex;align-items:baseline;gap:20px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.04);width:min(560px,90vw);opacity:0;transform:translateX(-12px);transition:all 0.6s ease}
-.sense-item.on{opacity:1;transform:none}
-.sense-num{font-family:'Space Mono',monospace;font-size:0.6rem;color:#4a463f;min-width:28px}
-.sense-name{font-family:'Newsreader',serif;font-size:1.25rem;color:#e2ddd3;min-width:140px}
-.sense-sub{font-size:0.85rem;color:#5a564f;flex:1}
-.sense-badge{font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:0.08em;text-transform:uppercase}
-.badge-live{color:#7eb8a8}.badge-soon{color:#c9a96e}.badge-future{color:#3d3a36}
+/* old senses styles removed — replaced by POV HUD */
 .apps-text,.interface-text{text-align:center;max-width:580px;padding:0 24px}
 .apps-text h2,.interface-text h2{font-family:'Newsreader',serif;font-size:clamp(1.5rem,3.5vw,2.4rem);font-weight:300;line-height:1.25;margin-bottom:20px}
 .apps-text h2 em,.interface-text h2 em{font-style:italic;color:#c9a96e}
 .apps-text p,.interface-text p{font-size:0.95rem;line-height:1.8;color:#8a847a}
 .interface-text p strong{color:#e2ddd3;font-weight:400}
+/* POV HUD */
+.pov-hud{width:100%;height:100%;display:flex;align-items:center;justify-content:center;perspective:800px}
+.hud-frame{position:relative;width:min(800px,92vw);height:min(500px,75vh);border:1px solid rgba(126,184,168,0.15);border-radius:4px;display:flex;flex-direction:column;justify-content:space-between;padding:20px 28px;background:rgba(3,3,5,0.4);backdrop-filter:blur(4px);transform:rotateX(1deg)}
+.hud-corner{position:absolute;width:20px;height:20px;border-color:rgba(126,184,168,0.3);border-style:solid;border-width:0}
+.hud-tl{top:-1px;left:-1px;border-top-width:2px;border-left-width:2px}
+.hud-tr{top:-1px;right:-1px;border-top-width:2px;border-right-width:2px}
+.hud-bl{bottom:-1px;left:-1px;border-bottom-width:2px;border-left-width:2px}
+.hud-br{bottom:-1px;right:-1px;border-bottom-width:2px;border-right-width:2px}
+.hud-top{display:flex;justify-content:space-between;align-items:center}
+.hud-tag{font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(126,184,168,0.4);padding:4px 10px;border:1px solid rgba(126,184,168,0.1);border-radius:2px}
+.hud-live{color:rgba(40,200,64,0.7);border-color:rgba(40,200,64,0.2)}
+.hud-center-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Newsreader',serif;font-size:clamp(1.4rem,3vw,2rem);font-weight:300;color:rgba(226,221,211,0.7);text-align:center;pointer-events:none}
+.hud-senses{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:auto 0;max-width:600px;align-self:center}
+.hud-sense{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid rgba(255,255,255,0.04);border-radius:3px;background:rgba(255,255,255,0.02);transition:all 0.3s}
+.hud-s-active{border-color:rgba(126,184,168,0.15);background:rgba(126,184,168,0.04)}
+.hud-icon{width:28px;height:28px;color:rgba(126,184,168,0.4);flex-shrink:0}
+.hud-s-active .hud-icon{color:rgba(126,184,168,0.7)}
+.hud-icon svg{width:100%;height:100%}
+.hud-s-info{display:flex;flex-direction:column;gap:2px;flex:1}
+.hud-s-name{font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:#8a847a}
+.hud-s-desc{font-size:0.72rem;color:#4a463f}
+.hud-s-active .hud-s-name{color:#e2ddd3}
+.hud-s-active .hud-s-desc{color:#7eb8a8}
+.hud-s-status{font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:0.12em;flex-shrink:0}
+.hud-st-live{color:#28c840}
+.hud-st-soon{color:#c9a96e}
+.hud-st-future{color:#3d3a36}
+.hud-bottom{display:flex;justify-content:space-between}
+.hud-coord{font-family:'Space Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;color:rgba(126,184,168,0.2)}
+@media(max-width:640px){.hud-senses{grid-template-columns:1fr}.hud-bottom{flex-wrap:wrap;gap:8px}}
+
 .final-cta{text-align:center;max-width:540px;padding:0 24px}
 .final-cta .ghost-img{width:56px;height:56px;margin-bottom:20px;opacity:0.8}
 .final-cta .phase-tag{font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#7eb8a8;margin-bottom:20px}
@@ -96,11 +119,20 @@ canvas{display:block}
 <div class="scene" id="scene-2"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
 <div class="scene" id="scene-3"><div class="prose-float"><h2>What if agentic intelligence became <em>ambient?</em></h2></div></div>
 <div class="scene" id="scene-4"><div class="interface-text"><h2>Introducing <span class="purple">ARIA.</span></h2><p><strong>Agentic Reality Interface Architecture.</strong> Intelligence at the interface between you and everything. One continuous layer. Always present. Never in the way.</p></div></div>
-<div class="scene" id="scene-5"><div class="senses-float"><h2>Building the <em>senses.</em></h2>
-  <div class="sense-item"><span class="sense-num">01</span><span class="sense-name">Autoclaw</span><span class="sense-sub">AI on your screen</span><span class="sense-badge badge-live">Live</span></div>
-  <div class="sense-item"><span class="sense-num">02</span><span class="sense-name">ARIA Voice</span><span class="sense-sub">Second voice in your head</span><span class="sense-badge badge-soon">Soon</span></div>
-  <div class="sense-item"><span class="sense-num">03</span><span class="sense-name">ARIA Vision</span><span class="sense-sub">AI through your eyes</span><span class="sense-badge badge-soon">Soon</span></div>
-  <div class="sense-item"><span class="sense-num">04</span><span class="sense-name">ARIA Neural</span><span class="sense-sub">Thought to thought</span><span class="sense-badge badge-future">Unplanned</span></div>
+<div class="scene" id="scene-5"><div class="pov-hud">
+  <div class="hud-frame">
+    <div class="hud-corner hud-tl"></div><div class="hud-corner hud-tr"></div>
+    <div class="hud-corner hud-bl"></div><div class="hud-corner hud-br"></div>
+    <div class="hud-top"><span class="hud-tag">ARIA v0.1</span><span class="hud-tag">AMBIENT MODE</span><span class="hud-tag hud-live">ACTIVE</span></div>
+    <div class="hud-center-label">Your world. Augmented.</div>
+    <div class="hud-senses">
+      <div class="hud-sense hud-s-active"><div class="hud-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="hud-s-info"><span class="hud-s-name">Screen</span><span class="hud-s-desc">Sees what you see</span></div><span class="hud-s-status hud-st-live">LIVE</span></div>
+      <div class="hud-sense"><div class="hud-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1v4M12 19v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M1 12h4M19 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="4"/></svg></div><div class="hud-s-info"><span class="hud-s-name">Voice</span><span class="hud-s-desc">Hears what you hear</span></div><span class="hud-s-status hud-st-soon">SOON</span></div>
+      <div class="hud-sense"><div class="hud-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/></svg></div><div class="hud-s-info"><span class="hud-s-name">Vision</span><span class="hud-s-desc">Sees through your eyes</span></div><span class="hud-s-status hud-st-soon">SOON</span></div>
+      <div class="hud-sense"><div class="hud-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a7 7 0 017 7c0 3-2 5-4 7l-1 2h-4l-1-2c-2-2-4-4-4-7a7 7 0 017-7z"/><line x1="10" y1="22" x2="14" y2="22"/></svg></div><div class="hud-s-info"><span class="hud-s-name">Neural</span><span class="hud-s-desc">Thinks what you think</span></div><span class="hud-s-status hud-st-future">UNPLANNED</span></div>
+    </div>
+    <div class="hud-bottom"><span class="hud-coord">40.7128 N, 74.0060 W</span><span class="hud-coord">CONTEXT: 127 SIGNALS</span><span class="hud-coord">LATENCY: 12ms</span></div>
+  </div>
 </div></div>
 <div class="scene" id="scene-6"><div class="final-cta">
   <img src="/img/ghost-green.png" alt="" class="ghost-img">
@@ -192,7 +224,7 @@ T_Dense();
 const sIds=['scene-0','scene-1','scene-2','scene-3','scene-4','scene-5','scene-6'];
 const sR=[[0,0.06],[0.06,0.22],[0.22,0.40],[0.40,0.55],[0.55,0.70],[0.70,0.85],[0.85,1.0]];
 function getS(p){for(let i=0;i<sR.length;i++)if(p>=sR[i][0]&&p<sR[i][1])return i;return sR.length-1}
-function updateScenes(){const s=getS(scrollPct);if(s===lastScene)return;lastScene=s;sIds.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===s));document.getElementById('nav').classList.toggle('show',s>0);document.getElementById('scroll-hint').classList.toggle('show',s===0);interfaceActive=false;switch(s){case 0:T_Dense();lmat.opacity=0.12;recolor(C.gold);break;case 1:T_Apps();lmat.opacity=0.10;recolor(C.red);break;case 2:T_Dense();lmat.opacity=0.08;recolor(C.gold);const term=document.querySelector('.terminal-3d');if(term)term.classList.remove('dissolving');runTerm();break;case 3:T_Release();lmat.opacity=0.02;recolor(C.teal);break;case 4:T_Interface();lmat.opacity=0.04;recolor(C.purple);interfaceActive=true;break;case 5:T_Ambient();lmat.opacity=0.03;recolor(C.green);document.querySelectorAll('.sense-item').forEach((el,i)=>{el.classList.remove('on');setTimeout(()=>el.classList.add('on'),200+i*150)});break;case 6:T_Ambient();lmat.opacity=0.02;recolor(C.teal);break}}
+function updateScenes(){const s=getS(scrollPct);if(s===lastScene)return;lastScene=s;sIds.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===s));document.getElementById('nav').classList.toggle('show',s>0);document.getElementById('scroll-hint').classList.toggle('show',s===0);interfaceActive=false;switch(s){case 0:T_Dense();lmat.opacity=0.12;recolor(C.gold);break;case 1:T_Apps();lmat.opacity=0.10;recolor(C.red);break;case 2:T_Dense();lmat.opacity=0.08;recolor(C.gold);const term=document.querySelector('.terminal-3d');if(term)term.classList.remove('dissolving');runTerm();break;case 3:T_Release();lmat.opacity=0.02;recolor(C.teal);break;case 4:T_Interface();lmat.opacity=0.04;recolor(C.purple);interfaceActive=true;break;case 5:T_Ambient();lmat.opacity=0.03;recolor(C.green);break;case 6:T_Ambient();lmat.opacity=0.02;recolor(C.teal);break}}
 
 function runTerm(){
   const body=document.getElementById('term-body');
