@@ -18,17 +18,15 @@ canvas{display:block}
 .scene.active{opacity:1}
 .scene.active .clickable{pointer-events:auto}
 .opening{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-.opening-sides{display:flex;align-items:center;justify-content:center;gap:0;width:100%;height:100%;position:relative}
-.opening-you{position:absolute;left:8%;top:50%;transform:translateY(-50%);text-align:center}
-.opening-you-label{font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#5a564f}
-.opening-you-sub{font-family:'Newsreader',serif;font-size:0.85rem;color:#3d3a36;margin-top:6px;font-style:italic}
-.opening-ai{position:absolute;right:8%;top:50%;transform:translateY(-50%);text-align:center}
-.opening-ai-label{font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#c9a96e}
-.opening-ai-sub{font-family:'Newsreader',serif;font-size:0.85rem;color:#5a564f;margin-top:6px;font-style:italic}
-.prompt-wall{position:absolute;left:50%;top:10%;transform:translateX(-50%);width:2px;height:80%;background:linear-gradient(180deg,transparent,rgba(201,169,110,0.4),rgba(201,169,110,0.5),rgba(201,169,110,0.4),transparent)}
-.prompt-wall::before{content:'';position:absolute;top:0;left:-30px;width:60px;height:100%;background:linear-gradient(90deg,transparent,rgba(201,169,110,0.03),transparent)}
-.wall-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-90deg);font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(201,169,110,0.4);background:#030305;padding:4px 14px;white-space:nowrap}
-.opening-question{position:absolute;bottom:12%;left:50%;transform:translateX(-50%);text-align:center;width:max-content}
+.adam-scene{position:relative;width:min(900px,92vw);height:auto;display:flex;align-items:center;justify-content:center}
+.adam-svg{width:100%;height:auto;overflow:visible}
+.adam-svg .hand-line{fill:none;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
+.adam-svg .human-hand{stroke:rgba(226,221,211,0.25)}
+.adam-svg .ai-hand{stroke:rgba(201,169,110,0.35)}
+.adam-svg .gap-glow{fill:none;stroke:rgba(201,169,110,0.15);stroke-width:0.5}
+.hand-label{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:0.15em;text-transform:uppercase}
+.prompt-gap-label{font-family:'Space Mono',monospace;font-size:5px;letter-spacing:0.2em;text-transform:uppercase;fill:rgba(201,169,110,0.4)}
+.opening-question{position:absolute;bottom:8%;left:50%;transform:translateX(-50%);text-align:center;width:max-content;max-width:90vw}
 .opening-question h2{font-family:'Newsreader',serif;font-size:clamp(1.1rem,2.5vw,1.6rem);font-weight:300;color:#5a564f}
 .opening-question em{font-style:italic;color:#c9a96e}
 .terminal-3d{width:min(680px,88vw);background:rgba(8,8,14,0.85);border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 40px 160px rgba(0,0,0,0.5);overflow:hidden;transform:perspective(800px) rotateX(2deg)}
@@ -99,7 +97,32 @@ canvas{display:block}
 <div id="canvas-container"></div>
 <div id="scroll-spacer"></div>
 <nav id="nav"><a href="#" class="nav-mark">The Last Prompt</a><div class="nav-r"><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="/autoclawd">Autoclaw</a><a href="https://x.com/sameeprehlan">X</a></div></nav>
-<div class="scene" id="scene-0"><div class="opening"><div class="opening-sides"><div class="opening-you"><div class="opening-you-label">You</div><div class="opening-you-sub">the human</div></div><div class="prompt-wall"><span class="wall-label">the prompt</span></div><div class="opening-ai"><div class="opening-ai-label">AI</div><div class="opening-ai-sub">superintelligent</div></div></div><div class="opening-question"><h2>If AI is so smart, why does it still need to be <em>prompted?</em></h2></div></div></div>
+<div class="scene" id="scene-0"><div class="opening"><div class="adam-scene"><svg class="adam-svg" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+<!-- Human hand (Adam) reaching from left -->
+<g class="human-hand">
+<path class="hand-line" d="M 60,120 C 80,118 100,112 120,108 C 135,105 150,100 165,96 C 175,93 185,90 195,88 C 200,87 208,85 215,84 L 225,83"/>
+<path class="hand-line" d="M 195,88 C 200,82 206,76 212,73 C 216,71 220,70 224,70"/>
+<path class="hand-line" d="M 185,90 C 188,84 192,78 197,75"/>
+<path class="hand-line" d="M 165,96 C 162,90 158,85 155,82"/>
+<path class="hand-line" d="M 120,108 C 115,102 112,96 110,92"/>
+</g>
+<text x="70" y="145" class="hand-label" fill="rgba(226,221,211,0.2)">human</text>
+
+<!-- The gap - the prompt -->
+<line x1="230" y1="60" x2="230" y2="110" class="gap-glow" stroke-dasharray="2,3"/>
+<line x1="270" y1="60" x2="270" y2="110" class="gap-glow" stroke-dasharray="2,3"/>
+<text x="250" y="55" class="prompt-gap-label" text-anchor="middle">the prompt</text>
+
+<!-- AI hand (God) reaching from right -->
+<g class="ai-hand">
+<path class="hand-line" d="M 440,105 C 420,102 400,98 380,94 C 365,91 350,87 335,84 C 325,82 315,80 305,79 C 300,78 292,77 285,77 L 275,77"/>
+<path class="hand-line" d="M 305,79 C 300,73 294,67 288,64 C 284,62 280,62 276,63"/>
+<path class="hand-line" d="M 315,80 C 312,74 308,68 303,65"/>
+<path class="hand-line" d="M 335,84 C 338,78 342,72 345,68"/>
+<path class="hand-line" d="M 380,94 C 385,88 388,82 390,78"/>
+</g>
+<text x="410" y="130" class="hand-label" fill="rgba(201,169,110,0.3)">intelligence</text>
+</svg></div><div class="opening-question"><h2>If AI is so smart, why does it still need to be <em>prompted?</em></h2></div></div></div>
 <div class="scene" id="scene-1"><div class="apps-text"><h2>Intelligence is trapped in boxes. Inside individual <span class="red">apps.</span></h2><p>You copy context out. Paste it into a chatbot. Describe what you already see. Wait. Carry the answer back. <strong>You are the integration layer.</strong></p><p>The model isn't the bottleneck. <strong>The prompt is.</strong></p></div></div>
 <div class="scene" id="scene-2"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
 <div class="scene" id="scene-3"><div class="prose-float"><h2>What if agentic intelligence became <em>ambient?</em></h2></div></div>
