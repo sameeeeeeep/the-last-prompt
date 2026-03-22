@@ -92,7 +92,7 @@ canvas{display:block}
 <div id="scroll-spacer"></div>
 <nav id="nav"><a href="#" class="nav-mark">The Last Prompt</a><div class="nav-r"><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="/autoclawd">Autoclaw</a><a href="https://x.com/sameeprehlan">X</a></div></nav>
 <div class="scene" id="scene-0"><div class="opening"><img src="/handsnobg.png" alt="" class="adam-img" id="hands-img" crossorigin="anonymous"><div class="opening-question"><h2>What stands between you and superintelligence? <em>A prompt.</em></h2></div></div></div>
-<div class="scene" id="scene-1"><div class="apps-text"><h2>Intelligence is trapped in boxes. Inside individual <span class="red">apps.</span></h2><p>You copy context out. Paste it into a chatbot. Describe what you already see. Wait. Carry the answer back. <strong>You are the integration layer.</strong></p><p>The model isn't the bottleneck. <strong>The prompt is.</strong></p></div></div>
+<div class="scene" id="scene-1"><div class="apps-text"><h2>Intelligence is trapped in boxes. Inside individual <span class="red">apps.</span></h2><p>You copy. You paste. You describe what you already see. <strong>You are the integration layer.</strong> The model isn't the bottleneck. <strong>The prompt is.</strong></p></div></div>
 <div class="scene" id="scene-2"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
 <div class="scene" id="scene-3"><div class="prose-float"><h2>What if agentic intelligence became <em>ambient?</em></h2></div></div>
 <div class="scene" id="scene-4"><div class="interface-text"><h2>Introducing <span class="purple">ARIA.</span></h2><p><strong>Agentic Reality Interface Architecture.</strong> Intelligence at the interface between you and everything. One continuous layer. Always present. Never in the way.</p></div></div>
@@ -117,7 +117,7 @@ const PC=6000;
 const C={gold:new THREE.Color(0xc9a96e),teal:new THREE.Color(0x7eb8a8),dim:new THREE.Color(0x2a2620),bright:new THREE.Color(0xe2ddd3),purple:new THREE.Color(0xa78bfa),red:new THREE.Color(0xf87171),green:new THREE.Color(0x28c840)};
 function recolor(accent){const ca=geo.attributes.color.array;for(let i=0;i<PC;i++){const i3=i*3;const r=Math.random();let c;if(r<0.18)c=accent;else if(r<0.28)c=C.teal;else if(r<0.38)c=C.bright;else c=C.dim;ca[i3]=c.r;ca[i3+1]=c.g;ca[i3+2]=c.b}geo.attributes.color.needsUpdate=true}
 const mouse={x:0,y:0,nx:0,ny:0};
-let scrollPct=0,lastScene=-1,termShown=false,sensesShown=false;
+let scrollPct=0,lastScene=-1,termShown=false,sensesShown=false,termDissolved=false;
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
 renderer.setSize(window.innerWidth,window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
@@ -236,7 +236,7 @@ function runTerm(){
       }
       body.appendChild(div);
       requestAnimationFrame(()=>div.classList.add('on'));
-      if(line.last){setTimeout(()=>{const term=document.querySelector('.terminal-3d');if(term)term.classList.add('dissolving');T_Release();recolor(C.teal);lmat.opacity=0.02;const mx=document.getElementById('scroll-spacer').offsetHeight-window.innerHeight;const targetScroll=sR[3][0]*mx;window.scrollTo({top:targetScroll,behavior:'smooth'})},2500)}
+      if(line.last&&!termDissolved){termDissolved=true;setTimeout(()=>{const term=document.querySelector('.terminal-3d');if(term)term.classList.add('dissolving');T_Release();recolor(C.teal);lmat.opacity=0.02;const mx=document.getElementById('scroll-spacer').offsetHeight-window.innerHeight;window.scrollTo({top:sR[3][0]*mx,behavior:'smooth'})},2500)}
     },delay);
   });
 }
