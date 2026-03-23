@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capabilities — The Last Prompt</title>
+<meta name="description" content="Open-source tools built by The Last Prompt. Camera correction, video intelligence, and more.">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Newsreader:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;min-height:100vh;background:#030305;color:#e2ddd3;font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(201,169,110,0.25)}
+
+/* grain */
+body::after{
+  content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  mix-blend-mode:screen;
+}
+
+header{
+  padding:40px 40px 0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.back{
+  font-family:'Space Mono',monospace;font-size:0.72rem;
+  color:#5a564f;text-decoration:none;letter-spacing:0.05em;
+  transition:color .2s;
+}
+.back:hover{color:#c9a96e}
+.back span{margin-right:6px}
+
+.container{
+  max-width:860px;margin:0 auto;
+  padding:80px 40px 120px;
+}
+
+h1{
+  font-family:'Newsreader',serif;
+  font-size:clamp(2rem,5vw,3.2rem);
+  font-weight:300;letter-spacing:-0.02em;
+  margin-bottom:12px;
+}
+h1 em{font-style:italic;color:#c9a96e}
+
+.subtitle{
+  font-size:clamp(0.9rem,1.6vw,1.05rem);
+  color:#5a564f;line-height:1.7;
+  max-width:520px;
+  margin-bottom:64px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:24px;
+}
+
+.card{
+  position:relative;
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:8px;
+  padding:36px 32px;
+  background:rgba(255,255,255,0.015);
+  backdrop-filter:blur(8px);
+  transition:border-color .25s, background .25s, transform .25s;
+  text-decoration:none;
+  color:inherit;
+  display:block;
+}
+.card:hover{
+  border-color:rgba(201,169,110,0.25);
+  background:rgba(201,169,110,0.03);
+  transform:translateY(-2px);
+}
+
+.card-top{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:16px;margin-bottom:16px;
+}
+
+.card-label{
+  font-family:'Space Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:#3d3a36;
+  margin-bottom:8px;
+}
+
+.card-title{
+  font-family:'Newsreader',serif;
+  font-size:clamp(1.3rem,3vw,1.7rem);
+  font-weight:300;letter-spacing:-0.01em;
+}
+
+.card-badge{
+  flex-shrink:0;
+  font-family:'Space Mono',monospace;
+  font-size:0.58rem;letter-spacing:0.1em;
+  text-transform:uppercase;
+  padding:5px 10px;
+  border-radius:4px;
+  white-space:nowrap;
+}
+.badge-live{
+  color:#28c840;
+  background:rgba(40,200,64,0.08);
+  border:1px solid rgba(40,200,64,0.15);
+}
+.badge-github{
+  color:#a78bfa;
+  background:rgba(167,139,250,0.08);
+  border:1px solid rgba(167,139,250,0.15);
+}
+
+.card-desc{
+  font-size:0.92rem;color:#8a847a;
+  line-height:1.75;
+  margin-bottom:20px;
+}
+
+.card-tags{
+  display:flex;flex-wrap:wrap;gap:8px;
+}
+.tag{
+  font-family:'Space Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.08em;
+  color:#5a564f;
+  padding:4px 10px;
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:3px;
+}
+
+.card-arrow{
+  position:absolute;
+  bottom:32px;right:32px;
+  font-size:1.1rem;
+  color:#3d3a36;
+  transition:color .25s, transform .25s;
+}
+.card:hover .card-arrow{
+  color:#c9a96e;
+  transform:translateX(3px);
+}
+
+@media(max-width:600px){
+  header{padding:24px 20px 0}
+  .container{padding:48px 20px 80px}
+  .card{padding:28px 24px}
+  .card-arrow{bottom:24px;right:24px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="back" href="/"><span>&larr;</span> The Last Prompt</a>
+</header>
+
+<div class="container">
+  <h1>Open <em>Capabilities</em></h1>
+  <p class="subtitle">Tools we've built and open-sourced. Some run in the browser, some need a local install.</p>
+
+  <div class="grid">
+
+    <a class="card" href="/capabilities/autolut/">
+      <div class="card-top">
+        <div>
+          <div class="card-label">01 &mdash; Color Science</div>
+          <div class="card-title">AutoLUT</div>
+        </div>
+        <span class="card-badge badge-live">Live</span>
+      </div>
+      <p class="card-desc">Precise camera color correction from a single frame. Shoot a ColorChecker, upload, mark corners, get a broadcast-grade .cube LUT in seconds. Runs entirely in the browser.</p>
+      <div class="card-tags">
+        <span class="tag">Browser</span>
+        <span class="tag">Color Correction</span>
+        <span class="tag">.cube LUT</span>
+        <span class="tag">No Backend</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a class="card" href="https://github.com/sameeeeeeep/video2ai" target="_blank" rel="noopener">
+      <div class="card-top">
+        <div>
+          <div class="card-label">02 &mdash; Video Intelligence</div>
+          <div class="card-title">video2ai</div>
+        </div>
+        <span class="card-badge badge-github">GitHub</span>
+      </div>
+      <p class="card-desc">Turn any video into AI-ready structured content. Extracts key frames, transcribes audio, auto-detects visual themes &mdash; all running locally on Apple Silicon's Neural Engine. No cloud, no API keys.</p>
+      <div class="card-tags">
+        <span class="tag">Python</span>
+        <span class="tag">Apple Vision</span>
+        <span class="tag">Whisper</span>
+        <span class="tag">Local Only</span>
+      </div>
+      <span class="card-arrow">&nearr;</span>
+    </a>
+
+  </div>
+</div>
+
+</body>
+</html>
