@@ -70,6 +70,79 @@ canvas{display:block}
 .sense-st-soon{color:#c9a96e}
 .sense-st-future{color:#3d3a36}
 
+/* POV SHARED */
+.pov-container{display:flex;flex-direction:column;align-items:center;gap:24px;width:100%;height:100%;justify-content:center;padding:60px 24px 24px}
+.pov-label{font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#5a564f;display:flex;align-items:center;gap:12px}
+.pov-num{color:#c9a96e}
+.pov-badge{font-size:0.5rem;padding:2px 8px;border:1px solid rgba(255,255,255,0.08);border-radius:2px}
+.pov-live{color:#28c840;border-color:rgba(40,200,64,0.2)}
+.pov-soon{color:#c9a96e;border-color:rgba(201,169,110,0.2)}
+.pov-future{color:#3d3a36;border-color:rgba(61,58,54,0.2)}
+.pov-caption{font-size:0.85rem;color:#5a564f;text-align:center;max-width:460px;line-height:1.6}
+
+/* SCREEN POV */
+.pov-screen{width:min(720px,90vw);border:1px solid rgba(255,255,255,0.08);border-radius:8px;overflow:hidden;background:rgba(20,20,30,0.9);box-shadow:0 20px 80px rgba(0,0,0,0.6)}
+.pov-menubar{display:flex;justify-content:space-between;padding:6px 14px;background:rgba(40,40,50,0.8);font-size:0.6rem;color:#8a847a;font-family:'DM Sans',sans-serif;border-bottom:1px solid rgba(255,255,255,0.04)}
+.pov-mb-left,.pov-mb-right{letter-spacing:0.02em}
+.pov-desktop{position:relative;min-height:320px;padding:20px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.pov-win{border:1px solid rgba(255,255,255,0.06);border-radius:6px;overflow:hidden;background:rgba(15,15,22,0.95);flex:1;min-width:200px}
+.pov-win-bar{display:flex;gap:5px;padding:8px 12px;background:rgba(255,255,255,0.02);border-bottom:1px solid rgba(255,255,255,0.04);align-items:center}
+.pov-win-bar .dot{width:7px;height:7px}
+.pov-win-title{font-family:'Space Mono',monospace;font-size:0.55rem;color:#5a564f;margin-left:8px}
+.pov-win-body{padding:12px 14px;font-size:0.72rem;line-height:1.8}
+.pov-code-body{font-family:'Space Mono',monospace}
+.pov-code-line{display:flex;gap:12px}
+.pov-ln{color:#3d3a36;min-width:20px;text-align:right}
+.pov-err{color:#f87171}
+.pov-dim{color:#5a564f}
+.pov-task-title{color:#e2ddd3;font-weight:500;margin-bottom:4px}
+.pov-task-status{color:#c9a96e;font-family:'Space Mono',monospace;font-size:0.6rem}
+.pov-toast{position:absolute;bottom:20px;right:20px;width:320px;background:rgba(8,8,14,0.95);border:1px solid rgba(52,211,153,0.15);border-radius:10px;padding:14px 16px;backdrop-filter:blur(16px);box-shadow:0 8px 40px rgba(0,0,0,0.4);animation:toastIn 0.5s ease 1.5s both}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px) scale(0.97)}to{opacity:1;transform:none}}
+.pov-toast-header{display:flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:0.7rem;color:#e2ddd3;margin-bottom:10px}
+.pov-toast-ghost{width:18px;height:18px}
+.pov-toast-mode{font-size:0.5rem;color:#34d399;border:1px solid rgba(52,211,153,0.2);padding:1px 6px;border-radius:2px;margin-left:auto}
+.pov-toast-body{font-size:0.72rem;color:#8a847a;line-height:1.65;margin-bottom:12px}
+.pov-toast-actions{display:flex;gap:8px}
+.pov-toast-btn{font-family:'Space Mono',monospace;font-size:0.58rem;padding:6px 14px;border:1px solid rgba(255,255,255,0.08);border-radius:4px;color:#8a847a;cursor:pointer}
+.pov-btn-approve{background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.2);color:#34d399}
+
+/* VOICE POV */
+.pov-voice{display:flex;flex-direction:column;align-items:center;gap:28px;width:min(580px,90vw)}
+.pov-voice-ctx{font-family:'Newsreader',serif;font-size:1.1rem;color:#5a564f;font-style:italic;text-align:center}
+.pov-voice-wave{width:100%;height:60px;position:relative;overflow:hidden}
+.pov-voice-wave::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(201,169,110,0.15) 3px,rgba(201,169,110,0.15) 4px);animation:waveShift 2s linear infinite}
+@keyframes waveShift{from{transform:translateX(0)}to{transform:translateX(-40px)}}
+.pov-voice-thought{display:flex;flex-direction:column;gap:12px;width:100%;padding:16px 20px;border-left:2px solid rgba(201,169,110,0.2);background:rgba(201,169,110,0.03)}
+.pov-vt-line{font-size:0.85rem;color:#c9a96e;opacity:0;transform:translateX(-8px);transition:all 0.5s ease;line-height:1.6}
+.pov-vt-line.on{opacity:1;transform:none}
+.pov-voice-sub{font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:0.1em;color:#3d3a36;text-transform:uppercase}
+
+/* VISION POV */
+.pov-vision{width:min(700px,90vw);height:380px;position:relative}
+.pov-vision-frame{width:100%;height:100%;position:relative;border:1px solid rgba(167,139,250,0.12);border-radius:4px;overflow:hidden;background:rgba(10,8,20,0.6)}
+.pov-vision-env{position:absolute;inset:0}
+.pov-v-object{position:absolute;display:flex;flex-direction:column;gap:2px;animation:vObjIn 0.6s ease both}
+@keyframes vObjIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:none}}
+.pov-v-tag{font-family:'Space Mono',monospace;font-size:0.6rem;color:#a78bfa;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.15);padding:3px 10px;border-radius:2px;white-space:nowrap}
+.pov-v-sub{font-size:0.6rem;color:#5a564f;padding-left:10px}
+.pov-vision-corners{position:absolute;inset:0;pointer-events:none}
+.pov-vc{position:absolute;width:24px;height:24px;border-color:rgba(167,139,250,0.25);border-style:solid;border-width:0}
+.pov-vc-tl{top:8px;left:8px;border-top-width:2px;border-left-width:2px}
+.pov-vc-tr{top:8px;right:8px;border-top-width:2px;border-right-width:2px}
+.pov-vc-bl{bottom:8px;left:8px;border-bottom-width:2px;border-left-width:2px}
+.pov-vc-br{bottom:8px;right:8px;border-bottom-width:2px;border-right-width:2px}
+.pov-vision-scan{position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,transparent,rgba(167,139,250,0.3),transparent);animation:vScan 3s linear infinite}
+@keyframes vScan{from{top:0}to{top:100%}}
+
+/* NEURAL POV */
+.pov-neural{width:min(600px,90vw);height:300px;position:relative}
+.pov-neural-thoughts{position:absolute;inset:0}
+.pov-nt{position:absolute;font-family:'Newsreader',serif;font-size:1rem;color:rgba(90,86,79,0.6);opacity:0;transition:all 0.8s ease}
+.pov-nt.on{opacity:1}
+.pov-nt:nth-child(odd){color:rgba(226,221,211,0.3);font-style:italic}
+.pov-nt:nth-child(even){color:rgba(126,184,168,0.4);font-family:'Space Mono',monospace;font-size:0.75rem}
+
 /* POV HUD */
 .pov-hud{width:100%;height:100%;display:flex;align-items:center;justify-content:center;perspective:800px}
 .hud-frame{position:relative;width:min(800px,92vw);height:min(500px,75vh);border:1px solid rgba(126,184,168,0.15);border-radius:4px;display:flex;flex-direction:column;justify-content:space-between;padding:20px 28px;background:rgba(3,3,5,0.4);backdrop-filter:blur(4px);transform:rotateX(1deg)}
@@ -134,10 +207,79 @@ canvas{display:block}
 <div class="scene" id="scene-2"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
 <div class="scene" id="scene-3"><div class="prose-float"><h2>What if agentic intelligence became <em>ambient?</em></h2></div></div>
 <div class="scene" id="scene-4"><div class="interface-text"><h2>Introducing <span class="purple">ARIA.</span></h2><p><strong>Agentic Reality Interface Architecture.</strong> Intelligence at the interface between you and everything. One continuous layer. Always present. Never in the way.</p></div></div>
-<div class="scene" id="scene-5"><div class="sense-scene"><div class="sense-icon-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="sense-num-lg">01</div><h2 class="sense-title">Screen</h2><p class="sense-desc">AI on your screen. Sees what you see. Acts before you ask.</p><span class="sense-status sense-st-live">Phase 1 -- Live</span></div></div>
-<div class="scene" id="scene-6"><div class="sense-scene"><div class="sense-icon-lg sense-icon-voice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 1a3 3 0 00-3 3v7a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="18" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><div class="sense-num-lg">02</div><h2 class="sense-title">Voice</h2><p class="sense-desc">A second voice. Hears what you hear. Responds in real time.</p><span class="sense-status sense-st-soon">Coming soon</span></div></div>
-<div class="scene" id="scene-7"><div class="sense-scene"><div class="sense-icon-lg sense-icon-vision"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/></svg></div><div class="sense-num-lg">03</div><h2 class="sense-title">Vision</h2><p class="sense-desc">AI through your eyes. Sees the world you walk through.</p><span class="sense-status sense-st-soon">Coming soon</span></div></div>
-<div class="scene" id="scene-8"><div class="sense-scene"><div class="sense-icon-lg sense-icon-neural"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2a7 7 0 017 7c0 3-2 5-4 7l-1 2h-4l-1-2c-2-2-4-4-4-7a7 7 0 017-7z"/><line x1="10" y1="22" x2="14" y2="22"/></svg></div><div class="sense-num-lg">04</div><h2 class="sense-title">Neural</h2><p class="sense-desc">Thought to thought. No interface left. Just intelligence.</p><span class="sense-status sense-st-future">Unplanned</span></div></div>
+<!-- Scene 5: SCREEN - macOS POV -->
+<div class="scene" id="scene-5">
+  <div class="pov-container">
+    <div class="pov-label"><span class="pov-num">01</span> Screen <span class="pov-badge pov-live">Live</span></div>
+    <div class="pov-screen">
+      <div class="pov-menubar"><span class="pov-mb-left">Finder  File  Edit  View</span><span class="pov-mb-right">Tue 4:23 PM</span></div>
+      <div class="pov-desktop">
+        <div class="pov-win pov-win-code"><div class="pov-win-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pov-win-title">routes/users.ts</span></div><div class="pov-win-body pov-code-body"><div class="pov-code-line"><span class="pov-ln">47</span><span class="pov-err">const user = await db.getUserById(id);</span></div><div class="pov-code-line"><span class="pov-ln">48</span><span class="pov-dim">return user.profile.name;</span></div></div></div>
+        <div class="pov-win pov-win-slack"><div class="pov-win-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pov-win-title">ClickUp - CL-247</span></div><div class="pov-win-body"><div class="pov-task-title">Fix null ref in getUserById</div><div class="pov-task-status">Status: In Progress</div></div></div>
+        <div class="pov-toast" id="pov-toast-screen">
+          <div class="pov-toast-header"><img src="/img/ghost-green.png" alt="" class="pov-toast-ghost">Autoclaw <span class="pov-toast-mode">TASK</span></div>
+          <div class="pov-toast-body">Null ref at getUserById():47. Missing optional chain. I've patched it. Tests passing 14/14.</div>
+          <div class="pov-toast-actions"><span class="pov-toast-btn pov-btn-approve">Approve</span><span class="pov-toast-btn pov-btn-diff">View diff</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="pov-caption">Autopilot for your Mac. Sees tasks, reads code, ships fixes. You just approve.</p>
+  </div>
+</div>
+
+<!-- Scene 6: VOICE - inner voice POV -->
+<div class="scene" id="scene-6">
+  <div class="pov-container">
+    <div class="pov-label"><span class="pov-num">02</span> Voice <span class="pov-badge pov-soon">Soon</span></div>
+    <div class="pov-voice">
+      <div class="pov-voice-ctx">You're in a standup. PM mentions "the Q3 numbers."</div>
+      <div class="pov-voice-wave" id="voice-wave"></div>
+      <div class="pov-voice-thought" id="voice-thought">
+        <div class="pov-vt-line" data-delay="0">Q3 revenue was down 12% from the deck you sent last week.</div>
+        <div class="pov-vt-line" data-delay="600">The drop was in enterprise, not SMB.</div>
+        <div class="pov-vt-line" data-delay="1200">Sarah flagged churn in the Acme account yesterday.</div>
+      </div>
+      <div class="pov-voice-sub">Not a command. Not a response. A thought alongside yours.</div>
+    </div>
+    <p class="pov-caption">A voice in your head. Thinks alongside you. Fills in what you need before you ask.</p>
+  </div>
+</div>
+
+<!-- Scene 7: VISION - real world POV -->
+<div class="scene" id="scene-7">
+  <div class="pov-container">
+    <div class="pov-label"><span class="pov-num">03</span> Vision <span class="pov-badge pov-soon">Soon</span></div>
+    <div class="pov-vision">
+      <div class="pov-vision-frame">
+        <div class="pov-vision-env">
+          <div class="pov-v-object" style="top:20%;left:15%"><span class="pov-v-tag">Part #A2-4170</span><span class="pov-v-sub">3 in stock, Bay C-12</span></div>
+          <div class="pov-v-object" style="top:55%;left:60%"><span class="pov-v-tag">Safety hazard</span><span class="pov-v-sub">Wet floor, east corridor</span></div>
+          <div class="pov-v-object" style="top:35%;left:75%"><span class="pov-v-tag">Menu item: Ramen</span><span class="pov-v-sub">$14 - contains gluten, shellfish</span></div>
+        </div>
+        <div class="pov-vision-corners"><span class="pov-vc pov-vc-tl"></span><span class="pov-vc pov-vc-tr"></span><span class="pov-vc pov-vc-bl"></span><span class="pov-vc pov-vc-br"></span></div>
+        <div class="pov-vision-scan" id="vision-scan"></div>
+      </div>
+    </div>
+    <p class="pov-caption">Intelligence applied to reality. Reads the world you walk through.</p>
+  </div>
+</div>
+
+<!-- Scene 8: NEURAL - thought dissolves into action -->
+<div class="scene" id="scene-8">
+  <div class="pov-container">
+    <div class="pov-label"><span class="pov-num">04</span> Neural <span class="pov-badge pov-future">Unplanned</span></div>
+    <div class="pov-neural">
+      <div class="pov-neural-thoughts">
+        <div class="pov-nt" data-delay="0" style="top:30%;left:20%">reschedule tomorrow</div>
+        <div class="pov-nt" data-delay="400" style="top:50%;left:55%">done.</div>
+        <div class="pov-nt" data-delay="900" style="top:25%;left:65%">what was that paper about</div>
+        <div class="pov-nt" data-delay="1300" style="top:60%;left:25%">retrieved. 3 results.</div>
+        <div class="pov-nt" data-delay="1800" style="top:45%;left:42%">no interface left.</div>
+      </div>
+    </div>
+    <p class="pov-caption">Thought becomes action. No screen. No voice. No eyes. Just intelligence.</p>
+  </div>
+</div>
 <div class="scene" id="scene-9"><div class="final-cta">
   <img src="/img/ghost-green.png" alt="" class="ghost-img">
   <div class="phase-tag">Phase 1 -- Live on macOS</div>
@@ -232,8 +374,22 @@ T_Dense();
 const sIds=['scene-0','scene-1','scene-2','scene-3','scene-4','scene-5','scene-6','scene-7','scene-8','scene-9'];
 const sR=[[0,0.05],[0.05,0.15],[0.15,0.28],[0.28,0.38],[0.38,0.48],[0.48,0.58],[0.58,0.68],[0.68,0.78],[0.78,0.88],[0.88,1.0]];
 function getS(p){for(let i=0;i<sR.length;i++)if(p>=sR[i][0]&&p<sR[i][1])return i;return sR.length-1}
-function updateScenes(){const s=getS(scrollPct);if(s===lastScene)return;lastScene=s;sIds.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===s));document.getElementById('nav').classList.add('show');document.getElementById('scroll-hint').classList.toggle('show',s===0);interfaceActive=false;switch(s){case 0:T_Dense();lmat.opacity=0.12;recolor(C.gold);break;case 1:T_Apps();lmat.opacity=0.10;recolor(C.red);break;case 2:T_Dense();lmat.opacity=0.08;recolor(C.gold);const term=document.querySelector('.terminal-3d');if(term){term.classList.remove('dissolving');term.style.opacity='1'}runTerm();break;case 3:T_Release();lmat.opacity=0.02;recolor(C.teal);break;case 4:T_Interface();lmat.opacity=0.04;recolor(C.purple);interfaceActive=true;break;case 5:T_Screen();lmat.opacity=0.08;recolor(C.green);break;case 6:T_Wave();lmat.opacity=0.06;recolor(C.gold);break;case 7:T_Eye();lmat.opacity=0.06;recolor(C.purple);break;case 8:T_Neural();lmat.opacity=0.08;recolor(C.dim);break;case 9:T_Ambient();lmat.opacity=0.02;recolor(C.teal);break}}
+function updateScenes(){const s=getS(scrollPct);if(s===lastScene)return;lastScene=s;sIds.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===s));document.getElementById('nav').classList.add('show');document.getElementById('scroll-hint').classList.toggle('show',s===0);interfaceActive=false;switch(s){case 0:T_Dense();lmat.opacity=0.12;recolor(C.gold);break;case 1:T_Apps();lmat.opacity=0.10;recolor(C.red);break;case 2:T_Dense();lmat.opacity=0.08;recolor(C.gold);const term=document.querySelector('.terminal-3d');if(term){term.classList.remove('dissolving');term.style.opacity='1'}runTerm();break;case 3:T_Release();lmat.opacity=0.02;recolor(C.teal);break;case 4:T_Interface();lmat.opacity=0.04;recolor(C.purple);interfaceActive=true;break;case 5:T_Screen();lmat.opacity=0.08;recolor(C.green);break;case 6:T_Wave();lmat.opacity=0.06;recolor(C.gold);activateVoice();break;case 7:T_Eye();lmat.opacity=0.06;recolor(C.purple);break;case 8:T_Neural();lmat.opacity=0.08;recolor(C.dim);activateNeural();break;case 9:T_Ambient();lmat.opacity=0.02;recolor(C.teal);break}}
 
+function activateVoice(){
+  document.querySelectorAll('.pov-vt-line').forEach(el=>{el.classList.remove('on')});
+  document.querySelectorAll('.pov-vt-line').forEach((el,i)=>{
+    const d=parseInt(el.getAttribute('data-delay'))||0;
+    setTimeout(()=>el.classList.add('on'),500+d);
+  });
+}
+function activateNeural(){
+  document.querySelectorAll('.pov-nt').forEach(el=>{el.classList.remove('on')});
+  document.querySelectorAll('.pov-nt').forEach((el,i)=>{
+    const d=parseInt(el.getAttribute('data-delay'))||0;
+    setTimeout(()=>el.classList.add('on'),400+d);
+  });
+}
 function runTerm(){
   const body=document.getElementById('term-body');
   body.textContent='';
