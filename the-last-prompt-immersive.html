@@ -22,8 +22,8 @@ canvas{display:block}
 .opening{position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
 .adam-hands{position:relative;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .hand-left,.hand-right{width:min(800px,50vw);height:auto;pointer-events:none;flex-shrink:0;will-change:transform,opacity}
-.hand-left{margin-right:0}
-.hand-right{margin-left:0}
+.hand-left{margin-right:-2px}
+.hand-right{margin-left:-2px}
 .opening-question{text-align:center;max-width:90vw;margin-top:32px;opacity:0;transform:translateY(16px);transition:opacity 0.8s ease 0.3s,transform 0.8s ease 0.3s}
 .opening-question.show{opacity:1;transform:translateY(0)}
 .opening-question h2{font-family:'Newsreader',serif;font-size:clamp(1.1rem,2.5vw,1.6rem);font-weight:300;color:#5a564f}
@@ -396,9 +396,9 @@ function T_Neural(){cachedTargets('neural',function(t){const nodes=[];for(let l=
 function T_Ambient(){cachedTargets('ambient',function(t){for(let i=0;i<PC;i++){const i3=i*3;const r=200+Math.random()*500;const th=Math.random()*Math.PI*2;const p=Math.acos(2*Math.random()-1);t[i3]=r*Math.sin(p)*Math.cos(th);t[i3+1]=r*Math.sin(p)*Math.sin(th);t[i3+2]=r*Math.cos(p)-100}})}
 T_Dense();
 const sIds=['scene-0','scene-1','scene-2','scene-3','scene-4','scene-5','scene-6','scene-7','scene-8','scene-9'];
-const sR=[[0,0.05],[0.05,0.15],[0.15,0.28],[0.28,0.38],[0.38,0.48],[0.48,0.58],[0.58,0.68],[0.68,0.78],[0.78,0.88],[0.88,1.0]];
+const sR=[[0,0.12],[0.12,0.20],[0.20,0.32],[0.32,0.42],[0.42,0.52],[0.52,0.61],[0.61,0.70],[0.70,0.79],[0.79,0.88],[0.88,1.0]];
 function getS(p){for(let i=0;i<sR.length;i++)if(p>=sR[i][0]&&p<sR[i][1])return i;return sR.length-1}
-function updateScenes(){const s=getS(scrollPct);const changed=s!==lastScene;lastScene=s;if(!changed)return;sIds.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===s));document.getElementById('nav').classList.add('show');document.getElementById('scroll-hint').classList.toggle('show',s===0);interfaceActive=false;switch(s){case 0:T_Dense();lmat.opacity=0.12;recolor(C.gold);window._particlesRevealed=false;break;case 1:T_Apps();lmat.opacity=0.10;recolor(C.red);break;case 2:T_Dense();lmat.opacity=0.08;recolor(C.gold);resetTerm();runTerm();break;case 3:T_Release();lmat.opacity=0.02;recolor(C.teal);break;case 4:T_Interface();lmat.opacity=0.04;recolor(C.purple);interfaceActive=true;break;case 5:T_Screen();lmat.opacity=0.08;recolor(C.green);break;case 6:T_Wave();lmat.opacity=0.06;recolor(C.gold);activateVoice();break;case 7:T_Eye();lmat.opacity=0.06;recolor(C.purple);break;case 8:T_Neural();lmat.opacity=0.08;recolor(C.dim);activateNeural();break;case 9:T_Ambient();lmat.opacity=0.02;recolor(C.teal);break}}
+function updateScenes(){const s=getS(scrollPct);const changed=s!==lastScene;lastScene=s;if(!changed)return;sIds.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===s));document.getElementById('nav').classList.add('show');document.getElementById('scroll-hint').classList.toggle('show',s===0);interfaceActive=false;switch(s){case 0:T_Dense();lmat.opacity=0.12;recolor(C.gold);break;case 1:T_Apps();lmat.opacity=0.10;recolor(C.red);break;case 2:T_Dense();lmat.opacity=0.08;recolor(C.gold);resetTerm();runTerm();break;case 3:T_Release();lmat.opacity=0.02;recolor(C.teal);break;case 4:T_Interface();lmat.opacity=0.04;recolor(C.purple);interfaceActive=true;break;case 5:T_Screen();lmat.opacity=0.08;recolor(C.green);break;case 6:T_Wave();lmat.opacity=0.06;recolor(C.gold);activateVoice();break;case 7:T_Eye();lmat.opacity=0.06;recolor(C.purple);break;case 8:T_Neural();lmat.opacity=0.08;recolor(C.dim);activateNeural();break;case 9:T_Ambient();lmat.opacity=0.02;recolor(C.teal);break}}
 
 function activateVoice(){
   document.querySelectorAll('.pov-vt-line').forEach(el=>{el.classList.remove('on')});
@@ -502,30 +502,38 @@ sampleHandPoints();
 // Hands and particles are scroll-driven in scene 0
 const handL=document.querySelector('.hand-left');
 const handR=document.querySelector('.hand-right');
+const openQ=document.querySelector('.opening-question');
+const startOffset=600; // how far apart hands start
 function updateScene0Scroll(){
   const s0end=sR[0][1];
   if(scrollPct<=s0end){
     const p=Math.min(scrollPct/s0end,1);
-    // Hands slide in: 300px offset at 0, 0 at 1
-    const offset=300*(1-p);
-    const opacity=Math.min(p*2,0.9);
+    // Hands: start 600px apart, end at 0
+    const offset=startOffset*(1-p);
+    // Opacity: visible immediately but subtle, full at 40%
+    const opacity=Math.min(0.3+p*1.5,0.9);
     if(handL){handL.style.transform='translateX(-'+offset+'px)';handL.style.opacity=opacity}
     if(handR){handR.style.transform='translateX('+offset+'px)';handR.style.opacity=opacity}
-    // Particles fade in
-    mat.uniforms.uAlpha.value=Math.min(p*3,1.0);
-    if(p>0.8)window._particlesRevealed=true;
-    // Text reveals
-    const q=document.querySelector('.opening-question');
-    if(q){if(p>0.4)q.classList.add('show');else q.classList.remove('show')}
-  } else if(window._particlesRevealed){
+    // Text: appears when hands are close (after 60%)
+    if(openQ){if(p>0.6)openQ.classList.add('show');else openQ.classList.remove('show')}
+    // Particles: only appear at the very end (after 80%)
+    if(p>0.8){
+      mat.uniforms.uAlpha.value=Math.min((p-0.8)*5,1.0);
+      window._particlesRevealed=true;
+    } else {
+      mat.uniforms.uAlpha.value=0;
+      window._particlesRevealed=false;
+    }
+  } else {
     mat.uniforms.uAlpha.value=1.0;
     if(handL){handL.style.transform='translateX(0)';handL.style.opacity='0.9'}
     if(handR){handR.style.transform='translateX(0)';handR.style.opacity='0.9'}
+    if(openQ)openQ.classList.add('show');
   }
 }
-// Init hands off-screen
-if(handL){handL.style.transform='translateX(-300px)';handL.style.opacity='0'}
-if(handR){handR.style.transform='translateX(300px)';handR.style.opacity='0'}
+// Init hands far apart
+if(handL){handL.style.transform='translateX(-'+startOffset+'px)';handL.style.opacity='0.3'}
+if(handR){handR.style.transform='translateX('+startOffset+'px)';handR.style.opacity='0.3'}
 updateScenes();
 setTimeout(()=>document.getElementById('scroll-hint').classList.add('show'),1800);
 animate();
