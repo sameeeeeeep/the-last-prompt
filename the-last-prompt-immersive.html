@@ -276,7 +276,7 @@ function runTerm(){
       }
       body.appendChild(div);
       requestAnimationFrame(()=>div.classList.add('on'));
-      if(line.last){setTimeout(()=>{const term=document.querySelector('.terminal-3d');if(term&&lastScene===2)term.classList.add('dissolving')},2500)}
+      if(line.last){setTimeout(()=>{const term=document.querySelector('.terminal-3d');if(term&&lastScene===2){term.classList.add('dissolving');setTimeout(()=>{const mx=document.getElementById('scroll-spacer').offsetHeight-window.innerHeight;window.scrollTo({top:sR[3][0]*mx,behavior:'smooth'})},1200)}},2500)}
     },delay);
   });
 }
@@ -300,7 +300,8 @@ function animate(){
   renderer.render(sc,cam);
 }
 window.addEventListener('mousemove',e=>{mouse.x=(e.clientX/window.innerWidth)*2-1;mouse.y=-(e.clientY/window.innerHeight)*2+1});
-window.addEventListener('scroll',()=>{const mx=document.getElementById('scroll-spacer').offsetHeight-window.innerHeight;scrollPct=Math.min(window.scrollY/mx,1);document.getElementById('progress-fill').style.width=(scrollPct*100)+'%';updateScenes()},{passive:true});
+let snapTimer=null;let isAutoScrolling=false;
+window.addEventListener('scroll',()=>{const mx=document.getElementById('scroll-spacer').offsetHeight-window.innerHeight;scrollPct=Math.min(window.scrollY/mx,1);document.getElementById('progress-fill').style.width=(scrollPct*100)+'%';updateScenes();if(!isAutoScrolling){clearTimeout(snapTimer);snapTimer=setTimeout(()=>{const s=getS(scrollPct);const mid=(sR[s][0]+sR[s][1])/2;const snapTo=mid*mx;isAutoScrolling=true;window.scrollTo({top:snapTo,behavior:'smooth'});setTimeout(()=>{isAutoScrolling=false},600)},150)}},{passive:true});
 window.addEventListener('resize',()=>{cam.aspect=window.innerWidth/window.innerHeight;cam.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight)});
 window.addEventListener('touchmove',e=>{if(e.touches.length){mouse.x=(e.touches[0].clientX/window.innerWidth)*2-1;mouse.y=-(e.touches[0].clientY/window.innerHeight)*2+1}},{passive:true});
 // Sample hand image for particle positions
