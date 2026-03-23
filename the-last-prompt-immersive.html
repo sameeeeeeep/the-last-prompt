@@ -21,9 +21,9 @@ canvas{display:block}
 .scene.active .clickable{pointer-events:auto}
 .opening{position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
 .adam-hands{position:relative;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.hand-left,.hand-right{width:min(720px,50vw);height:auto;pointer-events:none;flex-shrink:0;will-change:transform,opacity}
-.hand-left{margin-right:-370px}
-.hand-right{margin-left:-370px}
+.hand-left,.hand-right{width:min(800px,50vw);height:auto;pointer-events:none;flex-shrink:0;will-change:transform,opacity}
+.hand-left{margin-right:0}
+.hand-right{margin-left:0}
 .opening-question{text-align:center;max-width:90vw;margin-top:32px;opacity:0;transform:translateY(16px);transition:opacity 0.8s ease 0.3s,transform 0.8s ease 0.3s}
 .opening-question.show{opacity:1;transform:translateY(0)}
 .opening-question h2{font-family:'Newsreader',serif;font-size:clamp(1.1rem,2.5vw,1.6rem);font-weight:300;color:#5a564f}
@@ -323,30 +323,40 @@ const lns=new THREE.LineSegments(lgeo,lmat);sc.add(lns);
 
 let handPoints=null;
 function sampleHandPoints(){
-  const img=document.getElementById('hands-img');
-  if(!img||!img.complete||img.naturalWidth===0)return;
-  const cv=document.createElement('canvas');
-  const w=img.naturalWidth,h=img.naturalHeight;
-  cv.width=w;cv.height=h;
-  const cx=cv.getContext('2d');
-  cx.drawImage(img,0,0);
-  const d=cx.getImageData(0,0,w,h).data;
-  const pts=[];
-  for(let y=0;y<h;y+=2){for(let x=0;x<w;x+=2){
-    const i=(y*w+x)*4;
-    const r=d[i],g=d[i+1],b=d[i+2],a=d[i+3];
-    // Select green-dominant pixels (AI hand)
-    if(a>15&&g>30&&g>=r&&g>=b){
-      // Map image coords to Three.js world coords
-      // Image center -> world origin, scale to ~400 wide
-      const wx=(x/w-0.5)*500;
-      const wy=-(y/h-0.5)*300;
-      // Weight: brighter green = more likely to be sampled
-      const weight=g>150?3:g>100?2:1;
-      for(let ww=0;ww<weight;ww++)pts.push([wx,wy]);
-    }
-  }}
-  handPoints=pts;
+  // Load a fresh copy of the full image to sample green pixels
+  const img=new Image();
+  img.crossOrigin='anonymous';
+  img.onload=function(){
+    const cv=document.createElement('canvas');
+    const w=img.naturalWidth,h=img.naturalHeight;
+    cv.width=w;cv.height=h;
+    const cx=cv.getContext('2d');
+    cx.drawImage(img,0,0);
+    try{
+      const d=cx.getImageData(0,0,w,h).data;
+      const pts=[];
+      // Only sample right half of image (the green/AI hand)
+      const startX=Math.floor(w*0.4);
+      for(let y=0;y<h;y+=3){for(let x=startX;x<w;x+=3){
+        const i=(y*w+x)*4;
+        const r=d[i],g=d[i+1],b=d[i+2],a=d[i+3];
+        if(a>20&&g>40&&g>r*0.8){
+          // Map: right half of image -> positive x in world, centered vertically
+          // The green hand is roughly in the right 40% of image
+          const wx=(x/w-0.5)*400;
+          const wy=-(y/h-0.5)*250;
+          const weight=g>150?4:g>80?2:1;
+          for(let ww=0;ww<weight;ww++)pts.push([wx,wy]);
+        }
+      }}
+      if(pts.length>200){
+        handPoints=pts;
+        delete tgtCache['dense_fallback'];
+        if(lastScene<=0)T_Dense();
+      }
+    }catch(e){}
+  };
+  img.src='/handsnobg.png';
 }
 // --- CACHED TARGET SYSTEM ---
 // Each formation is generated once and cached so scroll-back looks identical
@@ -486,8 +496,8 @@ window.addEventListener('resize',()=>{cam.aspect=window.innerWidth/window.innerH
 window.addEventListener('touchmove',e=>{if(e.touches.length){mouse.x=(e.touches[0].clientX/window.innerWidth)*2-1;mouse.y=-(e.touches[0].clientY/window.innerHeight)*2+1}},{passive:true});
 // Sample hand image for particle positions
 const himg=document.getElementById('hands-img');
-if(himg.complete){sampleHandPoints();T_Dense()}
-else{himg.addEventListener('load',()=>{sampleHandPoints();if(lastScene<=0)T_Dense()})}
+// Sample green hand pixels from the full image (async)
+sampleHandPoints();
 
 // Hands and particles are scroll-driven in scene 0
 const handL=document.querySelector('.hand-left');
