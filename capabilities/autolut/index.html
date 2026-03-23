@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoLUT — Color Correction LUT Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+
+:root{
+  --bg:#060608;
+  --s1:#0d0d10;
+  --s2:#13131a;
+  --border:#1c1c24;
+  --border-hi:#2e2e3a;
+  --accent:#e8c547;
+  --accent-glow:rgba(232,197,71,.2);
+  --accent-dim:rgba(232,197,71,.08);
+  --text:#ececf0;
+  --dim:#666672;
+  --muted:#3a3a48;
+  --good:#4fc87a;
+  --warn:#e89a47;
+  --bad:#e85547;
+  --mono:'JetBrains Mono',monospace;
+  --ui:'Syne',sans-serif;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--ui);
+  display:flex;
+  flex-direction:column;
+}
+
+/* ── GRAIN OVERLAY ── */
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  z-index:9998;
+  pointer-events:none;
+  opacity:.032;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  mix-blend-mode:screen;
+}
+
+/* ── HEADER ── */
+header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:11px 24px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  position:relative;
+  z-index:10;
+}
+.logo{
+  font-size:18px;
+  font-weight:800;
+  letter-spacing:-.6px;
+  display:flex;
+  align-items:center;
+  gap:1px;
+}
+.logo-a{color:var(--accent); text-shadow:0 0 20px var(--accent-glow);}
+.badge{
+  font-size:9px;
+  font-family:var(--mono);
+  color:var(--dim);
+  border:1px solid var(--border-hi);
+  border-radius:3px;
+  padding:2px 7px;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+}
+.header-right{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.card-link{
+  font-size:11px;
+  font-family:var(--mono);
+  color:var(--accent);
+  border:1px solid rgba(232,197,71,.25);
+  padding:4px 10px;
+  border-radius:4px;
+  text-decoration:none;
+  letter-spacing:.4px;
+  transition:all .15s;
+}
+.card-link:hover{
+  background:var(--accent-dim);
+  border-color:rgba(232,197,71,.5);
+}
+
+/* ── STAGES ── */
+main{flex:1;min-height:0;position:relative;}
+.stage{
+  position:absolute;
+  inset:0;
+  display:none;
+  flex-direction:column;
+  animation:fadeIn .25s ease;
+}
+.stage.active{display:flex;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+/* ════════════════════════════════════════
+   STAGE 1: UPLOAD
+════════════════════════════════════════ */
+#s-upload{
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  gap:0;
+}
+.upload-layout{
+  width:100%;
+  max-width:820px;
+  display:flex;
+  flex-direction:column;
+  gap:28px;
+}
+
+/* Hero */
+.hero{
+  display:flex;
+  align-items:baseline;
+  gap:16px;
+}
+.hero-title{
+  font-size:48px;
+  font-weight:800;
+  letter-spacing:-2px;
+  line-height:1;
+}
+.hero-title .a{
+  color:var(--accent);
+  text-shadow:0 0 40px var(--accent-glow);
+}
+.hero-sub{
+  font-size:13px;
+  color:var(--dim);
+  line-height:1.6;
+}
+
+/* Drop zones row */
+.zones{
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:10px;
+}
+.zone{
+  border:1px dashed var(--border-hi);
+  border-radius:10px;
+  padding:32px 28px;
+  cursor:pointer;
+  position:relative;
+  transition:border-color .18s, background .18s;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.zone:hover,.zone.over{
+  border-color:var(--accent);
+  background:var(--accent-dim);
+}
+.zone input[type=file]{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  cursor:pointer;
+}
+.zone-eyebrow{
+  font-size:9px;
+  font-family:var(--mono);
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  color:var(--dim);
+  margin-bottom:4px;
+}
+.zone-icon{
+  font-size:22px;
+  margin-bottom:4px;
+  opacity:.55;
+}
+.zone-title{
+  font-size:15px;
+  font-weight:700;
+}
+.zone-sub{
+  font-size:11px;
+  color:var(--dim);
+  font-family:var(--mono);
+}
+.zone-desc{
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.55;
+  margin-top:6px;
+}
+
+/* LUT zone loaded state */
+.zone-lut.loaded{
+  border-style:solid;
+  border-color:rgba(232,197,71,.4);
+  background:var(--accent-dim);
+}
+.lut-loaded-name{
+  font-size:12px;
+  font-family:var(--mono);
+  color:var(--accent);
+  font-weight:500;
+  display:none;
+}
+.zone-lut.loaded .lut-loaded-name{display:block;}
+.zone-lut.loaded .zone-sub{display:none;}
+.lut-clear{
+  position:absolute;
+  top:10px; right:12px;
+  font-size:14px;
+  background:none;
+  border:none;
+  color:var(--dim);
+  cursor:pointer;
+  padding:2px 4px;
+  display:none;
+}
+.zone-lut.loaded .lut-clear{display:block;}
+.lut-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  font-size:9px;
+  font-family:var(--mono);
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  color:var(--accent);
+  border:1px solid rgba(232,197,71,.3);
+  border-radius:3px;
+  padding:2px 7px;
+  margin-top:4px;
+  display:none;
+}
+.zone-lut.loaded .lut-badge{display:inline-flex;}
+
+/* Steps */
+.how{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  border-top:1px solid var(--border);
+  padding-top:20px;
+}
+.how-step{padding:0 4px;}
+.how-n{
+  font-size:9px;
+  font-family:var(--mono);
+  color:var(--accent);
+  margin-bottom:5px;
+  letter-spacing:1px;
+}
+.how-t{font-size:12px;font-weight:700;margin-bottom:3px;}
+.how-d{font-size:11px;color:var(--dim);line-height:1.5;}
+.how-d a{color:var(--accent);text-decoration:none;}
+
+/* ════════════════════════════════════════
+   STAGE 2: MARK
+════════════════════════════════════════ */
+#s-mark{overflow:hidden;}
+.mark-bar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:9px 20px;
+  border-bottom:1px solid var(--border);
+  gap:12px;
+  flex-shrink:0;
+}
+.mark-steps{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.steps-lbl{font-size:11px;color:var(--dim);margin-right:2px;}
+.cstep{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  font-size:10px;
+  font-family:var(--mono);
+  padding:3px 9px;
+  border-radius:4px;
+  border:1px solid var(--border-hi);
+  color:var(--muted);
+  transition:all .15s;
+}
+.cstep .dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.cstep.active{
+  border-color:var(--accent);
+  color:var(--accent);
+  background:var(--accent-dim);
+}
+.cstep.done{border-color:var(--border);color:var(--muted);opacity:.4;}
+.remix-indicator{
+  font-size:10px;
+  font-family:var(--mono);
+  color:var(--accent);
+  border:1px solid rgba(232,197,71,.25);
+  border-radius:3px;
+  padding:2px 8px;
+  display:none;
+}
+.remix-indicator.on{display:inline-block;}
+.mark-btns{display:flex;gap:7px;flex-shrink:0;}
+.canvas-wrap{flex:1;min-height:0;position:relative;overflow:hidden;cursor:crosshair;}
+#mc{width:100%;height:100%;display:block;}
+
+/* ════════════════════════════════════════
+   STAGE 3: RESULTS
+════════════════════════════════════════ */
+#s-results{overflow:hidden;}
+.res-bar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:13px 24px;
+  border-bottom:1px solid var(--border);
+  gap:16px;
+  flex-shrink:0;
+}
+.res-left{display:flex;align-items:center;gap:20px;}
+.res-title{
+  font-size:16px;
+  font-weight:700;
+}
+.res-stats{
+  display:flex;
+  gap:14px;
+  align-items:center;
+}
+.stat{
+  font-size:11px;
+  color:var(--dim);
+  font-family:var(--mono);
+}
+.stat b{color:var(--text);}
+.stat-de{
+  font-family:var(--mono);
+  font-size:22px;
+  font-weight:500;
+  color:var(--text);
+  letter-spacing:-1px;
+}
+.stat-de-label{
+  font-size:9px;
+  font-family:var(--mono);
+  color:var(--dim);
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  display:block;
+  margin-bottom:1px;
+}
+.remix-tag{
+  display:none;
+  align-items:center;
+  gap:6px;
+  font-size:10px;
+  font-family:var(--mono);
+  color:var(--accent);
+  border:1px solid rgba(232,197,71,.25);
+  border-radius:4px;
+  padding:3px 10px;
+}
+.remix-tag.on{display:inline-flex;}
+.res-btns{display:flex;gap:8px;flex-shrink:0;}
+.res-body{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  padding:16px 24px;
+}
+.res-body::-webkit-scrollbar{width:3px;}
+.res-body::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px;}
+
+.patch-grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:6px;
+}
+.pcell{
+  border:1px solid var(--border);
+  border-radius:6px;
+  overflow:hidden;
+  transition:border-color .12s, transform .12s;
+  cursor:default;
+}
+.pcell:hover{
+  border-color:var(--border-hi);
+  transform:translateY(-1px);
+}
+.sw-labels{
+  display:flex;
+  font-size:8px;
+  font-family:var(--mono);
+  color:var(--dim);
+  padding:2px 6px;
+  border-bottom:1px solid var(--border);
+}
+.sw-labels span{flex:1;}
+.swatches{display:flex;height:54px;}
+.sw{flex:1;}
+.pinfo{padding:5px 7px 6px;}
+.pname{
+  font-size:9px;
+  color:var(--dim);
+  margin-bottom:3px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.pde{font-family:var(--mono);font-size:12px;font-weight:500;}
+.pde.good{color:var(--good);}
+.pde.warn{color:var(--warn);}
+.pde.bad{color:var(--bad);}
+
+/* ── BUTTONS ── */
+.btn{
+  padding:7px 16px;
+  border-radius:5px;
+  font-family:var(--ui);
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  border:none;
+  transition:all .12s;
+  white-space:nowrap;
+  position:relative;
+}
+.btn-ghost{
+  background:transparent;
+  color:var(--dim);
+  border:1px solid var(--border-hi);
+}
+.btn-ghost:hover{color:var(--text);border-color:#444;}
+.btn-accent{
+  background:var(--accent);
+  color:#000;
+}
+.btn-accent:hover:not(:disabled){
+  background:#f0cf5a;
+  transform:translateY(-1px);
+  box-shadow:0 4px 20px rgba(232,197,71,.25);
+}
+.btn-accent:disabled{
+  background:#1e1e26;
+  color:var(--muted);
+  cursor:not-allowed;
+}
+.btn-accent.glow{
+  box-shadow:0 0 24px rgba(232,197,71,.35);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 16px rgba(232,197,71,.3);}
+  50%{box-shadow:0 0 32px rgba(232,197,71,.6);}
+}
+
+/* ── LOADING OVERLAY ── */
+#overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(6,6,8,.95);
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  gap:12px;
+}
+#overlay.on{display:flex;}
+.ov-icon{font-size:28px;animation:spin 2s linear infinite;margin-bottom:4px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ov-title{font-size:14px;font-weight:700;}
+.ov-sub{font-size:11px;color:var(--dim);font-family:var(--mono);}
+.ov-bar{width:200px;height:1px;background:var(--border-hi);border-radius:1px;overflow:hidden;margin-top:4px;}
+.ov-fill{height:100%;background:var(--accent);animation:sweep 1.2s ease-in-out infinite;}
+@keyframes sweep{
+  0%{width:0;margin-left:0;}
+  50%{width:100%;margin-left:0;}
+  100%{width:0;margin-left:100%;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="logo">Auto<span class="logo-a">LUT</span></span>
+  <span class="badge">Client-Side · No Upload</span>
+  <div class="header-right">
+    <a class="card-link" href="card.html" target="_blank">📱 Digital Card</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- ════ STAGE 1: UPLOAD ════ -->
+  <section class="stage active" id="s-upload">
+    <div class="upload-layout">
+
+      <div class="hero">
+        <h1 class="hero-title">Auto<span class="a">LUT</span></h1>
+        <p class="hero-sub">Precise camera correction,<br>one frame at a time.</p>
+      </div>
+
+      <div class="zones">
+        <!-- Frame upload -->
+        <div class="zone" id="frameZone">
+          <div class="zone-eyebrow">01 · Required</div>
+          <div class="zone-icon">⬆</div>
+          <div class="zone-title">Drop frame here</div>
+          <div class="zone-sub">JPG · PNG · TIFF · WebP — click or drag</div>
+          <div class="zone-desc">Shot with ColorChecker Classic or the digital card in frame</div>
+          <input type="file" id="fileInput" accept="image/*">
+        </div>
+
+        <!-- LUT remix -->
+        <div class="zone zone-lut" id="lutZone">
+          <button class="lut-clear" id="lutClear" title="Remove LUT">✕</button>
+          <div class="zone-eyebrow">02 · Optional</div>
+          <div class="zone-icon">🎬</div>
+          <div class="zone-title">Remix with LUT</div>
+          <div class="zone-sub">Drop a .cube file to apply a style</div>
+          <div class="zone-desc">Camera correction will target this LUT's color rendering — correction + look in a single export</div>
+          <span class="lut-loaded-name" id="lutName">—</span>
+          <span class="lut-badge">✓ Style Active</span>
+          <input type="file" id="lutInput" accept=".cube,.lut">
+        </div>
+      </div>
+
+      <div class="how">
+        <div class="how-step">
+          <div class="how-n">Shoot</div>
+          <div class="how-t">Show the color card</div>
+          <div class="how-d">Physical ColorChecker Classic or open the <a href="card.html" target="_blank">digital card ↗</a> on a phone</div>
+        </div>
+        <div class="how-step">
+          <div class="how-n">Mark</div>
+          <div class="how-t">Click 4 corners</div>
+          <div class="how-d">We extract all 24 patches and compare to reference values</div>
+        </div>
+        <div class="how-step">
+          <div class="how-n">Export</div>
+          <div class="how-t">Download .cube LUT</div>
+          <div class="how-d">Apply in DaVinci Resolve, Premiere, FCPX, or ffmpeg in one node</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════ STAGE 2: MARK ════ -->
+  <section class="stage" id="s-mark">
+    <div class="mark-bar">
+      <div class="mark-steps">
+        <span class="steps-lbl">Corners →</span>
+        <span class="cstep active" id="cs0"><span class="dot"></span>① TL</span>
+        <span class="cstep" id="cs1"><span class="dot"></span>② TR</span>
+        <span class="cstep" id="cs2"><span class="dot"></span>③ BR</span>
+        <span class="cstep" id="cs3"><span class="dot"></span>④ BL</span>
+        <span class="remix-indicator" id="remixIndicator">🎬 Style Active</span>
+      </div>
+      <div class="mark-btns">
+        <button class="btn btn-ghost" id="resetBtn">Reset</button>
+        <button class="btn btn-accent" id="processBtn" disabled>Generate LUT →</button>
+      </div>
+    </div>
+    <div class="canvas-wrap" id="canvasWrap">
+      <canvas id="mc"></canvas>
+    </div>
+  </section>
+
+  <!-- ════ STAGE 3: RESULTS ════ -->
+  <section class="stage" id="s-results">
+    <div class="res-bar">
+      <div class="res-left">
+        <div>
+          <div class="res-title">LUT Generated</div>
+        </div>
+        <div class="res-stats">
+          <div>
+            <span class="stat-de-label">Avg ΔE</span>
+            <span class="stat-de" id="avgDE">—</span>
+          </div>
+          <span class="stat">24 patches · 33³ grid</span>
+          <span class="remix-tag" id="remixTag">🎬 <span id="remixTagName">—</span></span>
+        </div>
+      </div>
+      <div class="res-btns">
+        <button class="btn btn-ghost" id="startOverBtn">← Start Over</button>
+        <button class="btn btn-accent glow" id="downloadBtn">↓ Download .cube</button>
+      </div>
+    </div>
+    <div class="res-body">
+      <div class="patch-grid" id="patchGrid"></div>
+    </div>
+  </section>
+
+</main>
+
+<div id="overlay">
+  <div class="ov-icon">⟳</div>
+  <div class="ov-title">Computing LUT…</div>
+  <div class="ov-sub" id="ovSub">Solving RBF weights · building 33³ grid</div>
+  <div class="ov-bar"><div class="ov-fill"></div></div>
+</div>
+
+<script>
+'use strict';
+
+// ════════════════════════════════════════════════════════
+// COLOR MATH
+// ════════════════════════════════════════════════════════
+
+const toLinear = c => c <= 0.04045 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4);
+const toSrgb   = c => c <= 0.0031308 ? 12.92*c : 1.055*Math.pow(c,1/2.4)-0.055;
+
+function srgbToLab(r, g, b) {
+  r=toLinear(r); g=toLinear(g); b=toLinear(b);
+  let X=r*0.4124564+g*0.3575761+b*0.1804375;
+  let Y=r*0.2126729+g*0.7151522+b*0.0721750;
+  let Z=r*0.0193339+g*0.1191920+b*0.9503041;
+  let Xd= X*1.0478112+Y*0.0228866+Z*-0.0501270;
+  let Yd= X*0.0295424+Y*0.9904844+Z*-0.0170491;
+  let Zd= X*-0.0092345+Y*0.0150436+Z*0.7521316;
+  const Xn=0.96422,Yn=1.00000,Zn=0.82521;
+  const f=t=>t>0.008856?Math.cbrt(t):7.787*t+16/116;
+  return [116*f(Yd/Yn)-16, 500*(f(Xd/Xn)-f(Yd/Yn)), 200*(f(Yd/Yn)-f(Zd/Zn))];
+}
+
+function labToSrgb(L, a, b) {
+  const Xn=0.96422,Yn=1.00000,Zn=0.82521;
+  const fy=(L+16)/116, fx=a/500+fy, fz=fy-b/200;
+  const fi=t=>t>0.2069?t*t*t:(t-16/116)/7.787;
+  const X=Xn*fi(fx), Y=Yn*fi(fy), Z=Zn*fi(fz);
+  const Xd=X*0.9554734+Y*-0.0230985+Z*0.0632592;
+  const Yd=X*-0.0283869+Y*1.0099416+Z*0.0210416;
+  const Zd=X*0.0123175+Y*-0.0205173+Z*1.3301922;
+  const lr=Xd*3.2404542+Yd*-1.5371385+Zd*-0.4985314;
+  const lg=Xd*-0.9692660+Yd*1.8760108+Zd*0.0415560;
+  const lb=Xd*0.0556434+Yd*-0.2040259+Zd*1.0572252;
+  const cl=v=>Math.max(0,Math.min(1,toSrgb(v)));
+  return [cl(lr),cl(lg),cl(lb)];
+}
+
+const dE = (l1,l2) => Math.sqrt((l1[0]-l2[0])**2+(l1[1]-l2[1])**2+(l1[2]-l2[2])**2);
+
+// ════════════════════════════════════════════════════════
+// LINEAR ALGEBRA
+// ════════════════════════════════════════════════════════
+
+function solve(A, b) {
+  const n=A.length;
+  const M=A.map((row,i)=>[...row,b[i]]);
+  for(let c=0;c<n;c++){
+    let mx=c;
+    for(let r=c+1;r<n;r++) if(Math.abs(M[r][c])>Math.abs(M[mx][c])) mx=r;
+    [M[c],M[mx]]=[M[mx],M[c]];
+    for(let r=c+1;r<n;r++){
+      const f=M[r][c]/M[c][c];
+      for(let j=c;j<=n;j++) M[r][j]-=f*M[c][j];
+    }
+  }
+  const x=new Array(n).fill(0);
+  for(let i=n-1;i>=0;i--){
+    x[i]=M[i][n];
+    for(let j=i+1;j<n;j++) x[i]-=M[i][j]*x[j];
+    x[i]/=M[i][i];
+  }
+  return x;
+}
+
+// ════════════════════════════════════════════════════════
+// HOMOGRAPHY (DLT)
+// ════════════════════════════════════════════════════════
+
+function computeH(src, dst) {
+  const A=[],bv=[];
+  for(let i=0;i<4;i++){
+    const [x,y]=src[i],[u,v]=dst[i];
+    A.push([x,y,1,0,0,0,-x*u,-y*u]); bv.push(u);
+    A.push([0,0,0,x,y,1,-x*v,-y*v]); bv.push(v);
+  }
+  const h=solve(A,bv);
+  return [[h[0],h[1],h[2]],[h[3],h[4],h[5]],[h[6],h[7],1]];
+}
+
+const applyH=(H,x,y)=>{
+  const w=H[2][0]*x+H[2][1]*y+H[2][2];
+  return [(H[0][0]*x+H[0][1]*y+H[0][2])/w,(H[1][0]*x+H[1][1]*y+H[1][2])/w];
+};
+
+// ════════════════════════════════════════════════════════
+// IMAGE SAMPLING
+// ════════════════════════════════════════════════════════
+
+function bsample(data, W, H, x, y) {
+  x=Math.max(0,Math.min(W-1.001,x));
+  y=Math.max(0,Math.min(H-1.001,y));
+  const x0=x|0,y0=y|0,x1=Math.min(x0+1,W-1),y1=Math.min(y0+1,H-1);
+  const fx=x-x0,fy=y-y0;
+  const px=(cx,cy)=>{const i=(cy*W+cx)*4;return[data[i]/255,data[i+1]/255,data[i+2]/255];};
+  const [r00,g00,b00]=px(x0,y0),[r10,g10,b10]=px(x1,y0);
+  const [r01,g01,b01]=px(x0,y1),[r11,g11,b11]=px(x1,y1);
+  const s=(a,b,c,d)=>a*(1-fx)*(1-fy)+b*fx*(1-fy)+c*(1-fx)*fy+d*fx*fy;
+  return[s(r00,r10,r01,r11),s(g00,g10,g01,g11),s(b00,b10,b01,b11)];
+}
+
+// ════════════════════════════════════════════════════════
+// PATCH EXTRACTION
+// ════════════════════════════════════════════════════════
+
+const CW=270,CH=180,PW=45,PH=45;
+
+function extractPatches(data, W, H, corners) {
+  const Hmat=computeH([[0,0],[CW,0],[CW,CH],[0,CH]],corners);
+  const out=[];
+  for(let row=0;row<4;row++){
+    for(let col=0;col<6;col++){
+      const cx=col*PW+PW/2,cy=row*PH+PH/2;
+      let sr=0,sg=0,sb=0,n=0;
+      for(let dy=-5;dy<=5;dy++) for(let dx=-5;dx<=5;dx++){
+        const [sx,sy]=applyH(Hmat,cx+dx,cy+dy);
+        if(sx<0||sy<0||sx>=W||sy>=H) continue;
+        const[pr,pg,pb]=bsample(data,W,H,sx,sy);
+        sr+=pr;sg+=pg;sb+=pb;n++;
+      }
+      out.push(n>0?[sr/n,sg/n,sb/n]:[0,0,0]);
+    }
+  }
+  return out;
+}
+
+// ════════════════════════════════════════════════════════
+// COLORCHECKER REFERENCE DATA
+// ════════════════════════════════════════════════════════
+
+// Exact sRGB reference values used on the digital card and
+// matching the published ColorChecker Classic standard.
+const REF_RGB = [
+  [115,82,68],[194,150,130],[98,122,157],[87,108,67],[133,128,177],[103,189,170],
+  [214,126,44],[80,91,166],[193,90,99],[94,60,108],[157,188,64],[224,163,46],
+  [56,61,150],[70,148,73],[175,54,60],[231,199,31],[187,86,149],[8,133,161],
+  [243,243,242],[200,200,200],[160,160,160],[122,122,121],[85,85,85],[52,52,52]
+].map(([r,g,b])=>[r/255,g/255,b/255]);
+
+// Reference Lab* values (D50, 2°) for ΔE comparison
+const REF_LAB = [
+  [37.986,13.555,14.059],[65.711,18.130,17.810],[49.927,-4.880,-21.925],
+  [43.139,-13.095,21.905],[55.112,8.844,-25.399],[70.719,-33.397,-0.199],
+  [62.661,36.067,57.096],[40.020,10.410,-45.964],[51.124,48.239,16.248],
+  [30.325,22.976,-21.587],[72.532,-23.709,57.255],[71.941,19.363,67.857],
+  [28.778,14.179,-50.297],[55.261,-38.342,31.370],[42.101,53.378,28.190],
+  [81.733,4.039,79.819],[51.935,49.986,-14.574],[51.038,-28.631,-28.638],
+  [96.539,-0.425,1.186],[81.257,-0.638,-0.335],[66.766,-0.734,-0.504],
+  [50.867,-0.153,-0.270],[35.656,-0.421,-1.231],[20.461,-0.079,-0.973]
+];
+
+const NAMES = [
+  'Dark Skin','Light Skin','Blue Sky','Foliage','Blue Flower','Bluish Green',
+  'Orange','Purplish Blue','Moderate Red','Purple','Yellow Green','Orange Yellow',
+  'Blue','Green','Red','Yellow','Magenta','Cyan',
+  'White','Neutral 8','Neutral 6.5','Neutral 5','Neutral 3.5','Black'
+];
+
+// ════════════════════════════════════════════════════════
+// LUT PARSING & TRILINEAR INTERPOLATION
+// ════════════════════════════════════════════════════════
+
+function parseCube(text) {
+  const lines=text.split('\n').map(l=>l.trim()).filter(l=>l&&!l.startsWith('#'));
+  let size=0;
+  const data=[];
+  for(const line of lines){
+    if(line.startsWith('LUT_3D_SIZE')){
+      size=parseInt(line.split(/\s+/)[1]);
+    } else if(/^[\d.-]/.test(line)){
+      const[r,g,b]=line.split(/\s+/).map(Number);
+      data.push([r,g,b]);
+    }
+  }
+  return {size,data};
+}
+
+function trilinear(lut, r, g, b) {
+  const N=lut.size;
+  r=Math.max(0,Math.min(1,r));
+  g=Math.max(0,Math.min(1,g));
+  b=Math.max(0,Math.min(1,b));
+  const ri=r*(N-1),gi=g*(N-1),bi=b*(N-1);
+  const r0=Math.min(r|0,N-2),g0=Math.min(g|0,N-2),b0=Math.min(b|0,N-2);
+  const r1=r0+1,g1=g0+1,b1=b0+1;
+  const fr=ri-r0,fg=gi-g0,fb=bi-b0;
+  // .cube: R slowest, B fastest → index = r*N*N + g*N + b
+  const idx=(ri,gi,bi)=>ri*N*N+gi*N+bi;
+  const c=i=>lut.data[i]||[0,0,0];
+  const lv=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];
+  const c000=c(idx(r0,g0,b0)),c001=c(idx(r0,g0,b1));
+  const c010=c(idx(r0,g1,b0)),c011=c(idx(r0,g1,b1));
+  const c100=c(idx(r1,g0,b0)),c101=c(idx(r1,g0,b1));
+  const c110=c(idx(r1,g1,b0)),c111=c(idx(r1,g1,b1));
+  return lv(lv(lv(c000,c001,fb),lv(c010,c011,fb),fg),
+             lv(lv(c100,c101,fb),lv(c110,c111,fb),fg),fr);
+}
+
+// ════════════════════════════════════════════════════════
+// RBF INTERPOLATION
+// ════════════════════════════════════════════════════════
+
+const EPS=0.08;
+const phi=r=>Math.sqrt(r*r+EPS*EPS);
+const rbfD=(a,b)=>Math.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2);
+
+function solveRBF(ctrl,vals){
+  const n=ctrl.length;
+  const A=ctrl.map((p,i)=>ctrl.map((q,j)=>phi(rbfD(p,q))+(i===j?1e-6:0)));
+  return solve(A,vals);
+}
+const evalRBF=(ctrl,w,q)=>w.reduce((s,wi,i)=>s+wi*phi(rbfD(q,ctrl[i])),0);
+
+// ════════════════════════════════════════════════════════
+// LUT GENERATION
+// ════════════════════════════════════════════════════════
+
+function buildLUT(capRgb, tgtRgb) {
+  const dR=tgtRgb.map((r,i)=>r[0]-capRgb[i][0]);
+  const dG=tgtRgb.map((r,i)=>r[1]-capRgb[i][1]);
+  const dB=tgtRgb.map((r,i)=>r[2]-capRgb[i][2]);
+  const wR=solveRBF(capRgb,dR),wG=solveRBF(capRgb,dG),wB=solveRBF(capRgb,dB);
+  const N=33;
+  const lines=['TITLE "AutoLUT"','LUT_3D_SIZE 33',''];
+  for(let ri=0;ri<N;ri++) for(let gi=0;gi<N;gi++) for(let bi=0;bi<N;bi++){
+    const rgb=[ri/32,gi/32,bi/32];
+    const cr=Math.max(0,Math.min(1,rgb[0]+evalRBF(capRgb,wR,rgb)));
+    const cg=Math.max(0,Math.min(1,rgb[1]+evalRBF(capRgb,wG,rgb)));
+    const cb=Math.max(0,Math.min(1,rgb[2]+evalRBF(capRgb,wB,rgb)));
+    lines.push(cr.toFixed(6)+' '+cg.toFixed(6)+' '+cb.toFixed(6));
+  }
+  return lines.join('\n');
+}
+
+// ════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════
+
+let img=null, imgPx=null, imgW=0, imgH=0;
+let corners=[], imgScale=1, imgOx=0, imgOy=0;
+let lutText='', remixLut=null, remixName='';
+const CC=['#e8c547','#47e8c5','#c547e8','#e87247'];
+
+const goTo=id=>{
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+};
+
+// ════════════════════════════════════════════════════════
+// STAGE 1 — UPLOAD
+// ════════════════════════════════════════════════════════
+
+const frameZone=document.getElementById('frameZone');
+const fileInput=document.getElementById('fileInput');
+const lutZone=document.getElementById('lutZone');
+const lutInput=document.getElementById('lutInput');
+
+frameZone.addEventListener('dragover',e=>{e.preventDefault();frameZone.classList.add('over');});
+frameZone.addEventListener('dragleave',()=>frameZone.classList.remove('over'));
+frameZone.addEventListener('drop',e=>{
+  e.preventDefault();frameZone.classList.remove('over');
+  const f=e.dataTransfer.files[0];
+  if(f&&f.type.startsWith('image/')) loadFrame(f);
+});
+fileInput.addEventListener('change',()=>{
+  console.log('fileInput change fired, files:', fileInput.files.length);
+  if(fileInput.files[0]) loadFrame(fileInput.files[0]);
+});
+
+lutZone.addEventListener('dragover',e=>{e.preventDefault();lutZone.classList.add('over');});
+lutZone.addEventListener('dragleave',()=>lutZone.classList.remove('over'));
+lutZone.addEventListener('drop',e=>{
+  e.preventDefault();lutZone.classList.remove('over');
+  const f=e.dataTransfer.files[0];
+  if(f) loadLUT(f);
+});
+lutInput.addEventListener('change',()=>{if(lutInput.files[0]) loadLUT(lutInput.files[0]);});
+
+document.getElementById('lutClear').addEventListener('click',e=>{
+  e.stopPropagation();
+  remixLut=null; remixName='';
+  lutZone.classList.remove('loaded');
+  document.getElementById('lutName').textContent='—';
+  lutInput.value='';
+});
+
+function loadFrame(file){
+  console.log('loadFrame called with:', file.name, file.type, file.size);
+  const url=URL.createObjectURL(file);
+  const i=new Image();
+  i.onerror=()=>console.error('Image failed to load');
+  i.onload=()=>{
+    console.log('Image loaded:', i.naturalWidth, 'x', i.naturalHeight);
+    img=i;
+    const oc=document.createElement('canvas');
+    oc.width=i.naturalWidth; oc.height=i.naturalHeight;
+    const ctx=oc.getContext('2d');
+    ctx.drawImage(i,0,0);
+    const d=ctx.getImageData(0,0,i.naturalWidth,i.naturalHeight);
+    imgPx=d.data; imgW=i.naturalWidth; imgH=i.naturalHeight;
+    URL.revokeObjectURL(url);
+    corners=[];
+    document.getElementById('remixIndicator').classList.toggle('on',!!remixLut);
+    goTo('s-mark');
+    setupCanvas();
+  };
+  i.src=url;
+}
+
+function loadLUT(file){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      remixLut=parseCube(e.target.result);
+      remixName=file.name;
+      lutZone.classList.add('loaded');
+      document.getElementById('lutName').textContent=file.name;
+    }catch(err){
+      alert('Could not parse LUT file: '+err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ════════════════════════════════════════════════════════
+// STAGE 2 — MARK CORNERS
+// ════════════════════════════════════════════════════════
+
+const mc=document.getElementById('mc');
+const canvasWrap=document.getElementById('canvasWrap');
+const processBtn=document.getElementById('processBtn');
+
+function setupCanvas(){
+  mc.width=canvasWrap.clientWidth;
+  mc.height=canvasWrap.clientHeight;
+  const scale=Math.min(mc.width/imgW,mc.height/imgH)*0.96;
+  imgScale=scale; imgOx=(mc.width-imgW*scale)/2; imgOy=(mc.height-imgH*scale)/2;
+  redraw();
+}
+
+function redraw(){
+  const ctx=mc.getContext('2d');
+  ctx.clearRect(0,0,mc.width,mc.height);
+  ctx.drawImage(img,imgOx,imgOy,imgW*imgScale,imgH*imgScale);
+  const dc=corners.map(([x,y])=>[x*imgScale+imgOx,y*imgScale+imgOy]);
+  if(dc.length>1){
+    ctx.beginPath();
+    ctx.moveTo(dc[0][0],dc[0][1]);
+    for(let i=1;i<dc.length;i++) ctx.lineTo(dc[i][0],dc[i][1]);
+    if(dc.length===4) ctx.closePath();
+    ctx.strokeStyle='rgba(232,197,71,.5)';
+    ctx.lineWidth=1.5;ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([]);
+  }
+  dc.forEach(([dx,dy],i)=>{
+    const c=CC[i];
+    ctx.beginPath();ctx.arc(dx,dy,14,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,0,0,.6)';ctx.fill();
+    ctx.beginPath();ctx.arc(dx,dy,12,0,Math.PI*2);
+    ctx.strokeStyle=c;ctx.lineWidth=2;ctx.stroke();
+    ctx.font='bold 11px Syne,sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle=c;ctx.fillText(i+1,dx,dy);
+  });
+  for(let i=0;i<4;i++){
+    const el=document.getElementById('cs'+i);
+    el.className='cstep'+(i<corners.length?' done':i===corners.length?' active':'');
+  }
+  processBtn.disabled=corners.length<4;
+  if(corners.length===4) processBtn.classList.add('glow');
+  else processBtn.classList.remove('glow');
+}
+
+mc.addEventListener('click',e=>{
+  if(corners.length>=4) return;
+  const rect=mc.getBoundingClientRect();
+  const cx=(e.clientX-rect.left)*(mc.width/rect.width);
+  const cy=(e.clientY-rect.top)*(mc.height/rect.height);
+  const ix=(cx-imgOx)/imgScale,iy=(cy-imgOy)/imgScale;
+  if(ix<0||iy<0||ix>imgW||iy>imgH) return;
+  corners.push([ix,iy]);
+  redraw();
+});
+
+document.getElementById('resetBtn').addEventListener('click',()=>{corners=[];redraw();});
+processBtn.addEventListener('click',()=>{if(corners.length===4) process();});
+window.addEventListener('resize',()=>{
+  if(document.getElementById('s-mark').classList.contains('active')&&img) setupCanvas();
+});
+
+// ════════════════════════════════════════════════════════
+// PROCESS
+// ════════════════════════════════════════════════════════
+
+function process(){
+  const ov=document.getElementById('overlay');
+  document.getElementById('ovSub').textContent=remixLut
+    ? 'Applying remix LUT · solving RBF · 33³ grid'
+    : 'Solving RBF weights · building 33³ grid';
+  ov.classList.add('on');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    try{
+      const capRgb=extractPatches(imgPx,imgW,imgH,corners);
+      const capLab=capRgb.map(([r,g,b])=>srgbToLab(r,g,b));
+      const deltaEs=capLab.map((cl,i)=>dE(cl,REF_LAB[i]));
+      const avgDE=(deltaEs.reduce((a,b)=>a+b,0)/deltaEs.length).toFixed(2);
+
+      // Target: reference sRGB (optionally transformed through remix LUT)
+      const tgtRgb = REF_RGB.map(rgb =>
+        remixLut ? trilinear(remixLut, rgb[0], rgb[1], rgb[2]) : rgb
+      );
+
+      lutText=buildLUT(capRgb,tgtRgb);
+      ov.classList.remove('on');
+      showResults(capRgb,tgtRgb,deltaEs,avgDE);
+    }catch(err){
+      ov.classList.remove('on');
+      alert('Error: '+err.message);
+      console.error(err);
+    }
+  }));
+}
+
+// ════════════════════════════════════════════════════════
+// STAGE 3 — RESULTS
+// ════════════════════════════════════════════════════════
+
+const toHex=(r,g,b)=>
+  '#'+[r,g,b].map(v=>Math.round(Math.max(0,Math.min(1,v))*255).toString(16).padStart(2,'0')).join('');
+
+function makePatchCell(capRgb, tgtRgb, de, name, isRemix) {
+  const cell=document.createElement('div');
+  cell.className='pcell';
+  cell.title=name+' — ΔE: '+de.toFixed(2);
+
+  const labels=document.createElement('div');
+  labels.className='sw-labels';
+  const l1=document.createElement('span'); l1.textContent='CAP';
+  const l2=document.createElement('span'); l2.textContent=isRemix?'LOOK':'REF';
+  labels.appendChild(l1); labels.appendChild(l2);
+
+  const swRow=document.createElement('div');
+  swRow.className='swatches';
+  const sw1=document.createElement('div'); sw1.className='sw';
+  sw1.style.background=toHex(...capRgb);
+  const sw2=document.createElement('div'); sw2.className='sw';
+  sw2.style.background=toHex(...tgtRgb);
+  swRow.appendChild(sw1); swRow.appendChild(sw2);
+
+  const info=document.createElement('div'); info.className='pinfo';
+  const pn=document.createElement('div'); pn.className='pname'; pn.textContent=name;
+  const pd=document.createElement('div');
+  pd.className='pde '+(de<2?'good':de<5?'warn':'bad');
+  pd.textContent='ΔE '+de.toFixed(1);
+  info.appendChild(pn); info.appendChild(pd);
+
+  cell.appendChild(labels); cell.appendChild(swRow); cell.appendChild(info);
+  return cell;
+}
+
+function showResults(capRgb, tgtRgb, deltaEs, avgDE) {
+  const de=parseFloat(avgDE);
+  const deEl=document.getElementById('avgDE');
+  deEl.textContent=avgDE;
+  deEl.style.color=de<3?'var(--good)':de<6?'var(--warn)':'var(--bad)';
+
+  const remixTag=document.getElementById('remixTag');
+  if(remixLut){
+    remixTag.classList.add('on');
+    document.getElementById('remixTagName').textContent=remixName;
+  } else {
+    remixTag.classList.remove('on');
+  }
+
+  const grid=document.getElementById('patchGrid');
+  grid.textContent='';
+  for(let i=0;i<24;i++){
+    grid.appendChild(makePatchCell(capRgb[i],tgtRgb[i],deltaEs[i],NAMES[i],!!remixLut));
+  }
+  goTo('s-results');
+}
+
+document.getElementById('downloadBtn').addEventListener('click',()=>{
+  if(!lutText) return;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([lutText],{type:'text/plain'}));
+  a.download='AutoLUT.cube';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+document.getElementById('startOverBtn').addEventListener('click',()=>{
+  corners=[];img=null;imgPx=null;lutText='';
+  fileInput.value='';
+  document.getElementById('patchGrid').textContent='';
+  goTo('s-upload');
+});
+</script>
+</body>
+</html>

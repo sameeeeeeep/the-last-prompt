@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen">
+<title>AutoLUT Color Card</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#000;overflow:hidden;touch-action:none;font-family:system-ui,sans-serif;}
+
+/* ── SPLASH ── */
+#splash{
+  position:fixed;inset:0;z-index:100;
+  background:#060608;color:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;text-align:center;padding:32px;
+}
+#splash.hidden{display:none;}
+.splash-icon{font-size:44px;}
+.splash-rotate{animation:tilt 1.8s ease-in-out infinite;}
+@keyframes tilt{0%,100%{transform:rotate(0deg);}50%{transform:rotate(90deg);}}
+.splash-title{font-size:22px;font-weight:700;}
+.splash-sub{font-size:13px;color:#888;line-height:1.6;max-width:300px;}
+.splash-actions{display:flex;gap:10px;flex-direction:column;align-items:center;margin-top:4px;}
+.splash-btn{
+  padding:10px 28px;border-radius:6px;
+  background:#e8c547;color:#000;font-size:14px;font-weight:700;
+  border:none;cursor:pointer;width:200px;
+}
+.splash-pdf{
+  font-size:12px;color:#e8c547;text-decoration:none;
+  border:1px solid rgba(232,197,71,.3);
+  border-radius:5px;padding:8px 20px;width:200px;text-align:center;
+  display:block;
+}
+.splash-pdf:hover{background:rgba(232,197,71,.08);}
+
+/* ── CARD AREA ── */
+#card-wrap{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  background:#0a0a0a;
+}
+#card{
+  position:relative;background:#fff;
+}
+
+/* ── FIDUCIAL CORNERS (bullseye) ── */
+.fid{
+  position:absolute;width:30px;height:30px;border-radius:50%;
+  background:#000;display:flex;align-items:center;justify-content:center;z-index:10;
+}
+.fid::before{
+  content:'';width:17px;height:17px;border-radius:50%;background:#fff;
+}
+.fid::after{
+  content:'';position:absolute;width:7px;height:7px;border-radius:50%;background:#000;
+}
+.fid-tl{top:-15px;left:-15px;}
+.fid-tr{top:-15px;right:-15px;}
+.fid-br{bottom:-15px;right:-15px;}
+.fid-bl{bottom:-15px;left:-15px;}
+
+/* ── CORNER LABELS ── */
+.clbl{
+  position:absolute;font-size:7px;font-weight:700;
+  font-family:monospace;opacity:0.3;color:#000;pointer-events:none;
+}
+.clbl-tl{top:4px;left:5px;}
+.clbl-tr{top:4px;right:5px;}
+.clbl-br{bottom:4px;right:5px;}
+.clbl-bl{bottom:4px;left:5px;}
+
+/* ── MAIN GRID ── */
+#grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  width:100%;height:100%;
+}
+.patch{
+  position:relative;
+  display:flex;align-items:flex-end;justify-content:flex-start;
+  padding:3px 4px;
+}
+.patch-rgb{
+  font-size:6.5px;
+  font-family:monospace;
+  color:#fff;
+  mix-blend-mode:difference;
+  opacity:0.55;
+  line-height:1.2;
+  pointer-events:none;
+}
+
+/* ── NEUTRAL STRIP ── */
+#neutral-strip{
+  width:100%;
+  display:flex;
+  border-top:2px solid #000;
+  flex-shrink:0;
+}
+.ns-patch{
+  flex:1;
+  position:relative;
+  display:flex;align-items:flex-end;justify-content:center;
+  padding-bottom:3px;
+}
+.ns-rgb{
+  font-size:6px;font-family:monospace;
+  color:#fff;mix-blend-mode:difference;opacity:0.5;
+}
+
+/* ── UI CHROME ── */
+#ui-bar{
+  position:fixed;bottom:16px;right:16px;z-index:50;
+  display:flex;gap:8px;align-items:center;
+}
+.ui-btn{
+  background:rgba(0,0,0,.65);color:#fff;border:1px solid #333;
+  font-size:11px;padding:6px 12px;border-radius:4px;cursor:pointer;
+  backdrop-filter:blur(4px);text-decoration:none;display:inline-block;
+}
+.ui-btn:hover{background:rgba(255,255,255,.1);}
+
+#bright-tip{
+  position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:50;
+  background:rgba(232,197,71,.95);color:#000;
+  font-size:11px;font-weight:700;
+  padding:6px 16px;border-radius:4px;
+  pointer-events:none;white-space:nowrap;
+  transition:opacity 1s;
+}
+
+/* ── PRINT STYLES ── */
+@media print{
+  html,body{overflow:visible;width:100%;height:auto;background:#fff;}
+  #splash,#ui-bar,#bright-tip{display:none!important;}
+  #card-wrap{
+    width:100%;height:auto;background:#fff;
+    display:block;padding:6mm;
+  }
+  #card{
+    width:100%!important;height:auto!important;
+    page-break-inside:avoid;
+  }
+  .fid{display:none;}
+  .clbl{opacity:0.15;}
+  #grid{height:120mm;}
+  #neutral-strip{height:18mm;}
+  .patch-rgb,.ns-rgb{opacity:0.6;}
+  @page{size:A4 landscape;margin:8mm;}
+}
+</style>
+</head>
+<body>
+
+<!-- Portrait hint -->
+<div id="splash">
+  <div class="splash-icon splash-rotate">📱</div>
+  <div class="splash-title">AutoLUT Color Card</div>
+  <div class="splash-sub">Rotate to landscape · Set brightness to max · Avoid glare</div>
+  <div class="splash-actions">
+    <button class="splash-btn" id="splashOk">Show Card →</button>
+    <a class="splash-pdf" href="https://upload.wikimedia.org/wikipedia/commons/4/4f/Color_Checker.pdf" target="_blank">↓ Download Printable PDF</a>
+  </div>
+</div>
+
+<div id="card-wrap">
+  <div id="card">
+    <div class="fid fid-tl"></div>
+    <div class="fid fid-tr"></div>
+    <div class="fid fid-br"></div>
+    <div class="fid fid-bl"></div>
+    <div class="clbl clbl-tl">①TL</div>
+    <div class="clbl clbl-tr">②TR</div>
+    <div class="clbl clbl-br">③BR</div>
+    <div class="clbl clbl-bl">④BL</div>
+    <div id="grid"></div>
+    <div id="neutral-strip"></div>
+  </div>
+</div>
+
+<div id="bright-tip">Set brightness to MAX before filming</div>
+
+<div id="ui-bar">
+  <a class="ui-btn" href="https://upload.wikimedia.org/wikipedia/commons/4/4f/Color_Checker.pdf" target="_blank">↓ Printable PDF</a>
+  <button class="ui-btn" id="printBtn">🖨 Print</button>
+  <button class="ui-btn" id="fullBtn">⛶ Fullscreen</button>
+</div>
+
+<script>
+// ── PATCH DATA ─────────────────────────────────────────────
+const PATCHES = [
+  {name:'Dark Skin',      r:115,g:82,  b:68 },
+  {name:'Light Skin',     r:194,g:150, b:130},
+  {name:'Blue Sky',       r:98, g:122, b:157},
+  {name:'Foliage',        r:87, g:108, b:67 },
+  {name:'Blue Flower',    r:133,g:128, b:177},
+  {name:'Bluish Green',   r:103,g:189, b:170},
+  {name:'Orange',         r:214,g:126, b:44 },
+  {name:'Purplish Blue',  r:80, g:91,  b:166},
+  {name:'Moderate Red',   r:193,g:90,  b:99 },
+  {name:'Purple',         r:94, g:60,  b:108},
+  {name:'Yellow Green',   r:157,g:188, b:64 },
+  {name:'Orange Yellow',  r:224,g:163, b:46 },
+  {name:'Blue',           r:56, g:61,  b:150},
+  {name:'Green',          r:70, g:148, b:73 },
+  {name:'Red',            r:175,g:54,  b:60 },
+  {name:'Yellow',         r:231,g:199, b:31 },
+  {name:'Magenta',        r:187,g:86,  b:149},
+  {name:'Cyan',           r:8,  g:133, b:161},
+  {name:'White',          r:243,g:243, b:242},
+  {name:'Neutral 8',      r:200,g:200, b:200},
+  {name:'Neutral 6.5',    r:160,g:160, b:160},
+  {name:'Neutral 5',      r:122,g:122, b:121},
+  {name:'Neutral 3.5',    r:85, g:85,  b:85 },
+  {name:'Black',          r:52, g:52,  b:52 },
+];
+
+// Extra pure neutral scale (visual reference strip)
+const NEUTRALS = [
+  {r:255,g:255,b:255},
+  {r:210,g:210,b:210},
+  {r:168,g:168,b:168},
+  {r:128,g:128,b:128},
+  {r:89, g:89, b:89 },
+  {r:50, g:50, b:50 },
+  {r:18, g:18, b:18 },
+  {r:0,  g:0,  b:0  },
+];
+
+// ── BUILD GRID ─────────────────────────────────────────────
+const grid = document.getElementById('grid');
+PATCHES.forEach(p => {
+  const cell = document.createElement('div');
+  cell.className = 'patch';
+  cell.style.background = `rgb(${p.r},${p.g},${p.b})`;
+  cell.title = `${p.name} — rgb(${p.r},${p.g},${p.b})`;
+
+  const label = document.createElement('div');
+  label.className = 'patch-rgb';
+  label.textContent = `${p.r} ${p.g} ${p.b}`;
+  cell.appendChild(label);
+  grid.appendChild(cell);
+});
+
+// ── BUILD NEUTRAL STRIP ────────────────────────────────────
+const strip = document.getElementById('neutral-strip');
+NEUTRALS.forEach(n => {
+  const cell = document.createElement('div');
+  cell.className = 'ns-patch';
+  cell.style.background = `rgb(${n.r},${n.g},${n.b})`;
+  const label = document.createElement('div');
+  label.className = 'ns-rgb';
+  label.textContent = n.r;
+  cell.appendChild(label);
+  strip.appendChild(cell);
+});
+
+// ── SIZE CARD ──────────────────────────────────────────────
+function sizeCard() {
+  const card = document.getElementById('card');
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const margin = 44;
+  const W = vw - margin, H = vh - margin;
+  // Main grid aspect: 6:4.5 (with neutral strip adding ~15% height)
+  const aspect = 6 / 4.5;
+  let w, h;
+  if (W/H > aspect) { h = H; w = h * aspect; }
+  else { w = W; h = w / aspect; }
+  w = Math.floor(w); h = Math.floor(h);
+  card.style.width = w + 'px';
+  card.style.height = h + 'px';
+  // Grid takes 80% of height, strip takes 20%
+  document.getElementById('grid').style.height = Math.floor(h * 0.82) + 'px';
+  document.getElementById('neutral-strip').style.height = Math.floor(h * 0.18) + 'px';
+}
+sizeCard();
+window.addEventListener('resize', sizeCard);
+window.addEventListener('orientationchange', () => setTimeout(sizeCard, 300));
+
+// ── SPLASH ─────────────────────────────────────────────────
+const splash = document.getElementById('splash');
+function showCard() {
+  splash.classList.add('hidden');
+  const el = document.documentElement;
+  if (el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+}
+document.getElementById('splashOk').addEventListener('click', showCard);
+window.addEventListener('orientationchange', () => {
+  setTimeout(() => {
+    if (window.innerWidth > window.innerHeight) showCard();
+  }, 350);
+});
+if (window.innerWidth > window.innerHeight) showCard();
+
+// ── CONTROLS ───────────────────────────────────────────────
+document.getElementById('fullBtn').addEventListener('click', () => {
+  const el = document.documentElement;
+  if (!document.fullscreenElement) {
+    if (el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  } else {
+    if (document.exitFullscreen) document.exitFullscreen();
+  }
+});
+
+document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+// ── BRIGHTNESS TIP ─────────────────────────────────────────
+setTimeout(() => {
+  const t = document.getElementById('bright-tip');
+  t.style.opacity = '0';
+  setTimeout(() => t.remove(), 1000);
+}, 4000);
+
+// ── SCREEN WAKE LOCK ───────────────────────────────────────
+async function keepAwake() {
+  if ('wakeLock' in navigator) {
+    try { await navigator.wakeLock.request('screen'); } catch {}
+  }
+}
+keepAwake();
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') keepAwake();
+});
+</script>
+</body>
+</html>
