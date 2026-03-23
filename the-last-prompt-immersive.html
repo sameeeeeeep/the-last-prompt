@@ -21,11 +21,9 @@ canvas{display:block}
 .scene.active .clickable{pointer-events:auto}
 .opening{position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
 .adam-hands{position:relative;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.hand-left,.hand-right{width:min(380px,45vw);height:auto;opacity:0.85;pointer-events:none}
-.hand-left{object-fit:cover;object-position:right center;clip-path:inset(0 0 0 0)}
-.hand-right{object-fit:cover;object-position:left center;clip-path:inset(0 0 0 0)}
-.hand-gap{width:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.hand-gap-line{width:1px;height:60px;background:linear-gradient(to bottom,transparent,rgba(201,169,110,0.3),transparent)}
+.hand-left,.hand-right{width:min(720px,50vw);height:auto;opacity:0.9;pointer-events:none;flex-shrink:0}
+.hand-left{margin-right:-6px}
+.hand-right{margin-left:-6px}
 .opening-question{text-align:center;max-width:90vw;margin-top:32px}
 .opening-question h2{font-family:'Newsreader',serif;font-size:clamp(1.1rem,2.5vw,1.6rem);font-weight:300;color:#5a564f}
 .opening-question em{font-style:italic;color:#c9a96e}
@@ -207,7 +205,7 @@ canvas{display:block}
 <div id="canvas-container"></div>
 <div id="scroll-spacer"></div>
 <nav id="nav" class="show"><a href="#" class="nav-mark">The Last Prompt</a><div class="nav-r"><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="/autoclawd">Autoclaw</a><a href="https://x.com/sameeprehlan">X</a></div></nav>
-<div class="scene" id="scene-0"><div class="opening"><div class="adam-hands"><img src="/handsnobg.png" alt="" class="hand-left" id="hands-img" crossorigin="anonymous" style="clip-path:inset(0 50% 0 0)"><div class="hand-gap"><div class="hand-gap-line"></div></div><img src="/handsnobg.png" alt="" class="hand-right" style="clip-path:inset(0 0 0 50%)"></div><div class="opening-question"><h2>What stands between you and superintelligence? <em>A prompt.</em></h2></div></div></div>
+<div class="scene" id="scene-0"><div class="opening"><div class="adam-hands"><img src="/handsnobg.png" alt="" class="hand-left" id="hands-img" crossorigin="anonymous" style="clip-path:inset(0 50% 0 0)"><img src="/handsnobg.png" alt="" class="hand-right" style="clip-path:inset(0 0 0 50%)"></div><div class="opening-question"><h2>What stands between you and superintelligence? <em>A prompt.</em></h2></div></div></div>
 <div class="scene" id="scene-1"><div class="apps-text"><h2>Intelligence is trapped in boxes. Inside individual <span class="red">apps.</span></h2><p><strong>You are the integration layer.</strong> The model isn't the bottleneck. <strong>The prompt is.</strong></p></div></div>
 <div class="scene" id="scene-2"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
 <div class="scene" id="scene-3"><div class="prose-float"><h2>What if agentic intelligence became <em>ambient?</em></h2></div></div>
