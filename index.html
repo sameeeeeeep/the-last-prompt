@@ -453,7 +453,7 @@ function runTerm(){
       }
       body.appendChild(div);
       requestAnimationFrame(()=>div.classList.add('on'));
-      if(line.last){window._termDissolveTimer=setTimeout(()=>{const term=document.querySelector('.terminal-3d');if(term&&lastScene===2){term.classList.add('dissolving')}},2500)}
+      if(line.last){window._termDissolveTimer=setTimeout(()=>{const term=document.querySelector('.terminal-3d');if(term&&lastScene===2){term.classList.add('dissolving');setTimeout(()=>{if(lastScene===2){const mx=document.getElementById('scroll-spacer').offsetHeight-window.innerHeight;window.scrollTo({top:sR[3][0]*mx+10,behavior:'smooth'})}},1400)}},2500)}
     },delay));
   });
 }
