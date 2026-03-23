@@ -493,13 +493,11 @@ const himg=document.getElementById('hands-img');
 if(himg.complete){sampleHandPoints();T_Dense()}
 else{himg.addEventListener('load',()=>{sampleHandPoints();if(lastScene<=0)T_Dense()})}
 
-// Hands animate in immediately
-requestAnimationFrame(()=>{
-  requestAnimationFrame(()=>{
-    const h=document.querySelector('.adam-hands');
-    if(h)h.classList.add('hands-in');
-  });
-});
+// Hands animate in after brief delay so browser registers initial state
+setTimeout(()=>{
+  const h=document.querySelector('.adam-hands');
+  if(h)h.classList.add('hands-in');
+},100);
 // Particles start invisible (controlled by uAlpha uniform)
 updateScenes();
 setTimeout(()=>document.getElementById('scroll-hint').classList.add('show'),1800);
