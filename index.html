@@ -19,10 +19,10 @@ canvas{display:block}
 @keyframes sceneIn{from{opacity:0}to{opacity:1}}
 .scene.active .clickable{pointer-events:auto}
 .opening{position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
-.adam-hands{position:relative;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.hand-left,.hand-right{width:min(800px,50vw);height:auto;pointer-events:none;flex-shrink:0;will-change:transform,opacity}
-.hand-left{margin-right:-2px}
-.hand-right{margin-left:-2px}
+.adam-hands{position:relative;width:100%;display:flex;align-items:center;justify-content:center;overflow:visible}
+.hand-left,.hand-right{width:min(800px,50vw);height:auto;pointer-events:none;flex-shrink:0;will-change:transform,opacity;opacity:1}
+.hand-left{margin-right:max(-400px,-25vw)}
+.hand-right{margin-left:max(-400px,-25vw)}
 .opening-question{text-align:center;max-width:90vw;margin-top:32px;opacity:0;transform:translateY(16px);transition:opacity 0.8s ease 0.3s,transform 0.8s ease 0.3s}
 .opening-question.show{opacity:1;transform:translateY(0)}
 .opening-question h2{font-family:'Newsreader',serif;font-size:clamp(1.1rem,2.5vw,1.6rem);font-weight:300;color:#5a564f}
@@ -204,7 +204,7 @@ canvas{display:block}
 <body>
 <div id="canvas-container"></div>
 <div id="scroll-spacer"></div>
-<nav id="nav" class="show"><a href="#" class="nav-mark">The Last Prompt</a><div class="nav-r"><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="/autoclawd">Autoclaw</a><a href="https://x.com/sameeprehlan">X</a></div></nav>
+<nav id="nav" class="show"><a href="#" class="nav-mark">The Last Prompt</a><div class="nav-r"><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="/autoclawd">Autoclaw</a><a href="https://x.com/sameeeeeeep">X</a></div></nav>
 <div class="scene" id="scene-0"><div class="opening"><div class="adam-hands"><img src="/handsnobg.png" alt="" class="hand-left" id="hands-img" crossorigin="anonymous" style="clip-path:inset(0 50% 0 0)"><img src="/handsnobg.png" alt="" class="hand-right" style="clip-path:inset(0 0 0 50%)"></div><div class="opening-question"><h2>What stands between you and superintelligence? <em>A prompt.</em></h2></div></div></div>
 <div class="scene" id="scene-1"><div class="apps-text"><h2>Intelligence is trapped in boxes. Inside individual <span class="red">apps.</span></h2><p><strong>You are the integration layer.</strong> The model isn't the bottleneck. <strong>The prompt is.</strong></p></div></div>
 <div class="scene" id="scene-2"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
@@ -317,7 +317,7 @@ geo.setAttribute('size',new THREE.BufferAttribute(sz,1));
 const mat=new THREE.ShaderMaterial({uniforms:{uAlpha:{value:0.0}},vertexShader:'attribute float size;varying vec3 vColor;void main(){vColor=color;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=size*(400.0/-mv.z);gl_Position=projectionMatrix*mv;}',fragmentShader:'uniform float uAlpha;varying vec3 vColor;void main(){float d=length(gl_PointCoord-0.5);if(d>0.5)discard;float a=smoothstep(0.5,0.1,d)*0.7*uAlpha;gl_FragColor=vec4(vColor,a);}',transparent:true,vertexColors:true,depthWrite:false,blending:THREE.AdditiveBlending});
 const pts=new THREE.Points(geo,mat);sc.add(pts);
 const lgeo=new THREE.BufferGeometry();const lp=new Float32Array(600*6);lgeo.setAttribute('position',new THREE.BufferAttribute(lp,3));
-const lmat=new THREE.LineBasicMaterial({color:0xe2ddd3,transparent:true,opacity:0.06,blending:THREE.AdditiveBlending,depthWrite:false});
+const lmat=new THREE.LineBasicMaterial({color:0xe2ddd3,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false});
 const lns=new THREE.LineSegments(lgeo,lmat);sc.add(lns);
 
 let handPoints=null;
@@ -340,10 +340,9 @@ function sampleHandPoints(){
         const i=(y*w+x)*4;
         const r=d[i],g=d[i+1],b=d[i+2],a=d[i+3];
         if(a>20&&g>40&&g>r*0.8){
-          // Map: right half of image -> positive x in world, centered vertically
-          // The green hand is roughly in the right 40% of image
-          const wx=(x/w-0.5)*400;
-          const wy=-(y/h-0.5)*250;
+          // Map: right half of image -> world coords, scaled to match on-screen hand
+          const wx=(x/w-0.5)*550;
+          const wy=-(y/h-0.5)*350;
           const weight=g>150?4:g>80?2:1;
           for(let ww=0;ww<weight;ww++)pts.push([wx,wy]);
         }
@@ -484,7 +483,9 @@ function animate(){
   for(let k=li*6;k<ll.length;k++)ll[k]=0;
   lns.geometry.attributes.position.needsUpdate=true;
   cam.position.x+=(mouse.nx*40-cam.position.x)*0.02;cam.position.y+=(mouse.ny*25-cam.position.y)*0.02;cam.lookAt(0,0,0);
-  pts.rotation.y=t*0.02+scrollPct*Math.PI*0.5;pts.rotation.x=Math.sin(t*0.01)*0.05;lns.rotation.y=pts.rotation.y;lns.rotation.x=pts.rotation.x;
+  // In scene 0, keep particles flat so hand shape is recognizable; other scenes rotate freely
+  if(lastScene===0){pts.rotation.y=t*0.015;pts.rotation.x=0;} else {pts.rotation.y=t*0.02+scrollPct*Math.PI*0.5;pts.rotation.x=Math.sin(t*0.01)*0.05;}
+  lns.rotation.y=pts.rotation.y;lns.rotation.x=pts.rotation.x;
   renderer.render(sc,cam);
 }
 window.addEventListener('mousemove',e=>{mouse.x=(e.clientX/window.innerWidth)*2-1;mouse.y=-(e.clientY/window.innerHeight)*2+1});
@@ -502,37 +503,59 @@ sampleHandPoints();
 const handL=document.querySelector('.hand-left');
 const handR=document.querySelector('.hand-right');
 const openQ=document.querySelector('.opening-question');
-const startOffset=600; // how far apart hands start
+// Use viewport-relative offset so hands are clearly visible on screen edges
+function getStartOffset(){return Math.min(window.innerWidth*0.12,200)}
+const minGap=15; // small gap so hands almost touch but don't
+// Convert pixel offset to Three.js world-space offset
+function pxToWorld(px){
+  const aspect=window.innerWidth/window.innerHeight;
+  const halfW=500*Math.tan(Math.PI/6)*aspect;
+  return px*(halfW*2/window.innerWidth);
+}
 function updateScene0Scroll(){
   const s0end=sR[0][1];
+  const startOff=getStartOffset();
   if(scrollPct<=s0end){
     const p=Math.min(scrollPct/s0end,1);
-    // Hands: start 600px apart, end at 0
-    const offset=startOffset*(1-p);
-    // Opacity: visible immediately but subtle, full at 40%
-    const opacity=Math.min(0.3+p*1.5,0.9);
+    // Hands: come very close with a slight gap
+    const offset=minGap+(startOff-minGap)*(1-p);
+    const opacity=Math.min(0.75+p*0.25,1.0);
     if(handL){handL.style.transform='translateX(-'+offset+'px)';handL.style.opacity=opacity}
     if(handR){handR.style.transform='translateX('+offset+'px)';handR.style.opacity=opacity}
-    // Text: appears when hands are close (after 60%)
-    if(openQ){if(p>0.6)openQ.classList.add('show');else openQ.classList.remove('show')}
-    // Particles: only appear at the very end (after 80%)
-    if(p>0.8){
-      mat.uniforms.uAlpha.value=Math.min((p-0.8)*5,1.0);
+    // Position particles to overlay on the green hand image
+    // The green hand is on the right side; offset pushes it further right
+    const particleTrackX=pxToWorld(offset*0.8);
+    pts.position.x=particleTrackX;lns.position.x=particleTrackX;
+    // Text: appears when hands are close (after 55%)
+    if(openQ){if(p>0.55)openQ.classList.add('show');else openQ.classList.remove('show')}
+    // Particles + lines: fade in as hands approach (start at 40%, full at 80%)
+    if(p>0.4){
+      const pAlpha=Math.min((p-0.4)*2.5,1.0);
+      mat.uniforms.uAlpha.value=pAlpha;
+      lmat.opacity=pAlpha*0.12;
+      pts.visible=true;lns.visible=true;
       window._particlesRevealed=true;
     } else {
       mat.uniforms.uAlpha.value=0;
+      lmat.opacity=0;
+      pts.visible=false;lns.visible=false;
       window._particlesRevealed=false;
     }
   } else {
     mat.uniforms.uAlpha.value=1.0;
-    if(handL){handL.style.transform='translateX(0)';handL.style.opacity='0.9'}
-    if(handR){handR.style.transform='translateX(0)';handR.style.opacity='0.9'}
+    pts.visible=true;lns.visible=true;
+    pts.position.x=pxToWorld(minGap*0.5);lns.position.x=pts.position.x;
+    if(handL){handL.style.transform='translateX(-'+minGap+'px)';handL.style.opacity='1'}
+    if(handR){handR.style.transform='translateX('+minGap+'px)';handR.style.opacity='1'}
     if(openQ)openQ.classList.add('show');
   }
 }
-// Init hands far apart
-if(handL){handL.style.transform='translateX(-'+startOffset+'px)';handL.style.opacity='0.3'}
-if(handR){handR.style.transform='translateX('+startOffset+'px)';handR.style.opacity='0.3'}
+// Init: hands visible on sides, particles completely hidden
+const initOff=getStartOffset();
+if(handL){handL.style.transform='translateX(-'+initOff+'px)';handL.style.opacity='0.75'}
+if(handR){handR.style.transform='translateX('+initOff+'px)';handR.style.opacity='0.75'}
+mat.uniforms.uAlpha.value=0;
+pts.visible=false;lns.visible=false;
 updateScenes();
 setTimeout(()=>document.getElementById('scroll-hint').classList.add('show'),1800);
 animate();
