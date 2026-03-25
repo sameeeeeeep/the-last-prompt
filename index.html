@@ -23,8 +23,7 @@ canvas{display:block}
 .hand-left,.hand-right{width:min(800px,50vw);height:auto;pointer-events:none;flex-shrink:0;will-change:transform,opacity;opacity:1}
 .hand-left{margin-right:max(-400px,-25vw)}
 .hand-right{margin-left:max(-400px,-25vw)}
-.opening-question{text-align:center;max-width:90vw;margin-top:32px;opacity:0;transform:translateY(16px);transition:opacity 0.8s ease 0.3s,transform 0.8s ease 0.3s}
-.opening-question.show{opacity:1;transform:translateY(0)}
+.opening-question{text-align:center;max-width:90vw;margin-top:32px}
 #oq-line1,#oq-line2{opacity:0;transform:translateY(10px);transition:opacity 0.8s ease,transform 0.8s ease}
 #oq-line1.show{opacity:1;transform:translateY(0)}
 #oq-line2.show{opacity:1;transform:translateY(0)}
@@ -223,7 +222,7 @@ canvas{display:block}
 <div class="scene" id="scene-1"><div class="apps-text"><h2>Intelligence is trapped in boxes. Inside individual <span class="red">apps.</span></h2><p><strong>You are the integration layer.</strong> The model isn't the bottleneck. <strong>The prompt is.</strong></p></div></div>
 <div class="scene" id="scene-2"><div class="prose-float"><h2>What if agentic intelligence became <em>ambient?</em></h2></div></div>
 <div class="scene" id="scene-3"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
-<div class="scene" id="scene-4"><div class="interface-text"><h2>Introducing <span class="purple">ARIA.</span></h2><p><strong>Agentic Reality Interface Architecture.</strong> Intelligence at the interface between you and everything. One continuous layer. Always present. Never in the way.</p></div></div>
+<div class="scene" id="scene-4"><div class="interface-text"><h2>Introducing <span class="purple">ARIA.</span></h2><p><strong>Agentic Reality Interface Architecture.</strong><br>An intelligence layer that wraps around your entire digital life.<br>It sees what you see. Hears what you hear. Acts before you ask.</p></div></div>
 <!-- Scene 5: SCREEN - macOS POV -->
 <div class="scene" id="scene-5">
   <div class="pov-container">
@@ -301,7 +300,7 @@ canvas{display:block}
   <img src="/img/ghost-green.png" alt="" class="ghost-img">
   <div class="phase-tag">Phase 1 -- Live on macOS</div>
   <h2>Autoclaw</h2>
-  <p>Sees your screen. Detects friction. Fixes it. Pure Swift. Apple Neural Engine. Open source.</p>
+  <p>The first piece of ARIA. A macOS agent that watches your screen, understands what you're doing, and steps in when it can help. Fully open source.</p>
   <div class="cta-row"><a href="https://github.com/sameeeeeeep/autoclaw" class="btn-gold clickable">Clone & Build</a><a href="/autoclawd" class="btn-ghost clickable">How it works</a></div>
 </div></div>
 <div class="scene" id="scene-10"><div class="signup-end">
@@ -553,7 +552,6 @@ function updateScene0Scroll(){
     // Text: line 1 at 35%, line 2 at 60%
     const l1=document.getElementById('oq-line1');
     const l2=document.getElementById('oq-line2');
-    if(openQ){if(p>0.15)openQ.classList.add('show');else openQ.classList.remove('show')}
     if(l1){if(p>0.2)l1.classList.add('show');else l1.classList.remove('show')}
     if(l2){if(p>0.8)l2.classList.add('show');else l2.classList.remove('show')}
     // Particles + lines: fade in as hands approach (start at 40%, full at 80%)
@@ -575,7 +573,6 @@ function updateScene0Scroll(){
     pts.position.x=pxToWorld(minGap*0.5);lns.position.x=pts.position.x;
     if(handL){handL.style.transform='translateX(-'+minGap+'px)';handL.style.opacity='1'}
     if(handR){handR.style.transform='translateX('+minGap+'px)';handR.style.opacity='1'}
-    if(openQ)openQ.classList.add('show');
     const l1b=document.getElementById('oq-line1');const l2b=document.getElementById('oq-line2');
     if(l1b)l1b.classList.add('show');if(l2b)l2b.classList.add('show');
   }
@@ -591,30 +588,22 @@ setTimeout(()=>document.getElementById('scroll-hint').classList.add('show'),1800
 animate();
 
 // --- SIGNUP FORM (posts to Google Form via hidden iframe) ---
-// TODO: Replace GOOGLE_FORM_ID and ENTRY_ID with your actual values
-// 1. Create a Google Form with one "Email" field
-// 2. Get the prefilled link to find the form ID and entry ID
-// 3. Form URL: https://docs.google.com/forms/d/e/GOOGLE_FORM_ID/formResponse
-// 4. Entry field: entry.XXXXXXX
-const GFORM_URL='https://docs.google.com/forms/d/e/GOOGLE_FORM_ID/formResponse';
-const GFORM_ENTRY='entry.XXXXXXX';
+const GFORM_URL='https://docs.google.com/forms/d/e/1FAIpQLScbxN8cHzFjeOR3CEJVy46a7q-dSc9ltkRLIZT-2zAVdB4cRQ/formResponse';
+const GFORM_ENTRY='entry.1371637174';
 document.getElementById('signup-form').addEventListener('submit',function(e){
   e.preventDefault();
   const email=this.email.value.trim();
   const note=document.getElementById('signup-note');
   if(!email){note.textContent='Enter an email.';note.className='signup-note err';return}
-  const iframe=document.createElement('iframe');
-  iframe.name='gform-iframe';iframe.style.display='none';
-  document.body.appendChild(iframe);
-  const form=document.createElement('form');
-  form.method='POST';form.action=GFORM_URL;form.target='gform-iframe';
-  const input=document.createElement('input');
-  input.name=GFORM_ENTRY;input.value=email;
-  form.appendChild(input);document.body.appendChild(form);form.submit();
-  form.remove();
-  setTimeout(()=>iframe.remove(),3000);
-  note.textContent="You're on the list.";note.className='signup-note ok';
-  this.email.value='';
+  const self=this;
+  let iframe=document.getElementById('gform-iframe');
+  if(!iframe){iframe=document.createElement('iframe');iframe.id='gform-iframe';iframe.name='gform-iframe';iframe.style.display='none';document.body.appendChild(iframe);}
+  const f=document.createElement('form');
+  f.method='POST';f.action=GFORM_URL;f.target='gform-iframe';f.style.display='none';
+  const inp=document.createElement('input');inp.name=GFORM_ENTRY;inp.value=email;
+  f.appendChild(inp);document.body.appendChild(f);
+  f.submit();
+  setTimeout(()=>{f.remove();note.textContent="You're on the list.";note.className='signup-note ok';self.email.value='';},1000);
 });
 </script>
 </body>
