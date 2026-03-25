@@ -198,6 +198,17 @@ canvas{display:block}
 .scroll-hint{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:30;font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:#3d3a36;opacity:0;transition:opacity 1s ease;animation:hfloat 2.5s ease-in-out infinite}
 .scroll-hint.show{opacity:1}
 @keyframes hfloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6px)}}
+.signup-end{text-align:center;max-width:480px;padding:0 24px}
+.signup-end h2{font-family:'Newsreader',serif;font-size:clamp(1.6rem,4vw,2.8rem);font-weight:300;margin-bottom:12px}
+.signup-end p{font-size:0.95rem;line-height:1.75;color:#8a847a;margin-bottom:28px}
+.signup-form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.signup-input{font-family:'Space Mono',monospace;font-size:0.78rem;padding:14px 18px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:#e2ddd3;outline:none;min-width:220px;transition:border-color 0.3s}
+.signup-input:focus{border-color:rgba(201,169,110,0.4)}
+.signup-input::placeholder{color:#4a463f}
+.signup-btn{letter-spacing:0.04em}
+.signup-note{font-family:'Space Mono',monospace;font-size:0.68rem;margin-top:16px;min-height:1.2em}
+.signup-note.ok{color:#28c840}
+.signup-note.err{color:#f87171}
 @media(max-width:640px){.terminal-3d{transform:none}.sense-item{flex-wrap:wrap;gap:8px}.sense-name{min-width:100px;font-size:1.05rem}}
 </style>
 </head>
@@ -207,88 +218,97 @@ canvas{display:block}
 <nav id="nav" class="show"><a href="#" class="nav-mark">The Last Prompt</a><div class="nav-r"><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="/autoclawd">Autoclaw</a></div></nav>
 <div class="scene" id="scene-0"><div class="opening"><div class="adam-hands"><img src="/handsnobg.png" alt="" class="hand-left" id="hands-img" crossorigin="anonymous" style="clip-path:inset(0 50% 0 0)"><img src="/handsnobg.png" alt="" class="hand-right" style="clip-path:inset(0 0 0 50%)"></div><div class="opening-question"><h2>What stands between you and superintelligence? <em>A prompt.</em></h2></div></div></div>
 <div class="scene" id="scene-1"><div class="apps-text"><h2>Intelligence is trapped in boxes. Inside individual <span class="red">apps.</span></h2><p><strong>You are the integration layer.</strong> The model isn't the bottleneck. <strong>The prompt is.</strong></p></div></div>
-<div class="scene" id="scene-2"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
-<div class="scene" id="scene-3"><div class="prose-float"><h2>What if agentic intelligence became <em>ambient?</em></h2></div></div>
+<div class="scene" id="scene-2"><div class="prose-float"><h2>What if agentic intelligence became <em>ambient?</em></h2></div></div>
+<div class="scene" id="scene-3"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
 <div class="scene" id="scene-4"><div class="interface-text"><h2>Introducing <span class="purple">ARIA.</span></h2><p><strong>Agentic Reality Interface Architecture.</strong> Intelligence at the interface between you and everything. One continuous layer. Always present. Never in the way.</p></div></div>
 <!-- Scene 5: SCREEN - macOS POV -->
 <div class="scene" id="scene-5">
   <div class="pov-container">
-    <div class="pov-label"><span class="pov-num">01</span> Screen <span class="pov-badge pov-live">Live</span></div>
+    <div class="pov-label"><span class="pov-num">Phase 1</span> Screen <span class="pov-badge pov-live">Live</span></div>
     <div class="pov-screen">
       <div class="pov-menubar"><span class="pov-mb-left">Finder  File  Edit  View</span><span class="pov-mb-right">Thu 2:47 PM</span></div>
       <div class="pov-desktop">
-        <div class="pov-win pov-win-code"><div class="pov-win-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pov-win-title">Safari - Kayak.com</span></div><div class="pov-win-body"><div class="pov-task-title" style="font-size:0.68rem;color:#8a847a">SFO to JFK, Mar 27 - Apr 2</div><div class="pov-task-title" style="font-size:0.8rem">United 2847 - Departs 6:15 AM</div><div class="pov-task-status">$342 round trip</div></div></div>
-        <div class="pov-win pov-win-slack"><div class="pov-win-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pov-win-title">Calendar - March</span></div><div class="pov-win-body"><div class="pov-task-title" style="color:#f87171;font-size:0.72rem">Thu Mar 27, 10:00 AM</div><div class="pov-task-status" style="color:#f87171">Client sync - Henderson Group</div></div></div>
+        <div class="pov-win pov-win-code"><div class="pov-win-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pov-win-title">Slack - #partnerships</span></div><div class="pov-win-body"><div class="pov-task-title" style="font-size:0.68rem;color:#8a847a">James (Meridian)</div><div class="pov-task-title" style="font-size:0.8rem">Hey — can you send the deck with updated Q2 numbers before the board call tomorrow?</div><div class="pov-task-status" style="color:#c9a96e">2 min ago</div></div></div>
+        <div class="pov-win pov-win-slack"><div class="pov-win-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pov-win-title">Google Slides - Meridian Q2</span></div><div class="pov-win-body"><div class="pov-task-title" style="font-size:0.72rem">Last edited: Feb 14</div><div class="pov-task-status" style="color:#f87171">Revenue, CAC, and churn are stale</div></div></div>
         <div class="pov-toast" id="pov-toast-screen">
           <div class="pov-toast-header"><img src="/img/ghost-green.png" alt="" class="pov-toast-ghost">Autoclaw</div>
-          <div class="pov-toast-body">Your Mar 27 flight conflicts with the Henderson sync at 10 AM. I found 3 evening flights. Want me to rebook and message the team?</div>
-          <div class="pov-toast-actions"><span class="pov-toast-btn pov-btn-approve">Approve</span><span class="pov-toast-btn pov-btn-diff">Show flights</span></div>
+          <div class="pov-toast-body">I can pull the latest Q2 numbers from your dashboard, update slides 4-9, and send the deck to James. One click.</div>
+          <div class="pov-toast-actions"><span class="pov-toast-btn pov-btn-approve">Run it</span><span class="pov-toast-btn pov-btn-diff">Preview</span></div>
         </div>
       </div>
     </div>
-    <p class="pov-caption">Sees your screen. Connects the dots across apps. Acts before you notice the conflict.</p>
+    <p class="pov-caption">Sees the request. Knows where the data lives. Proposes the whole workflow.</p>
   </div>
 </div>
 
 <!-- Scene 6: VOICE - inner voice POV -->
 <div class="scene" id="scene-6">
   <div class="pov-container">
-    <div class="pov-label"><span class="pov-num">02</span> Voice <span class="pov-badge pov-soon">Soon</span></div>
+    <div class="pov-label"><span class="pov-num">Phase 2</span> Voice <span class="pov-badge pov-soon">Soon</span></div>
     <div class="pov-voice">
-      <div class="pov-voice-ctx">You're on a client call. They ask about "the Henderson timeline."</div>
+      <div class="pov-voice-ctx">You're in an argument. It's escalating. You're about to say something you'll regret.</div>
       <div class="pov-voice-wave" id="voice-wave"></div>
       <div class="pov-voice-thought" id="voice-thought">
-        <div class="pov-vt-line" data-delay="0">Deal closed last Tuesday. $340K, 15% below ask.</div>
-        <div class="pov-vt-line" data-delay="600">Next milestone is the onboarding call, scheduled April 3.</div>
-        <div class="pov-vt-line" data-delay="1200">Sarah sent the SOW yesterday. They haven't signed yet.</div>
+        <div class="pov-vt-line" data-delay="0">Pause. You're reacting to the tone, not the words.</div>
+        <div class="pov-vt-line" data-delay="600">They said the same thing last Tuesday and you agreed with it then.</div>
+        <div class="pov-vt-line" data-delay="1200">You're tired. This isn't the hill. Let it go.</div>
       </div>
-      <div class="pov-voice-sub">Not an assistant you talk to. A voice that thinks with you.</div>
+      <div class="pov-voice-sub">The calmer voice in your head. Always there. Never uninvited.</div>
     </div>
-    <p class="pov-caption">Hears what you hear. Surfaces what you need. Never interrupts.</p>
+    <p class="pov-caption">Not an assistant. A presence that helps you be the version of yourself you'd choose in hindsight.</p>
   </div>
 </div>
 
 <!-- Scene 7: VISION - real world POV -->
 <div class="scene" id="scene-7">
   <div class="pov-container">
-    <div class="pov-label"><span class="pov-num">03</span> Vision <span class="pov-badge pov-soon">Soon</span></div>
+    <div class="pov-label"><span class="pov-num">Phase 2</span> Vision <span class="pov-badge pov-soon">Soon</span></div>
     <div class="pov-vision">
       <div class="pov-vision-frame">
         <div class="pov-vision-env">
-          <div class="pov-v-object" style="top:22%;left:12%"><span class="pov-v-tag">Organic Oat Milk</span><span class="pov-v-sub">$4.99 - on your list</span></div>
-          <div class="pov-v-object" style="top:50%;left:55%"><span class="pov-v-tag">Almond Butter</span><span class="pov-v-sub">$2 cheaper at Trader Joe's</span></div>
-          <div class="pov-v-object" style="top:38%;left:78%"><span class="pov-v-tag">Expiry: Mar 28</span><span class="pov-v-sub">Use within 4 days</span></div>
+          <div class="pov-v-object" style="top:18%;left:10%"><span class="pov-v-tag">Water stain — ceiling joint</span><span class="pov-v-sub">Possible leak. Check roof access.</span></div>
+          <div class="pov-v-object" style="top:48%;left:50%"><span class="pov-v-tag">Electrical panel — Federal Pacific</span><span class="pov-v-sub">Known fire hazard. Replacement: ~$2,400</span></div>
+          <div class="pov-v-object" style="top:72%;left:25%"><span class="pov-v-tag">Foundation hairline crack</span><span class="pov-v-sub">Monitor. Cosmetic unless it widens past 1/4"</span></div>
         </div>
         <div class="pov-vision-corners"><span class="pov-vc pov-vc-tl"></span><span class="pov-vc pov-vc-tr"></span><span class="pov-vc pov-vc-bl"></span><span class="pov-vc pov-vc-br"></span></div>
         <div class="pov-vision-scan" id="vision-scan"></div>
       </div>
     </div>
-    <p class="pov-caption">Sees the world you walk through. Reads labels, compares prices, remembers your list.</p>
+    <p class="pov-caption">You're walking through an open house. It's already done the inspection.</p>
   </div>
 </div>
 
 <!-- Scene 8: NEURAL - thought dissolves into action -->
 <div class="scene" id="scene-8">
   <div class="pov-container">
-    <div class="pov-label"><span class="pov-num">04</span> Neural <span class="pov-badge pov-future">Unplanned</span></div>
+    <div class="pov-label"><span class="pov-num">Phase 2</span> Neural <span class="pov-badge pov-future">Unplanned</span></div>
     <div class="pov-neural">
       <div class="pov-neural-thoughts">
-        <div class="pov-nt" data-delay="0" style="top:28%;left:18%">cancel dinner tonight</div>
-        <div class="pov-nt" data-delay="500" style="top:48%;left:52%">done. texted Maya, cancelled the reservation.</div>
-        <div class="pov-nt" data-delay="1100" style="top:24%;left:62%">what's the status of the house offer</div>
-        <div class="pov-nt" data-delay="1600" style="top:58%;left:22%">pending. agent said they'd respond by Friday.</div>
-        <div class="pov-nt" data-delay="2200" style="top:42%;left:40%">no interface left.</div>
+        <div class="pov-nt" data-delay="0" style="top:28%;left:18%">should I take the offer or wait?</div>
+        <div class="pov-nt" data-delay="600" style="top:48%;left:52%">if you wait, the terms get worse. but you're not ready to move yet.</div>
+        <div class="pov-nt" data-delay="1200" style="top:24%;left:62%">counter at 80%. buy yourself three weeks. you'll know by then.</div>
+        <div class="pov-nt" data-delay="1800" style="top:58%;left:22%">your next best move is already clear to you.</div>
+        <div class="pov-nt" data-delay="2400" style="top:42%;left:40%">no interface left.</div>
       </div>
     </div>
-    <p class="pov-caption">Thought becomes action. No screen. No voice. No eyes. Just intelligence.</p>
+    <p class="pov-caption">You don't ask it. You don't prompt it. You just know.</p>
   </div>
 </div>
 <div class="scene" id="scene-9"><div class="final-cta">
   <img src="/img/ghost-green.png" alt="" class="ghost-img">
   <div class="phase-tag">Phase 1 -- Live on macOS</div>
   <h2>Autoclaw</h2>
-  <p>Sees your screen. Detects friction. Fixes it. You never typed a thing. Pure Swift. Apple Neural Engine. Open source.</p>
+  <p>Sees your screen. Detects friction. Fixes it. Pure Swift. Apple Neural Engine. Open source.</p>
   <div class="cta-row"><a href="https://github.com/sameeeeeeep/autoclaw" class="btn-gold clickable">Clone & Build</a><a href="/autoclawd" class="btn-ghost clickable">How it works</a></div>
+</div></div>
+<div class="scene" id="scene-10"><div class="signup-end">
+  <h2>Stay in the loop.</h2>
+  <p>Get updates as we ship new phases.</p>
+  <form class="signup-form" id="signup-form" autocomplete="off">
+    <input type="email" name="email" placeholder="your@email.com" required class="signup-input clickable">
+    <button type="submit" class="btn-gold clickable signup-btn">Notify me</button>
+  </form>
+  <p class="signup-note" id="signup-note"></p>
 </div></div>
 <div class="scroll-hint" id="scroll-hint">scroll</div>
 <div id="progress-bar"><div id="progress-fill"></div></div>
@@ -393,10 +413,10 @@ function T_Eye(){cachedTargets('eye',function(t){for(let i=0;i<PC;i++){const i3=
 function T_Neural(){cachedTargets('neural',function(t){const nodes=[];for(let l=0;l<5;l++){const cnt=6+Math.floor(Math.random()*4);for(let n=0;n<cnt;n++){nodes.push({x:(l-2)*100,y:(n-cnt/2)*45+(Math.random()-0.5)*15,z:(Math.random()-0.5)*60})}}for(let i=0;i<PC;i++){const i3=i*3;const nd=nodes[Math.floor(Math.random()*nodes.length)];t[i3]=nd.x+(Math.random()-0.5)*30;t[i3+1]=nd.y+(Math.random()-0.5)*30;t[i3+2]=nd.z+(Math.random()-0.5)*30}})}
 function T_Ambient(){cachedTargets('ambient',function(t){for(let i=0;i<PC;i++){const i3=i*3;const r=200+Math.random()*500;const th=Math.random()*Math.PI*2;const p=Math.acos(2*Math.random()-1);t[i3]=r*Math.sin(p)*Math.cos(th);t[i3+1]=r*Math.sin(p)*Math.sin(th);t[i3+2]=r*Math.cos(p)-100}})}
 T_Dense();
-const sIds=['scene-0','scene-1','scene-2','scene-3','scene-4','scene-5','scene-6','scene-7','scene-8','scene-9'];
-const sR=[[0,0.12],[0.12,0.20],[0.20,0.32],[0.32,0.42],[0.42,0.52],[0.52,0.61],[0.61,0.70],[0.70,0.79],[0.79,0.88],[0.88,1.0]];
+const sIds=['scene-0','scene-1','scene-2','scene-3','scene-4','scene-5','scene-6','scene-7','scene-8','scene-9','scene-10'];
+const sR=[[0,0.10],[0.10,0.17],[0.17,0.25],[0.25,0.35],[0.35,0.44],[0.44,0.52],[0.52,0.60],[0.60,0.68],[0.68,0.76],[0.76,0.86],[0.86,1.0]];
 function getS(p){for(let i=0;i<sR.length;i++)if(p>=sR[i][0]&&p<sR[i][1])return i;return sR.length-1}
-function updateScenes(){const s=getS(scrollPct);const changed=s!==lastScene;lastScene=s;if(!changed)return;sIds.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===s));document.getElementById('nav').classList.add('show');document.getElementById('scroll-hint').classList.toggle('show',s===0);interfaceActive=false;switch(s){case 0:T_Dense();lmat.opacity=0.12;recolor(C.gold);break;case 1:T_Apps();lmat.opacity=0.10;recolor(C.red);break;case 2:T_Dense();lmat.opacity=0.08;recolor(C.gold);resetTerm();runTerm();break;case 3:T_Release();lmat.opacity=0.02;recolor(C.teal);break;case 4:T_Interface();lmat.opacity=0.04;recolor(C.purple);interfaceActive=true;break;case 5:T_Screen();lmat.opacity=0.08;recolor(C.green);break;case 6:T_Wave();lmat.opacity=0.06;recolor(C.gold);activateVoice();break;case 7:T_Eye();lmat.opacity=0.06;recolor(C.purple);break;case 8:T_Neural();lmat.opacity=0.08;recolor(C.dim);activateNeural();break;case 9:T_Ambient();lmat.opacity=0.02;recolor(C.teal);break}}
+function updateScenes(){const s=getS(scrollPct);const changed=s!==lastScene;lastScene=s;if(!changed)return;sIds.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===s));document.getElementById('nav').classList.add('show');document.getElementById('scroll-hint').classList.toggle('show',s===0);interfaceActive=false;switch(s){case 0:T_Dense();lmat.opacity=0.12;recolor(C.gold);break;case 1:T_Apps();lmat.opacity=0.10;recolor(C.red);break;case 2:T_Release();lmat.opacity=0.02;recolor(C.teal);break;case 3:T_Dense();lmat.opacity=0.08;recolor(C.gold);resetTerm();runTerm();break;case 4:T_Interface();lmat.opacity=0.04;recolor(C.purple);interfaceActive=true;break;case 5:T_Screen();lmat.opacity=0.08;recolor(C.green);break;case 6:T_Wave();lmat.opacity=0.06;recolor(C.gold);activateVoice();break;case 7:T_Eye();lmat.opacity=0.06;recolor(C.purple);break;case 8:T_Neural();lmat.opacity=0.08;recolor(C.dim);activateNeural();break;case 9:T_Ambient();lmat.opacity=0.02;recolor(C.teal);break;case 10:T_Ambient();lmat.opacity=0.01;recolor(C.gold);break}}
 
 function activateVoice(){
   document.querySelectorAll('.pov-vt-line').forEach(el=>{el.classList.remove('on')});
@@ -463,7 +483,7 @@ function runTerm(){
       }
       body.appendChild(div);
       requestAnimationFrame(()=>div.classList.add('on'));
-      if(line.last){window._termDissolveTimer=setTimeout(()=>{const term=document.querySelector('.terminal-3d');if(term&&lastScene===2){term.classList.add('dissolving');setTimeout(()=>{if(lastScene===2){const mx=document.getElementById('scroll-spacer').offsetHeight-window.innerHeight;window.scrollTo({top:sR[3][0]*mx+10,behavior:'smooth'})}},1400)}},2500)}
+      if(line.last){window._termDissolveTimer=setTimeout(()=>{const term=document.querySelector('.terminal-3d');if(term&&lastScene===3){term.classList.add('dissolving');setTimeout(()=>{if(lastScene===3){const mx=document.getElementById('scroll-spacer').offsetHeight-window.innerHeight;window.scrollTo({top:sR[4][0]*mx+10,behavior:'smooth'})}},1400)}},2500)}
     },delay));
   });
 }
@@ -476,7 +496,8 @@ function animate(){
   flowInterface(t);
   const p=geo.attributes.position.array;
   const ls=0.08;
-  for(let i=0;i<PC;i++){const i3=i*3;p[i3]+=(tgt[i3]-p[i3])*ls;p[i3+1]+=(tgt[i3+1]-p[i3+1])*ls;p[i3+2]+=(tgt[i3+2]-p[i3+2])*ls;const pp=ph[i];p[i3]+=Math.sin(t*0.3+pp)*0.15;p[i3+1]+=Math.cos(t*0.25+pp*1.3)*0.15;p[i3+2]+=Math.sin(t*0.2+pp*0.7)*0.1;const dx=p[i3]-mouse.nx*300;const dy=p[i3+1]-mouse.ny*200;const d=Math.sqrt(dx*dx+dy*dy);if(d<150){const f=(150-d)/150*0.8;p[i3]+=dx*f*0.02;p[i3+1]+=dy*f*0.02}}
+  const isS0=lastScene===0;
+  for(let i=0;i<PC;i++){const i3=i*3;p[i3]+=(tgt[i3]-p[i3])*ls;p[i3+1]+=(tgt[i3+1]-p[i3+1])*ls;p[i3+2]+=(tgt[i3+2]-p[i3+2])*ls;const pp=ph[i];if(isS0){const sp=scrollPct/sR[0][1];p[i3]+=Math.sin(sp*6+pp)*0.12;p[i3+1]+=Math.cos(sp*5+pp*1.3)*0.12;p[i3+2]+=Math.sin(sp*4+pp*0.7)*0.08}else{p[i3]+=Math.sin(t*0.3+pp)*0.15;p[i3+1]+=Math.cos(t*0.25+pp*1.3)*0.15;p[i3+2]+=Math.sin(t*0.2+pp*0.7)*0.1}const dx=p[i3]-mouse.nx*300;const dy=p[i3+1]-mouse.ny*200;const d=Math.sqrt(dx*dx+dy*dy);if(d<150){const f=(150-d)/150*0.8;p[i3]+=dx*f*0.02;p[i3+1]+=dy*f*0.02}}
   geo.attributes.position.needsUpdate=true;
   const ll=lns.geometry.attributes.position.array;let li=0;const ml=600,md=60;
   for(let i=0;i<PC&&li<ml;i+=12){for(let j=i+12;j<PC&&li<ml;j+=12){const i3=i*3,j3=j*3;const dx=p[i3]-p[j3];const dy=p[i3+1]-p[j3+1];const dz=p[i3+2]-p[j3+2];const d=dx*dx+dy*dy+dz*dz;if(d<md*md){const l6=li*6;ll[l6]=p[i3];ll[l6+1]=p[i3+1];ll[l6+2]=p[i3+2];ll[l6+3]=p[j3];ll[l6+4]=p[j3+1];ll[l6+5]=p[j3+2];li++}}}
@@ -484,7 +505,7 @@ function animate(){
   lns.geometry.attributes.position.needsUpdate=true;
   cam.position.x+=(mouse.nx*40-cam.position.x)*0.02;cam.position.y+=(mouse.ny*25-cam.position.y)*0.02;cam.lookAt(0,0,0);
   // In scene 0, keep particles flat so hand shape is recognizable; other scenes rotate freely
-  if(lastScene===0){pts.rotation.y=t*0.015;pts.rotation.x=0;} else {pts.rotation.y=t*0.02+scrollPct*Math.PI*0.5;pts.rotation.x=Math.sin(t*0.01)*0.05;}
+  if(lastScene===0){pts.rotation.y=scrollPct*0.3;pts.rotation.x=0;} else {pts.rotation.y=t*0.02+scrollPct*Math.PI*0.5;pts.rotation.x=Math.sin(t*0.01)*0.05;}
   lns.rotation.y=pts.rotation.y;lns.rotation.x=pts.rotation.x;
   renderer.render(sc,cam);
 }
@@ -559,6 +580,33 @@ pts.visible=false;lns.visible=false;
 updateScenes();
 setTimeout(()=>document.getElementById('scroll-hint').classList.add('show'),1800);
 animate();
+
+// --- SIGNUP FORM (posts to Google Form via hidden iframe) ---
+// TODO: Replace GOOGLE_FORM_ID and ENTRY_ID with your actual values
+// 1. Create a Google Form with one "Email" field
+// 2. Get the prefilled link to find the form ID and entry ID
+// 3. Form URL: https://docs.google.com/forms/d/e/GOOGLE_FORM_ID/formResponse
+// 4. Entry field: entry.XXXXXXX
+const GFORM_URL='https://docs.google.com/forms/d/e/GOOGLE_FORM_ID/formResponse';
+const GFORM_ENTRY='entry.XXXXXXX';
+document.getElementById('signup-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  const email=this.email.value.trim();
+  const note=document.getElementById('signup-note');
+  if(!email){note.textContent='Enter an email.';note.className='signup-note err';return}
+  const iframe=document.createElement('iframe');
+  iframe.name='gform-iframe';iframe.style.display='none';
+  document.body.appendChild(iframe);
+  const form=document.createElement('form');
+  form.method='POST';form.action=GFORM_URL;form.target='gform-iframe';
+  const input=document.createElement('input');
+  input.name=GFORM_ENTRY;input.value=email;
+  form.appendChild(input);document.body.appendChild(form);form.submit();
+  form.remove();
+  setTimeout(()=>iframe.remove(),3000);
+  note.textContent="You're on the list.";note.className='signup-note ok';
+  this.email.value='';
+});
 </script>
 </body>
 </html>
