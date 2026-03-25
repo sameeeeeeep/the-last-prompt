@@ -179,11 +179,19 @@ canvas{display:block}
 .hud-coord{font-family:'Space Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;color:rgba(126,184,168,0.2)}
 @media(max-width:640px){.hud-senses{grid-template-columns:1fr}.hud-bottom{flex-wrap:wrap;gap:8px}}
 
-.final-cta{text-align:center;max-width:540px;padding:0 24px}
+.final-cta{text-align:center;max-width:640px;padding:0 24px;max-height:90vh;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
+.final-cta::-webkit-scrollbar{display:none}
 .final-cta .ghost-img{width:56px;height:56px;margin-bottom:20px;opacity:0.8}
-.final-cta .phase-tag{font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#7eb8a8;margin-bottom:20px}
+.final-cta .phase-tag{font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#7eb8a8;margin-bottom:16px}
 .final-cta h2{font-family:'Newsreader',serif;font-size:clamp(1.6rem,4vw,2.8rem);font-weight:300;margin-bottom:12px}
 .final-cta p{font-size:0.95rem;line-height:1.75;color:#8a847a;margin-bottom:32px}
+.final-cta .narrative-lead{font-family:'Newsreader',serif;font-size:clamp(0.95rem,2vw,1.15rem);font-weight:300;font-style:italic;color:#8a847a;line-height:1.7;margin-bottom:36px}
+.final-cta .narrative-lead strong{font-style:normal;color:#e2ddd3;font-weight:400}
+.layer-list{text-align:left;margin-bottom:36px;display:flex;flex-direction:column;gap:24px}
+.layer-item{padding-left:0}
+.layer-item .layer-quote{font-family:'Newsreader',serif;font-size:clamp(1rem,2vw,1.2rem);font-weight:400;color:#e2ddd3;margin-bottom:6px}
+.layer-item .layer-body{font-size:0.85rem;line-height:1.7;color:#6b6560}
+.layer-item .layer-tag{font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:#4a463f;margin-top:4px}
 .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .btn-gold{font-family:'Space Mono',monospace;font-size:0.72rem;letter-spacing:0.04em;padding:14px 26px;background:#c9a96e;color:#030305;border:none;text-decoration:none;pointer-events:auto;cursor:pointer;transition:all 0.3s}
 .btn-gold:hover{filter:brightness(1.15);transform:translateY(-1px)}
@@ -298,9 +306,36 @@ canvas{display:block}
 </div>
 <div class="scene" id="scene-9"><div class="final-cta">
   <img src="/img/ghost-green.png" alt="" class="ghost-img">
-  <div class="phase-tag">Phase 1 -- Live on macOS</div>
+  <div class="phase-tag">Phase 1 — Live on macOS</div>
   <h2>Autoclaw</h2>
-  <p>The first piece of ARIA. A macOS agent that watches your screen, understands what you're doing, and steps in when it can help. Fully open source.</p>
+  <p class="narrative-lead">Claude is the brain. It was always the brain.<br>But a brain without a body can only think.<br>We built the <strong>eyes, hands, reflexes, and memory</strong> — so it can actually live in your world.</p>
+  <div class="layer-list">
+    <div class="layer-item">
+      <div class="layer-quote">"It already sees what you see."</div>
+      <div class="layer-body">The biggest tax on AI is the prompt — describing what you're looking at, what you're trying to do. Autoclaw already knows. That entire step disappears.</div>
+      <div class="layer-tag">Vision Pipeline · Apple Neural Engine</div>
+    </div>
+    <div class="layer-item">
+      <div class="layer-quote">"It knows what to do about it."</div>
+      <div class="layer-body">Not suggestions. Task mode patches the bug. Question mode pulls the answer from your last meeting. The right scope is already there.</div>
+      <div class="layer-tag">Four modes · Hard permission boundaries</div>
+    </div>
+    <div class="layer-item">
+      <div class="layer-quote">"It reaches everywhere you work."</div>
+      <div class="layer-body">AI trapped in a chat window can only talk. Autoclaw plugs into your actual tools — tasks, repos, docs, data. The gap between "AI said to do this" and "it's done" closes.</div>
+      <div class="layer-tag">MCP Protocol · Infinite connectors</div>
+    </div>
+    <div class="layer-item">
+      <div class="layer-quote">"You do it once. It does it forever."</div>
+      <div class="layer-body">Show it a workflow by doing it. That's it. Your expertise becomes replayable. The line between "I know how" and "it knows how" is one demonstration.</div>
+      <div class="layer-tag">Learn mode · Screen + DOM + OCR</div>
+    </div>
+    <div class="layer-item">
+      <div class="layer-quote">"Everything stays yours."</div>
+      <div class="layer-body">The reason people hold back from letting AI see more isn't capability — it's trust. Nothing leaves your machine. Fully open source. You can let it see everything.</div>
+      <div class="layer-tag">Local-first · Pure Swift · No telemetry</div>
+    </div>
+  </div>
   <div class="cta-row"><a href="https://github.com/sameeeeeeep/autoclaw" class="btn-gold clickable">Clone & Build</a><a href="/autoclawd" class="btn-ghost clickable">How it works</a></div>
 </div></div>
 <div class="scene" id="scene-10"><div class="signup-end">
@@ -416,7 +451,7 @@ function T_Neural(){cachedTargets('neural',function(t){const nodes=[];for(let l=
 function T_Ambient(){cachedTargets('ambient',function(t){for(let i=0;i<PC;i++){const i3=i*3;const r=200+Math.random()*500;const th=Math.random()*Math.PI*2;const p=Math.acos(2*Math.random()-1);t[i3]=r*Math.sin(p)*Math.cos(th);t[i3+1]=r*Math.sin(p)*Math.sin(th);t[i3+2]=r*Math.cos(p)-100}})}
 T_Dense();
 const sIds=['scene-0','scene-1','scene-2','scene-3','scene-4','scene-5','scene-6','scene-7','scene-8','scene-9','scene-10'];
-const sR=[[0,0.10],[0.10,0.17],[0.17,0.25],[0.25,0.35],[0.35,0.44],[0.44,0.52],[0.52,0.60],[0.60,0.68],[0.68,0.76],[0.76,0.86],[0.86,1.0]];
+const sR=[[0,0.09],[0.09,0.15],[0.15,0.22],[0.22,0.31],[0.31,0.39],[0.39,0.47],[0.47,0.55],[0.55,0.63],[0.63,0.70],[0.70,0.88],[0.88,1.0]];
 function getS(p){for(let i=0;i<sR.length;i++)if(p>=sR[i][0]&&p<sR[i][1])return i;return sR.length-1}
 function updateScenes(){const s=getS(scrollPct);const changed=s!==lastScene;lastScene=s;if(!changed)return;sIds.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i===s));document.getElementById('nav').classList.add('show');document.getElementById('scroll-hint').classList.toggle('show',s===0);interfaceActive=false;switch(s){case 0:T_Dense();lmat.opacity=0.12;recolor(C.gold);break;case 1:T_Apps();lmat.opacity=0.10;recolor(C.red);break;case 2:T_Release();lmat.opacity=0.02;recolor(C.teal);break;case 3:T_Dense();lmat.opacity=0.08;recolor(C.gold);resetTerm();runTerm();break;case 4:T_Interface();lmat.opacity=0.04;recolor(C.purple);interfaceActive=true;break;case 5:T_Screen();lmat.opacity=0.08;recolor(C.green);break;case 6:T_Wave();lmat.opacity=0.06;recolor(C.gold);activateVoice();break;case 7:T_Eye();lmat.opacity=0.06;recolor(C.purple);break;case 8:T_Neural();lmat.opacity=0.08;recolor(C.dim);activateNeural();break;case 9:T_Ambient();lmat.opacity=0.02;recolor(C.teal);break;case 10:T_Ambient();lmat.opacity=0.01;recolor(C.gold);break}}
 
