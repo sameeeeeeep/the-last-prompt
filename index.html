@@ -553,9 +553,9 @@ function updateScene0Scroll(){
     // Text: line 1 at 35%, line 2 at 60%
     const l1=document.getElementById('oq-line1');
     const l2=document.getElementById('oq-line2');
-    if(openQ){if(p>0.3)openQ.classList.add('show');else openQ.classList.remove('show')}
-    if(l1){if(p>0.35)l1.classList.add('show');else l1.classList.remove('show')}
-    if(l2){if(p>0.6)l2.classList.add('show');else l2.classList.remove('show')}
+    if(openQ){if(p>0.15)openQ.classList.add('show');else openQ.classList.remove('show')}
+    if(l1){if(p>0.2)l1.classList.add('show');else l1.classList.remove('show')}
+    if(l2){if(p>0.8)l2.classList.add('show');else l2.classList.remove('show')}
     // Particles + lines: fade in as hands approach (start at 40%, full at 80%)
     if(p>0.4){
       const pAlpha=Math.min((p-0.4)*2.5,1.0);
