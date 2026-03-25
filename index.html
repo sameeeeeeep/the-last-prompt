@@ -25,6 +25,9 @@ canvas{display:block}
 .hand-right{margin-left:max(-400px,-25vw)}
 .opening-question{text-align:center;max-width:90vw;margin-top:32px;opacity:0;transform:translateY(16px);transition:opacity 0.8s ease 0.3s,transform 0.8s ease 0.3s}
 .opening-question.show{opacity:1;transform:translateY(0)}
+#oq-line1,#oq-line2{opacity:0;transform:translateY(10px);transition:opacity 0.8s ease,transform 0.8s ease}
+#oq-line1.show{opacity:1;transform:translateY(0)}
+#oq-line2.show{opacity:1;transform:translateY(0)}
 .opening-question h2{font-family:'Newsreader',serif;font-size:clamp(1.1rem,2.5vw,1.6rem);font-weight:300;color:#5a564f}
 .opening-question em{font-style:italic;color:#c9a96e}
 .terminal-3d{width:min(680px,88vw);background:rgba(8,8,14,0.85);border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 40px 160px rgba(0,0,0,0.5);overflow:hidden;transform:perspective(800px) rotateX(2deg)}
@@ -216,7 +219,7 @@ canvas{display:block}
 <div id="canvas-container"></div>
 <div id="scroll-spacer"></div>
 <nav id="nav" class="show"><a href="#" class="nav-mark">The Last Prompt</a><div class="nav-r"><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="/autoclawd">Autoclaw</a></div></nav>
-<div class="scene" id="scene-0"><div class="opening"><div class="adam-hands"><img src="/handsnobg.png" alt="" class="hand-left" id="hands-img" crossorigin="anonymous" style="clip-path:inset(0 50% 0 0)"><img src="/handsnobg.png" alt="" class="hand-right" style="clip-path:inset(0 0 0 50%)"></div><div class="opening-question"><h2>What stands between you and superintelligence? <em>A prompt.</em></h2></div></div></div>
+<div class="scene" id="scene-0"><div class="opening"><div class="adam-hands"><img src="/handsnobg.png" alt="" class="hand-left" id="hands-img" crossorigin="anonymous" style="clip-path:inset(0 50% 0 0)"><img src="/handsnobg.png" alt="" class="hand-right" style="clip-path:inset(0 0 0 50%)"></div><div class="opening-question"><h2 id="oq-line1">What stands between you and superintelligence?</h2><h2 id="oq-line2"><em>A prompt.</em></h2></div></div></div>
 <div class="scene" id="scene-1"><div class="apps-text"><h2>Intelligence is trapped in boxes. Inside individual <span class="red">apps.</span></h2><p><strong>You are the integration layer.</strong> The model isn't the bottleneck. <strong>The prompt is.</strong></p></div></div>
 <div class="scene" id="scene-2"><div class="prose-float"><h2>What if agentic intelligence became <em>ambient?</em></h2></div></div>
 <div class="scene" id="scene-3"><div class="terminal-3d"><div class="term-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div><div class="term-body" id="term-body"></div></div></div>
@@ -547,8 +550,12 @@ function updateScene0Scroll(){
     // The green hand is on the right side; offset pushes it further right
     const particleTrackX=pxToWorld(offset*0.8);
     pts.position.x=particleTrackX;lns.position.x=particleTrackX;
-    // Text: appears when hands are close (after 55%)
-    if(openQ){if(p>0.55)openQ.classList.add('show');else openQ.classList.remove('show')}
+    // Text: line 1 at 35%, line 2 at 60%
+    const l1=document.getElementById('oq-line1');
+    const l2=document.getElementById('oq-line2');
+    if(openQ){if(p>0.3)openQ.classList.add('show');else openQ.classList.remove('show')}
+    if(l1){if(p>0.35)l1.classList.add('show');else l1.classList.remove('show')}
+    if(l2){if(p>0.6)l2.classList.add('show');else l2.classList.remove('show')}
     // Particles + lines: fade in as hands approach (start at 40%, full at 80%)
     if(p>0.4){
       const pAlpha=Math.min((p-0.4)*2.5,1.0);
@@ -569,6 +576,8 @@ function updateScene0Scroll(){
     if(handL){handL.style.transform='translateX(-'+minGap+'px)';handL.style.opacity='1'}
     if(handR){handR.style.transform='translateX('+minGap+'px)';handR.style.opacity='1'}
     if(openQ)openQ.classList.add('show');
+    const l1b=document.getElementById('oq-line1');const l2b=document.getElementById('oq-line2');
+    if(l1b)l1b.classList.add('show');if(l2b)l2b.classList.add('show');
   }
 }
 // Init: hands visible on sides, particles completely hidden
