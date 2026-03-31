@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Autoclaw — Autopilot for macOS</title>
-<meta name="description" content="An ambient macOS agent that sees your screen, learns your workflows, and runs your work on autopilot. Not a copilot. An autopilot.">
+<title>Autoclaw — The Agentic Interface for macOS</title>
+<meta name="description" content="When AI lives inside apps, the cognitive load stays on you. Autoclaw is the agentic interface layer for macOS — so you never carry it again.">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -220,14 +220,14 @@ footer .desc{color:var(--t3);font-size:13px;line-height:1.6}
 <nav><div class="nav-inner">
   <a href="/autoclawd" class="logo"><img src="/img/ghost-sm.png" alt=""><span>Autoclaw</span></a>
   <div class="nav-links">
-    <a href="#how">How it works</a><a href="#modes">Modes</a><a href="#connectors">Connectors</a><a href="/">The Last Prompt</a>
+    <a href="#how">How it works</a><a href="#modes">Phase 1</a><a href="#connectors">Connectors</a><a href="/">The Last Prompt</a>
     <a href="https://github.com/sameeeeeeep/autoclaw" class="nav-cta">Get Started</a>
   </div>
 </div></nav>
 
 <section class="hero" id="top"><div class="hero-orb"></div><div class="wrap">
-  <h1>Autopilot for<br><em>your Mac.</em></h1>
-  <p class="hero-sub">Sees your screen. Hears your voice. Runs your workflows. <strong>Not a copilot. An autopilot.</strong></p>
+  <h1>The agentic interface<br>for <em>your Mac.</em></h1>
+  <p class="hero-sub">When AI lives inside apps, the cognitive load stays on you — what to do, how to prompt, which tool, what order. Autoclaw lives at the interface layer <strong>so you never carry it.</strong></p>
   <div class="hero-ctas"><a href="https://github.com/sameeeeeeep/autoclaw" class="btn btn-w">Clone &amp; Build</a><a href="#how" class="btn btn-g">How it works</a></div>
 </div></section>
 
@@ -257,7 +257,7 @@ footer .desc{color:var(--t3);font-size:13px;line-height:1.6}
 <section class="pipeline" id="how"><div class="wrap">
   <div class="badge">How it works</div>
   <h2>You work. It watches.<br>Then it runs.</h2>
-  <p class="pipeline-sub">Screen. Clipboard. Voice. Always on. One-click approval. Zero prompting.</p>
+  <p class="pipeline-sub">In Phase 1, Autoclaw runs a parallel low-intelligence pipeline between you and Claude Code — voice, screen, clipboard. Zero prompting. One-click approval.</p>
   <div class="pipe-row">
     <div class="pipe-node active" data-pipe="0"><div class="pipe-circle"><span class="pipe-glyph">O</span></div><div class="pipe-label">Observe</div></div><div class="pipe-arrow"></div>
     <div class="pipe-node" data-pipe="1"><div class="pipe-circle"><span class="pipe-glyph">U</span></div><div class="pipe-label">Understand</div></div><div class="pipe-arrow"></div>
@@ -265,25 +265,25 @@ footer .desc{color:var(--t3);font-size:13px;line-height:1.6}
     <div class="pipe-node" data-pipe="3"><div class="pipe-circle"><span class="pipe-glyph">A</span></div><div class="pipe-label">Approve</div></div><div class="pipe-arrow"></div>
     <div class="pipe-node" data-pipe="4"><div class="pipe-circle"><span class="pipe-glyph">X</span></div><div class="pipe-label">Execute</div></div>
   </div>
-  <div class="pipe-desc"><p>Autoclaw sees your tasks, understands your workflows, plans the execution, asks for one approval, and runs it end to end. <strong>Not assistance. Autonomous execution.</strong></p></div>
+  <div class="pipe-desc"><p>Autoclaw collapses the cognitive load of prompt engineering, thinking like a PM, managing tasks, and monitoring your session. <strong>In upcoming phases, it learns your workflows and ambiently runs tasks it recognises.</strong></p></div>
 </div></section>
 
 <section class="modes-section" id="modes"><div class="wrap">
-  <div class="badge">Modes</div>
-  <h2>One ghost.<br>Four operating modes.</h2>
-  <p class="sub">Cycle with <code style="font-family:var(--mono);background:#eee;padding:2px 8px;font-size:13px">Option + X</code>. Hard permission boundaries. Each mode has its own scope. They never cross.</p>
+  <div class="badge">Phase 1 · Claude Code</div>
+  <h2>The cognitive load<br>you don't carry anymore.</h2>
+  <p class="sub">A parallel low-intelligence pipeline at the interface between you and Claude Code. Voice in, prompts out. No prompt engineering. No project management. No context switching.</p>
   <div class="modes-layout">
-    <div class="mode-card"><h3>▸ Task</h3><div class="mode-quote">"Fix this. Ship this."</div><p>Full filesystem, shell, GitHub. Reads your code, finds the bug, patches it, runs the tests, opens the PR. You watch.</p><div class="mode-perms"><span class="perm allow">FS</span><span class="perm allow">Shell</span><span class="perm allow">GitHub</span><span class="perm allow">MCP</span></div></div>
-    <div class="mode-card"><h3>? Question</h3><div class="mode-quote">"What did we decide?"</div><p>Queries your meetings, tasks, spreadsheets, the entire web. Can't touch a file. Can't open a terminal. By design.</p><div class="mode-perms"><span class="perm allow">Granola</span><span class="perm allow">Sheets</span><span class="perm allow">Web</span><span class="perm deny">No FS</span></div></div>
-    <div class="mode-card"><h3>⊙ Analyze</h3><div class="mode-quote">"Explain. Change nothing."</div><p>Reads everything. Writes nothing. Traces the full call chain, maps dependencies, explains the architecture. You get the answer without the risk.</p><div class="mode-perms"><span class="perm allow">Read</span><span class="perm allow">MCP</span><span class="perm deny">No writes</span><span class="perm deny">No shell</span></div></div>
-    <div class="mode-card"><h3>⊕ Learn</h3><div class="mode-quote">"Watch me do this once."</div><p>Do it once in front of Autoclaw. It records your screen, captures DOM events from Chrome, extracts the steps with Sonnet. Next time it sees the pattern, it runs it for you.</p><div class="mode-perms"><span class="perm allow">Screen</span><span class="perm allow">Chrome</span><span class="perm allow">OCR</span><span class="perm allow">Record</span></div></div>
+    <div class="mode-card"><h3>▸ Prompt Crafting</h3><div class="mode-quote">"It writes the prompt for you."</div><p>Watches your screen, hears your voice, and crafts the right prompt. You never describe context, explain what file you're in, or engineer a prompt again.</p><div class="mode-perms"><span class="perm allow">Voice</span><span class="perm allow">Screen</span><span class="perm allow">Clipboard</span><span class="perm allow">Vision</span></div></div>
+    <div class="mode-card"><h3>⊙ Prompt Planning</h3><div class="mode-quote">"It already knows what's next."</div><p>Thinks like a PM. Before you finish one task, Autoclaw reads the trajectory, sees the gaps, and queues the next prompt. You stay in flow — it handles the thinking ahead.</p><div class="mode-perms"><span class="perm allow">Context</span><span class="perm allow">Session</span><span class="perm allow">History</span></div></div>
+    <div class="mode-card"><h3>✓ Todo Maintenance</h3><div class="mode-quote">"Nothing falls through the cracks."</div><p>Todos surface from your conversations, your screen, your work. Autoclaw maintains them ambiently so you can stay in flow instead of managing lists.</p><div class="mode-perms"><span class="perm allow">Ambient</span><span class="perm allow">Tracking</span><span class="perm allow">Screen</span></div></div>
+    <div class="mode-card"><h3>⊕ Theatre Mode</h3><div class="mode-quote">"Make your sessions legendary."</div><p>Character-driven Claude Code sessions. Custom filler dialogue, voice caches, storylines. Building software should be entertaining — Theatre mode makes it so.</p><div class="mode-perms"><span class="perm allow">Voice</span><span class="perm allow">Characters</span><span class="perm allow">Dialogue</span></div></div>
   </div>
 </div></section>
 
 <section class="connectors" id="connectors"><div class="wrap">
   <div class="badge">Connectors</div>
-  <h2>Plug in once.<br>Autoclaw handles the rest.</h2>
-  <p class="sub">If it's in <code style="font-family:var(--mono);color:var(--green)">~/.claude/mcp.json</code>, Autoclaw already has it. Zero config. Infinite reach.</p>
+  <h2>It already knows<br>your tools.</h2>
+  <p class="sub">If it's in <code style="font-family:var(--mono);color:var(--green)">~/.claude/mcp.json</code>, Autoclaw already has it. No setup. No configuration. The interface layer inherits everything.</p>
   <div class="conn-grid">
     <div class="conn-card"><div class="conn-dot" style="background:var(--cyan)"></div><span class="conn-name">ClickUp</span><span class="conn-type">Tasks</span></div>
     <div class="conn-card"><div class="conn-dot" style="background:var(--purple)"></div><span class="conn-name">Granola</span><span class="conn-type">Meetings</span></div>
@@ -301,81 +301,81 @@ footer .desc{color:var(--t3);font-size:13px;line-height:1.6}
 
 <section class="arch"><div class="wrap">
   <div class="badge">Architecture</div>
-  <h2>Built different.<br>Literally.</h2>
-  <p class="sub">Pure Swift. Apple Neural Engine. No Electron. No cloud relay. No telemetry. Your machine, your data, your code to audit.</p>
+  <h2>An interface layer.<br>Not another app.</h2>
+  <p class="sub">Pure Swift. Apple Neural Engine. No Electron. No cloud relay. Autoclaw doesn't compete with your tools — it sits between you and them, collapsing the space where cognitive load lives.</p>
   <div class="arch-grid">
-    <div class="arch-card"><h3>Vision Pipeline</h3><p>Apple VNFeaturePrint generates neural embeddings on-device. Zero API cost. Only meaningful screen changes trigger analysis.</p><div class="arch-code"><span class="kw">let</span> request = VNGenerateImageFeaturePrintRequest()<br><span class="cm">// On-device. Neural Engine. Zero cost.</span></div></div>
-    <div class="arch-card"><h3>Claude Code CLI</h3><p>Tasks execute through Claude Code's CLI with streaming JSON. Every MCP server, skill, and permission — inherited automatically.</p><div class="arch-code"><span class="kw">claude</span> -p <span class="str">"fix the null ref"</span> \<br>  --output-format stream-json</div></div>
-    <div class="arch-card"><h3>MCP Protocol</h3><p>Model Context Protocol gives Autoclaw reach. One JSON config, infinite integrations.</p><div class="arch-code"><span class="str">"mcpServers"</span>: {<br>  <span class="str">"slack"</span>: { <span class="str">"command"</span>: <span class="str">"npx"</span> }<br>}</div></div>
-    <div class="arch-card"><h3>Local-first</h3><p>Screen captures, clipboard, and workflows never leave your laptop. Direct API calls to Anthropic. Nothing in between.</p><div class="arch-code"><span class="cm">// ~/.autoclaw/</span><br>transcripts.db <span class="cm">// local SQLite</span><br>world-model.md <span class="cm">// your knowledge base</span></div></div>
+    <div class="arch-card"><h3>Vision Pipeline</h3><p>Apple VNFeaturePrint generates neural embeddings on-device. Zero API cost. Only meaningful screen changes trigger the interface layer.</p><div class="arch-code"><span class="kw">let</span> request = VNGenerateImageFeaturePrintRequest()<br><span class="cm">// On-device. Neural Engine. Zero cost.</span></div></div>
+    <div class="arch-card"><h3>Claude Code CLI</h3><p>Phase 1 runs through Claude Code's CLI with streaming JSON. Every MCP server, skill, and permission — inherited automatically.</p><div class="arch-code"><span class="kw">claude</span> -p <span class="str">"fix the null ref"</span> \<br>  --output-format stream-json</div></div>
+    <div class="arch-card"><h3>MCP Protocol</h3><p>Model Context Protocol gives the interface layer reach. One JSON config, infinite integrations. In upcoming phases, this extends beyond Claude Code.</p><div class="arch-code"><span class="str">"mcpServers"</span>: {<br>  <span class="str">"slack"</span>: { <span class="str">"command"</span>: <span class="str">"npx"</span> }<br>}</div></div>
+    <div class="arch-card"><h3>Local-first</h3><p>Screen captures, voice, clipboard, and workflows never leave your laptop. Direct API calls to Anthropic. Nothing in between.</p><div class="arch-code"><span class="cm">// ~/.autoclaw/</span><br>transcripts.db <span class="cm">// local SQLite</span><br>world-model.md <span class="cm">// your knowledge base</span></div></div>
   </div>
 </div></section>
 
 <section class="security"><div class="wrap">
-  <h2>It watches your screen.<br>Nobody else does.</h2>
+  <h2>It sees everything.<br>Nobody else does.</h2>
   <div class="sec-layout">
     <div class="sec-visual"><img src="/img/ghost-glass.png" alt="" class="ghost"></div>
     <div>
-      <div class="sec-item open"><div class="sec-hdr"><h4>Mode-level isolation</h4><span class="tog">+</span></div><div class="sec-item-body"><p>Each mode defines explicit tool access. Task mode can write files and run shell. Question mode queries Granola and Sheets but can't open a file. Permissions are structural, not suggestions.</p></div></div>
-      <div class="sec-item"><div class="sec-hdr"><h4>Local-first architecture</h4><span class="tog">+</span></div><div class="sec-item-body"><p>Everything runs on your machine. No cloud relay. No telemetry. Your clipboard, screen captures, and file contents never leave your laptop except as direct API calls to Anthropic.</p></div></div>
-      <div class="sec-item"><div class="sec-hdr"><h4>Fully open source</h4><span class="tog">+</span></div><div class="sec-item-body"><p>Every line of Swift is on GitHub. Read the perception pipeline. Inspect the MCP wiring. Verify the permission model. Fork it, modify it, audit it.</p></div></div>
+      <div class="sec-item open"><div class="sec-hdr"><h4>Interface-layer trust</h4><span class="tog">+</span></div><div class="sec-item-body"><p>Autoclaw sits between you and your AI tools — it sees your screen, voice, and clipboard. That position demands trust. Everything stays local, permissions are structural, and the pipeline is fully auditable.</p></div></div>
+      <div class="sec-item"><div class="sec-hdr"><h4>Local-first architecture</h4><span class="tog">+</span></div><div class="sec-item-body"><p>Everything runs on your machine. No cloud relay. No telemetry. Your screen captures, voice transcripts, and file contents never leave your laptop except as direct API calls to Anthropic.</p></div></div>
+      <div class="sec-item"><div class="sec-hdr"><h4>Fully open source</h4><span class="tog">+</span></div><div class="sec-item-body"><p>Every line of Swift is on GitHub. Read the vision pipeline. Inspect the prompt crafting logic. Verify the interface layer. Fork it, modify it, audit it.</p></div></div>
     </div>
   </div>
 </div></section>
 
 <section class="final-cta">
   <img src="/img/ghost-green.png" alt="" class="ghost">
-  <h2>Your Mac.<br>Watching your back.</h2>
+  <h2>Your Mac.<br>Zero cognitive load.</h2>
   <a href="https://github.com/sameeeeeeep/autoclaw" class="btn-b">Clone &amp; Build</a>
 </section>
 
 <footer><div class="wrap">
   <div class="foot-grid">
-    <div><div class="foot-brand"><img src="/img/ghost-sm.png" alt=""><span>Autoclaw</span></div><p class="desc">Phase 1 of The Last Prompt.<br>Built with Claude Code.<br>Powered by ARIA.</p></div>
-    <div class="foot-col"><h4>Product</h4><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="#modes">Modes</a><a href="#connectors">Connectors</a></div>
+    <div><div class="foot-brand"><img src="/img/ghost-sm.png" alt=""><span>Autoclaw</span></div><p class="desc">The agentic interface layer for macOS.<br>Phase 1 of The Last Prompt.<br>Built with Claude Code.</p></div>
+    <div class="foot-col"><h4>Product</h4><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="#modes">Phase 1</a><a href="#connectors">Connectors</a></div>
     <div class="foot-col"><h4>Resources</h4><a href="/">The Last Prompt</a><a href="#how">How it works</a><a href="https://github.com/sameeeeeeep/autoclaw#readme">Docs</a></div>
-    <div class="foot-col"><h4>Community</h4><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a><a href="https://x.com/sameeprehlan">X / Twitter</a></div>
+    <div class="foot-col"><h4>Community</h4><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a></div>
   </div>
-  <div class="foot-bottom"><span>© 2025 The Last Prompt</span><div class="foot-social"><a href="https://x.com/sameeprehlan">X</a><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a></div></div>
+  <div class="foot-bottom"><span>© 2025 The Last Prompt</span><div class="foot-social"><a href="https://github.com/sameeeeeeep/autoclaw">GitHub</a></div></div>
 </div></footer>
 
 <script>
 const S=[
-  {mode:'ambient',ml:'Ambient',mc:'ambient',model:'Haiku',st:'Active',sc:'on',tt:'Detected Context',
-   tools:[{n:'Notion',d:'Source app',c:'var(--purple)',b:0},{n:'Google Sheets',d:'Target app',c:'var(--green)',b:0},{n:'Clipboard',d:'Data transfer',c:'var(--amber)',b:1}],
-   prompt:'You\'re copying data from Notion to Sheets. I can sync that directly.',
-   steps:[{i:'⚡',t:'Detected cross-app data transfer',s:'done'},{i:'📋',t:'Clipboard: "Q3 revenue figures..."',s:'reading'}],
-   acts:['Do it','Dismiss'],primary:0,
-   cfg:[{k:'Mode',v:'Ambient',c:'green'},{k:'Engine',v:'Neural Engine',c:''},{k:'Interval',v:'60s',c:''},{k:'Friction',v:'Cross-app transfer',c:'green'}],
-   exec:[{t:'Screen captured',d:1},{t:'Frames compared (Δ 0.42)',d:1},{t:'Friction pattern matched',d:1},{t:'Awaiting approval...',d:0}]},
-  {mode:'task',ml:'Task',mc:'task',model:'Sonnet 4.6',st:'Active',sc:'on',tt:'Connected Tools',
-   tools:[{n:'Filesystem',d:'Read & write',c:'var(--green)',b:0},{n:'Shell',d:'Commands',c:'var(--cyan)',b:0},{n:'GitHub',d:'Issues & PRs',c:'var(--white)',b:0},{n:'MCP',d:'All servers',c:'var(--purple)',b:0}],
-   prompt:'"500 error on /api/users — check prod logs"',
-   steps:[{i:'📖',t:'Reading routes/users.ts...',s:'reading'},{i:'→',t:'Null ref at getUserById():47 — missing optional chain',s:'found'},{i:'✓',t:'Patched. Tests passing. 14/14.',s:'done'}],
-   acts:['Approve','View diff'],primary:0,
-   cfg:[{k:'Mode',v:'Task',c:'cyan'},{k:'Model',v:'Sonnet 4.6',c:''},{k:'Project',v:'~/dev/api',c:''},{k:'Perms',v:'FS + Shell + MCP',c:''}],
-   exec:[{t:'Read routes/users.ts',d:1},{t:'Edited line 47',d:1},{t:'npm test — 14/14',d:1},{t:'Done in 42s',d:1}]},
-  {mode:'question',ml:'Question',mc:'question',model:'Haiku',st:'Active',sc:'on',tt:'Query Sources',
-   tools:[{n:'Granola',d:'Meeting notes',c:'var(--purple)',b:1},{n:'ClickUp',d:'Tasks',c:'var(--cyan)',b:0},{n:'Sheets',d:'Live data',c:'var(--green)',b:0},{n:'Web',d:'Search',c:'var(--amber)',b:0}],
-   prompt:'"What did we decide about pricing in yesterday\'s standup?"',
-   steps:[{i:'🔍',t:'Querying Granola meetings...',s:'reading'},{i:'✓',t:'Found in "Daily Standup — Mar 21"',s:'done'},{i:'📋',t:'Decision: Keep current tier pricing through Q2. Revisit after launch metrics.',s:'done'}],
+  {mode:'prompt',ml:'Prompt Crafting',mc:'ambient',model:'Haiku',st:'Active',sc:'on',tt:'Context Sources',
+   tools:[{n:'Screen',d:'Active app',c:'var(--green)',b:1},{n:'Voice',d:'Transcription',c:'var(--amber)',b:0},{n:'Clipboard',d:'Recent copy',c:'var(--cyan)',b:0},{n:'Vision',d:'Neural Engine',c:'var(--purple)',b:0}],
+   prompt:'You said "fix that null thing in users." I can see routes/users.ts with the error on line 47. Sending to Claude Code.',
+   steps:[{i:'🎤',t:'Voice: "fix that null thing in users"',s:'done'},{i:'👁',t:'Screen: routes/users.ts open, error on L47',s:'done'},{i:'✓',t:'Prompt crafted → Claude Code session started',s:'done'}],
+   acts:['Send','Edit first'],primary:0,
+   cfg:[{k:'Feature',v:'Prompt Crafting',c:'green'},{k:'Engine',v:'Neural Engine',c:''},{k:'Input',v:'Voice + Screen',c:''},{k:'Output',v:'Claude Code prompt',c:'green'}],
+   exec:[{t:'Voice transcribed (Whisper)',d:1},{t:'Screen captured + OCR',d:1},{t:'Context merged into prompt',d:1},{t:'Sending to Claude Code...',d:0}]},
+  {mode:'planning',ml:'Prompt Planning',mc:'task',model:'Haiku',st:'Active',sc:'on',tt:'Session Context',
+   tools:[{n:'Session History',d:'Last 3 prompts',c:'var(--cyan)',b:0},{n:'Codebase',d:'Changed files',c:'var(--green)',b:0},{n:'ClickUp',d:'Current sprint',c:'var(--purple)',b:1}],
+   prompt:'You just fixed the null ref. Your sprint has "add input validation to /api/users" next. Want me to queue that prompt?',
+   steps:[{i:'✓',t:'Previous: fix null ref in getUserById()',s:'done'},{i:'→',t:'Sprint ticket CU-2847: input validation for /api/users',s:'found'},{i:'⊙',t:'Suggested next prompt queued',s:'done'}],
+   acts:['Queue it','Skip'],primary:0,
+   cfg:[{k:'Feature',v:'Prompt Planning',c:'cyan'},{k:'Model',v:'Haiku',c:''},{k:'Sprint',v:'CU-2847',c:''},{k:'Trajectory',v:'3 prompts deep',c:''}],
+   exec:[{t:'Analysed session trajectory',d:1},{t:'Cross-referenced sprint board',d:1},{t:'Identified logical next step',d:1},{t:'Prompt queued for approval',d:1}]},
+  {mode:'todos',ml:'Todo Tracking',mc:'question',model:'Haiku',st:'Active',sc:'on',tt:'Ambient Sources',
+   tools:[{n:'Session',d:'Claude Code log',c:'var(--green)',b:1},{n:'Screen',d:'Conversations',c:'var(--cyan)',b:0},{n:'ClickUp',d:'Task sync',c:'var(--purple)',b:0}],
+   prompt:'Surfaced from your Claude Code session: "TODO: add rate limiting before deploy." Adding to your list.',
+   steps:[{i:'📋',t:'Detected TODO in Claude Code output',s:'done'},{i:'→',t:'Matched to project: ~/dev/api',s:'done'},{i:'✓',t:'Added to ClickUp backlog as CU-2851',s:'done'}],
    acts:[],primary:-1,
-   cfg:[{k:'Mode',v:'Question',c:'purple'},{k:'Model',v:'Haiku',c:''},{k:'Sources',v:'3 connected',c:''},{k:'Perms',v:'Read-only',c:'purple'}],
-   exec:[{t:'Searched Granola transcripts',d:1},{t:'Matched 1 meeting',d:1},{t:'Extracted decision',d:1}]},
-  {mode:'learn',ml:'Learn',mc:'learn',model:'Sonnet 4.6',st:'Recording',sc:'rec',tt:'Recording Sources',
-   tools:[{n:'Screen OCR',d:'Text near cursor',c:'var(--green)',b:0},{n:'Chrome Extension',d:'DOM events',c:'var(--cyan)',b:0},{n:'Neural Engine',d:'Frame changes',c:'var(--amber)',b:0}],
-   prompt:'Recording workflow: "Deploy to staging"',
-   steps:[{i:'●',t:'Step 1: Open terminal in ~/dev/api',s:'recording'},{i:'●',t:'Step 2: Run git push origin staging',s:'recording'},{i:'●',t:'Step 3: Open Vercel dashboard → verify build',s:'recording'},{i:'✓',t:'3 steps captured. Extracting with Sonnet...',s:'done'}],
-   acts:['Save Workflow','Discard'],primary:0,
-   cfg:[{k:'Mode',v:'Learn',c:'red'},{k:'Recording',v:'Active',c:'red'},{k:'Steps',v:'3 captured',c:''},{k:'Extraction',v:'Sonnet vision',c:''}],
-   exec:[{t:'OCR captured 12 text regions',d:1},{t:'Chrome: 3 navigation events',d:1},{t:'Neural Engine: 8 frame changes',d:1},{t:'Extracting workflow...',d:0}]},
-  {mode:'analyze',ml:'Analyze',mc:'analyze',model:'Opus',st:'Active',sc:'on',tt:'Read Access',
-   tools:[{n:'Filesystem',d:'Read-only',c:'var(--green)',b:0},{n:'MCP',d:'Query only',c:'var(--purple)',b:0}],
-   prompt:'"Explain the auth middleware flow in this repo"',
-   steps:[{i:'📖',t:'Reading middleware/auth.ts, lib/jwt.ts, config/permissions.ts, routes/index.ts',s:'reading'},{i:'✓',t:'Auth flow: JWT from cookie → verify → extract claims → check role ACL → pass or 403.',s:'done'},{i:'📐',t:'4 files, 3 dependencies, 2 middleware layers.',s:'done'}],
-   acts:[],primary:-1,
-   cfg:[{k:'Mode',v:'Analyze',c:'amber'},{k:'Model',v:'Opus',c:''},{k:'Files read',v:'4',c:''},{k:'Perms',v:'No writes',c:'amber'}],
-   exec:[{t:'Read middleware/auth.ts',d:1},{t:'Read lib/jwt.ts',d:1},{t:'Read config/permissions.ts',d:1},{t:'Traced 2 middleware layers',d:1}]}
+   cfg:[{k:'Feature',v:'Todo Tracking',c:'purple'},{k:'Source',v:'Session output',c:''},{k:'Synced',v:'ClickUp',c:''},{k:'Tracking',v:'Ambient',c:'purple'}],
+   exec:[{t:'Parsed Claude Code output stream',d:1},{t:'Extracted actionable TODO',d:1},{t:'Synced to ClickUp',d:1}]},
+  {mode:'theatre',ml:'Theatre Mode',mc:'learn',model:'Sonnet 4.6',st:'Live',sc:'rec',tt:'Theatre Config',
+   tools:[{n:'Voice Cache',d:'Gilfoyle',c:'var(--red)',b:0},{n:'Dialogue',d:'Custom filler',c:'var(--amber)',b:0},{n:'Storyline',d:'S03E04',c:'var(--cyan)',b:0}],
+   prompt:'[GILFOYLE] "Your code has the structural integrity of a wet napkin. I\'ll fix it anyway."',
+   steps:[{i:'🎭',t:'Character: Gilfoyle (SiliconValley Theater)',s:'recording'},{i:'🔊',t:'Voice cache loaded — ElevenLabs clone',s:'done'},{i:'✓',t:'Filler dialogue active between Claude Code steps',s:'done'}],
+   acts:['Change Character','Pause'],primary:-1,
+   cfg:[{k:'Feature',v:'Theatre Mode',c:'red'},{k:'Show',v:'SiliconValley',c:''},{k:'Character',v:'Gilfoyle',c:''},{k:'Episode',v:'S03E04',c:'red'}],
+   exec:[{t:'Voice cache: Gilfoyle loaded',d:1},{t:'Filler dialogue: 12 lines queued',d:1},{t:'Storyline: merge conflict arc',d:1},{t:'Narrating session...',d:0}]},
+  {mode:'monitoring',ml:'Session Monitor',mc:'analyze',model:'Haiku',st:'Active',sc:'on',tt:'Session Health',
+   tools:[{n:'Claude Code',d:'Active session',c:'var(--green)',b:0},{n:'Cost Tracker',d:'Token usage',c:'var(--amber)',b:0}],
+   prompt:'Session running 14m. 3 tasks completed. Claude Code is looping on test — want me to intervene with a refined prompt?',
+   steps:[{i:'📊',t:'Session: 14m, 3/5 tasks, 42k tokens',s:'done'},{i:'⚠',t:'Detected: Claude Code retrying same test 3x',s:'found'},{i:'→',t:'Suggested: add mock for external API dependency',s:'done'}],
+   acts:['Send hint','Let it run'],primary:0,
+   cfg:[{k:'Feature',v:'Session Monitor',c:'amber'},{k:'Duration',v:'14m',c:''},{k:'Tokens',v:'42,381',c:''},{k:'Status',v:'Loop detected',c:'amber'}],
+   exec:[{t:'Streaming Claude Code output',d:1},{t:'Token tracking: 42k used',d:1},{t:'Loop pattern detected (3x retry)',d:1},{t:'Intervention ready',d:0}]}
 ];
 let ci=0,iv;
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
