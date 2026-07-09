@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Switchboard — Privacy Policy</title>
+<style>
+  :root{--void:#050807;--panel:#0a0f0c;--line:#16221b;--phosphor:#3dff88;--phosphor-dim:#1d7a45;--paper:#cfe3d6;--muted:#7fa18d;--faint:#48604f;
+    --mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:'Instrument Sans',system-ui,sans-serif}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--void);color:var(--paper);font-family:var(--sans);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:720px;margin:0 auto;padding:64px 24px 96px}
+  a{color:var(--phosphor)}
+  h1{font-size:28px;margin-bottom:6px}
+  .sub{color:var(--faint);font-family:var(--mono);font-size:12px;margin-bottom:40px}
+  h2{font-size:17px;margin:34px 0 10px;color:var(--phosphor)}
+  p,li{color:var(--muted);font-size:15px}
+  ul{padding-left:22px;margin:8px 0}
+  .card{border:1px solid var(--line);background:var(--panel);padding:18px 20px;margin:26px 0;font-size:15px;color:var(--paper)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Switchboard — Privacy Policy</h1>
+  <p class="sub">applies to the Switchboard browser extension and sidekick daemon · last updated 2026-07-09</p>
+
+  <div class="card"><b>The short version:</b> Switchboard exists so your data <i>doesn't</i> leave your machine.
+  The extension and daemon collect no analytics, run no telemetry, and operate no servers. Everything stays local.</div>
+
+  <h2>What Switchboard does</h2>
+  <p>Switchboard connects websites you visit to a daemon running on <b>your own computer</b>, which lends them
+  your AI model, tools, and data — only with your explicit, per-site consent. All traffic flows between the
+  page, the extension, and <span style="font-family:var(--mono)">127.0.0.1</span> (your machine). There is no
+  Switchboard cloud.</p>
+
+  <h2>Data the extension stores</h2>
+  <ul>
+    <li><b>Pairing token</b> — a random secret linking the extension to your local daemon. Stored in Chrome's
+    local extension storage. Never transmitted anywhere except to your local daemon.</li>
+  </ul>
+
+  <h2>Data the local daemon stores (on your machine)</h2>
+  <ul>
+    <li><b>Per-site grants</b> — which sites you've connected and what you allowed them.</li>
+    <li><b>An audit log</b> — a local record of requests, so you can see what apps did.</li>
+    <li><b>App storage</b> — data web apps save through Switchboard, in folders you control.</li>
+  </ul>
+  <p>All of this lives in <span style="font-family:var(--mono)">~/.relay</span> on your computer. Deleting that
+  folder deletes everything.</p>
+
+  <h2>What we collect</h2>
+  <p>Nothing. No analytics, no telemetry, no crash reporting, no accounts, no cookies, no remote logging.
+  We (the developers) never see your data, your prompts, your keys, or your browsing.</p>
+
+  <h2>What websites can access</h2>
+  <p>Only what you grant, per site, through the consent screen — and every change-making action asks again.
+  Sites never receive your credentials; the daemon holds them and returns results only.</p>
+
+  <h2>Third parties</h2>
+  <p>Your AI requests go to the model <i>you</i> configured (e.g. your own Claude subscription via the CLI on
+  your machine, or a local model). Those requests are governed by your agreement with that provider — Switchboard
+  adds no party in between.</p>
+
+  <h2>Changes & contact</h2>
+  <p>Changes to this policy will appear on this page. Questions:
+  <a href="https://github.com/sameeeeeeep/switchboard/issues">github.com/sameeeeeeep/switchboard/issues</a>.</p>
+
+  <p style="margin-top:44px"><a href="./">← Switchboard</a></p>
+</div>
+</body>
+</html>
