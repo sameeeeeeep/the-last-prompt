@@ -728,9 +728,9 @@
     <a class="wordmark" href="#">Switchboard</a>
     <div class="nav-links">
       <a href="#how" class="nav-hide">How</a>
-      <a href="#orchestrate" class="nav-hide">Orchestration</a>
+      
       <a href="#apps" class="nav-hide">Wrapp Store</a>
-      <a href="#devs" class="nav-hide">Developers</a>
+      
       <a href="#install" class="btn btn-solid">Get the extension</a>
     </div>
   </div>
@@ -738,17 +738,12 @@
 
 <header class="hero">
   <div class="wrap">
-    <p class="cap rv">~ apps ship the frontend · <b>your machine ships the rest</b> ~</p>
+    
     <h1 class="rv" style="margin-top:18px">Bring your own<br><span class="brk">&lt;</span><span class="lit" id="byo-word">AI</span><span class="brk">&gt;</span></h1>
     <p class="hero-plain rv">
-      You already pay for AI. Switchboard lets any app run on <b>your</b> AI — no signup,
-      no second bill, no reconnecting your tools. The app is just the screen; your machine
-      does the work, and nothing you type leaves it.
+      Use AI tools with your existing <b>Claude subscription</b> — no signup, no second bill, no data leaving your machine.
     </p>
-    <p class="hero-gloss rv">
-      Apps built this way are <b>wrapps</b> — open web pages that bring nothing but a UI.
-      The runtime — your AI, tools, context and data — is yours.
-    </p>
+    
     <div class="hero-ctas rv">
       <a href="#install" class="btn btn-solid">Install Switchboard</a>
       <a href="#apps" class="btn btn-ghost">Browse the wrapp store</a>
@@ -758,7 +753,7 @@
 
   <div class="relay">
     <div class="wrap">
-      <p class="board-cap rv" id="d2-cap">↓ real runs — actual wrapps doing actual work, on your own AI</p>
+      <p class="board-cap rv" id="d2-cap">↓ live runs — real wrapps, running on your own AI</p>
       <div class="demo2 rv" id="demo2">
         <!-- MAIN · the wrapp actually doing the job -->
         <div class="d2-main">
@@ -813,22 +808,22 @@
     <div class="compare">
       <div class="cmp old rv">
         <h5>every ai app today</h5>
-        <ul>
-          <li>Sign up. Again.</li>
-          <li>Pay again for the same model</li>
-          <li>Reconnect Gmail, Drive, GitHub</li>
-          <li>Re-explain your brand from scratch</li>
-          <li>Your data lives on their servers</li>
+        <ul class="icon-list">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e5484d" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>Sign up again</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e5484d" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>Pay again</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e5484d" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>Reconnect tools</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e5484d" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>Re-explain brand</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e5484d" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>Data on their servers</li>
         </ul>
       </div>
       <div class="cmp new rv">
         <h5>with switchboard</h5>
-        <ul>
-          <li>Open the page. That's it.</li>
-          <li>Runs on the subscription you have</li>
-          <li>Your tools already work</li>
-          <li>Your context loads in</li>
-          <li>Everything stays on your machine</li>
+        <ul class="icon-list">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30a46c" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg>Just open it</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30a46c" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg>Same subscription</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30a46c" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg>Tools already work</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30a46c" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg>Context loads in</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30a46c" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg>Stays on your machine</li>
         </ul>
       </div>
     </div>
@@ -882,69 +877,9 @@
   </div>
 </section>
 
-<section id="orchestrate">
-  <div class="wrap">
-    <div class="sec-head center rv">
-      <p class="cap">// orchestration</p>
-      <h2>Five models. <span class="lit">One HTML file.</span></h2>
-      <p class="sec-sub">One page can listen, think, draw, and speak — each part on whichever of your models does it best.</p>
-    </div>
-    <div class="sheetwrap">
-      <div class="term rv" id="callsheet">
-        <div class="term-bar">
-          <span class="dots"><i></i><i></i><i></i></span>
-          <span class="title">call sheet — voicejournal.app — static page, 60 kb</span>
-        </div>
-        <div class="sheet-body">
-          <div class="leg"><span><span class="k">leg 1/4</span>  listen  <span class="w">whisper-large-v3</span>   local          0.14s  <span class="ok">ok</span></span></div>
-          <div class="leg"><span><span class="k">leg 2/4</span>  think   <span class="w">claude-sonnet</span>      subscription   1.82s  <span class="ok">ok</span></span></div>
-          <div class="leg"><span>          <span class="f">└─ used: your calendar (look) · your notes (add)</span></span></div>
-          <div class="leg"><span><span class="k">leg 3/4</span>  draw    <span class="w">sdxl-turbo</span>         your gpu       2.90s  <span class="ok">ok</span></span></div>
-          <div class="leg"><span><span class="k">leg 4/4</span>  speak   <span class="w">kokoro-82m</span>         local          0.21s  <span class="ok">ok</span></span></div>
-          <div class="sheet-total" id="sheet-total">&gt; 4 parts · 3 of your models · 1 approval · 0 signups</div>
-        </div>
-      </div>
-      <div class="captions">
-        <div class="caption rv"><b>No assembly required</b><span>Listening, thinking, drawing, speaking — one ask each.</span></div>
-        <div class="caption rv"><b>Your setup decides</b><span>Swap any part in settings. The app never knows.</span></div>
-        <div class="caption rv"><b>Weekend projects feel finished</b><span>Builders skip the hard parts. You skip the signup.</span></div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<section id="connectors">
-  <div class="wrap">
-    <div class="split">
-      <div>
-        <div class="sec-head rv" style="margin-bottom:28px">
-          <p class="cap">// the side panel</p>
-          <h2>Everything yours,<br><span class="lit">one panel.</span></h2>
-        </div>
-        <ul class="points">
-          <li class="rv"><b>Working on</b><span>Pick a project once — every app scopes to it automatically.</span></li>
-          <li class="rv"><b>See who can touch what</b><span>Every app, every grant, in plain sight. No digging.</span></li>
-          <li class="rv"><b>The kill switch</b><span>One tap cuts off an app, a tool, or everything.</span></li>
-        </ul>
-      </div>
-      <div class="term rv" id="board">
-        <div class="term-bar">
-          <span class="dots"><i></i><i></i><i></i></span>
-          <span class="title">switchboard — side panel</span>
-        </div>
-        <div class="term-body" style="padding:18px 22px 22px;min-width:0">
-          <div class="conn"><span class="chip">▶</span><span class="n">working on: aamras</span><span class="g">scopes every app</span></div>
-          <div class="conn"><span class="chip">GM</span><span class="n">gmail</span><span class="g">2 apps · look only</span></div>
-          <div class="conn"><span class="chip">SH</span><span class="n">sheet: inventory</span><span class="g">live data</span></div>
-          <div class="conn"><span class="chip">AD</span><span class="n">ad maker</span><span class="g">your ai + 1 brand</span></div>
-          <div class="conn"><span class="chip">PL</span><span class="n">prototype lab</span><span class="g">your ai + files</span></div>
-          <div class="conn"><span class="chip">✕</span><span class="n">kill switch</span><span class="g">cuts everything · one tap</span></div>
-          <p class="conn-extra">approvals appear right here — say yes without leaving the page</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+
+
 
 <section id="security">
   <div class="wrap">
@@ -985,10 +920,10 @@
     <div class="sec-head center rv">
       <p class="cap">// the wrapp store</p>
       <h2>Yes, wrappers. <span class="lit">That's the point.</span></h2>
-      <p class="sec-sub">The apps are just interfaces — open, forkable, sealed. The runtime does the rest — even for apps that "need a backend."</p>
+      <p class="sec-sub">The apps are just open, forkable interfaces. Switchboard runs the backend — even for apps that normally need one.</p>
     </div>
     <div class="store-bar rv">
-      <span class="sb-l"><b>8 wrapps</b> · open source · forkable · every one runs on your Claude, zero signup</span>
+      <span class="sb-l"><b>7 wrapps</b> · open source · forkable · every one runs on your Claude, zero signup</span>
       <span class="sb-r">
         <a class="btn btn-ghost" href="https://github.com/sameeeeeeep/switchboard/blob/main/docs/BUILDING-A-WRAPP.md">Build a wrapp →</a>
         <a class="btn btn-solid" href="https://github.com/sameeeeeeep/switchboard">Browse the repo →</a>
@@ -1082,39 +1017,8 @@
 <section id="devs">
   <div class="wrap">
     <div class="split">
-      <div class="codebox rv">
-<pre><span class="c-cm">// the provider is already on the page</span>
-<span class="c-cm">// (today: window.claude via @relay/sdk — sb.* is the BYOP-1 roadmap)</span>
-<span class="c-kw">const</span> sb = <span class="c-kw">await</span> window.switchboard.<span class="c-fn">connect</span>({
-  scope: [<span class="c-st">"ai"</span>, <span class="c-st">"storage"</span>, <span class="c-st">"fetch"</span>]
-})
+      
 
-<span class="c-kw">const</span> res = <span class="c-kw">await</span> sb.ai.<span class="c-fn">complete</span>({
-  messages: [{ role: <span class="c-st">"user"</span>, content: prompt }]
-})
-
-<span class="c-cm">// porting an existing app? substitute seams:</span>
-<span class="c-cm">//   @/lib/claude       →  sb.ai</span>
-<span class="c-cm">//   lib/server/db      →  sb.storage</span>
-<span class="c-cm">//   cors-jailed calls  →  sb.fetch</span>
-<span class="c-cm">//   cron · oauth       →  sb.jobs · sb.secrets</span></pre>
-      </div>
-      <div>
-        <div class="sec-head rv" style="margin-bottom:28px">
-          <p class="cap">// for developers · spec: BYOP-1</p>
-          <h2>Port apps.<br><span class="lit">Don't rewrite them.</span></h2>
-        </div>
-        <div class="stats">
-          <div class="stat rv"><span class="v">32</span><span class="k">routes ported from a real app</span></div>
-          <div class="stat rv"><span class="v">0</span><span class="k">servers · keys · signups</span></div>
-          <div class="stat rv"><span class="v">3<span style="font-size:24px">/3</span></span><span class="k">oss ports built first try</span></div>
-          <div class="stat rv"><span class="v">1</span><span class="k">consent gate · no bypass</span></div>
-        </div>
-        <p class="rv" style="margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--muted)">
-          guide: <a href="https://github.com/sameeeeeeep/switchboard/blob/main/docs/BUILDING-A-WRAPP.md" style="color:var(--phosphor)">BUILDING-A-WRAPP.md</a>
-          · porting: <a href="https://github.com/sameeeeeeep/switchboard/blob/main/docs/PORTING-AND-DEPLOY.md" style="color:var(--phosphor)">PORTING-AND-DEPLOY.md</a>
-        </p>
-      </div>
     </div>
   </div>
 </section>
@@ -1157,31 +1061,11 @@
         <div class="act"><a class="btn btn-ghost" href="https://cartridge.thelastprompt.ai/">Open Cartridge — make a game</a></div>
       </div>
     </div>
-    <p class="reqs rv">needs <b>Chrome / Chromium</b> · <b>Node ≥ 20</b> · a signed-in <b>Claude Code CLI</b> · tested on macOS</p>
+    
   </div>
 </section>
 
-<section id="protocol" style="text-align:center">
-  <div class="wrap">
-    <div class="sec-head center rv" style="margin-bottom:0">
-      <p class="cap">// the protocol</p>
-      <h2>The standard library <span class="lit">the web never had.</span></h2>
-      <p class="sec-sub">Under the hood, for developers: one provider — <b style="color:var(--paper)">window.switchboard</b> — a consent-gated standard library for the web. window.claude was just the first primitive.</p>
-    </div>
-    <p class="rv" style="margin-top:26px"><code style="font-family:var(--mono);font-size:13px;color:var(--phosphor);background:var(--panel);border:1px solid var(--line-bright);padding:12px 20px;display:inline-block">const sb = await window.switchboard.connect()</code></p>
-    <div class="badges rv">
-      <span class="badge">sb.ai</span>
-      <span class="badge">sb.storage</span>
-      <span class="badge">sb.fetch</span>
-      <span class="badge">sb.jobs</span>
-      <span class="badge">sb.secrets</span>
-      <span class="badge">sb.exec</span>
-      <span class="badge">sb.vector</span>
-      <span class="badge">mcp tools</span>
-      <span class="badge">byop-1</span>
-    </div>
-  </div>
-</section>
+
 
 <section class="final">
   <div class="wrap">
@@ -1197,7 +1081,7 @@
 
 <div class="wrap">
   <footer>
-    <span>SWITCHBOARD — window.claude · BYOP-1 · MIT</span>
+    <span>SWITCHBOARD — window.switchboard · BYOP-1 · MIT</span>
     <span><a href="https://github.com/sameeeeeeep/switchboard">github</a> · <a href="https://github.com/sameeeeeeep/switchboard/blob/main/docs/VISION.md">vision</a> · <a href="https://github.com/sameeeeeeep/switchboard/blob/main/docs/CAPABILITIES.md">capabilities</a> · <a href="https://github.com/sameeeeeeep/switchboard/releases/latest">releases</a> · <a href="./privacy.html">privacy</a></span>
   </footer>
 </div>
