@@ -1,0 +1,7 @@
+.DS_Store
+
+# Wrapp per-origin state (batch/take/marquee/huddle/redline…) that leaks into a
+# bound deploy folder when a wrapp writes storage into switchboard/. Never ship these.
+switchboard/*-state.json
+switchboard/*-call.json
+switchboard/redline-*.json
