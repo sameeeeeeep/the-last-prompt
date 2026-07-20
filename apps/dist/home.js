@@ -25,6 +25,11 @@ var BYOPErrorCode = {
 };
 
 // ../../packages/sdk/dist/connect-chip.js
+function rungFromError(e) {
+  if (e?.code !== BYOPErrorCode.PROVIDER_UNAVAILABLE)
+    return null;
+  return e?.data?.reason === "unpaired" ? { kind: "unpaired" } : { kind: "unreachable" };
+}
 var CHROME_STORE_URL = "https://chromewebstore.google.com/detail/injmjolmnekmahlnackakiamjepegagb";
 var STYLE = `
 :host { all: initial; }
@@ -149,10 +154,20 @@ function mountConnect(target, opts = {}) {
       emitTransition(false);
       return render();
     }
-    const grant = sessionDisconnected ? null : await r.permissions().catch(() => null);
+    let permErr = null;
+    const grant = sessionDisconnected ? null : await r.permissions().catch((e) => {
+      permErr = e;
+      return null;
+    });
     if (destroyed || my !== seq)
       return;
     if (!grant) {
+      const rung = !h ? rungFromError(permErr) : null;
+      if (rung) {
+        state = rung;
+        emitTransition(false);
+        return render();
+      }
       state = { kind: "disconnected", relay: r };
       emitTransition(false);
       return render();
@@ -205,8 +220,18 @@ function mountConnect(target, opts = {}) {
       await relay2.connect(opts.scope);
       await refresh();
     } catch (e) {
-      if (e?.code === BYOPErrorCode.PROVIDER_UNAVAILABLE)
-        void refresh();
+      const err = e;
+      if (err?.code !== BYOPErrorCode.PROVIDER_UNAVAILABLE)
+        return;
+      await refresh();
+      if (state.kind === "disconnected") {
+        const rung = rungFromError(err);
+        if (rung) {
+          state = rung;
+          emitTransition(false);
+          render();
+        }
+      }
     }
   }
   async function doPick() {
@@ -2458,6 +2483,12 @@ var isDemo = new URLSearchParams(location.search).has("demo") && /^(localhost|12
 var isDemoEmpty = isDemo && new URLSearchParams(location.search).get("demo") === "empty";
 var demoTasks = isDemo && !isDemoEmpty;
 var RECENTLY_ADDED = ["huddle", "reel", "identity", "take", "batch", "marquee", "redline", "chat"];
+var TASKS_KEY = "tasks.md";
+var WRAPP_TAG_RE = /\s+@([a-z][a-z0-9-]{0,47})\s*$/i;
+var TASK_DUE_RE = /^(.*?)\s+—\s+by\s+(.+)$/;
+var escapeTaskRe = (x) => String(x).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+var normTask = (x) => String(x || "").toLowerCase().replace(WRAPP_TAG_RE, "").replace(/\s+—\s+by\s+.*$/i, "").replace(/\s+/g, " ").trim();
+var tasksRaw = "";
 var relay = null;
 var booted = false;
 var way = { installed: false, connected: false, brands: 0 };
@@ -2468,6 +2499,7 @@ var metasCache = [];
 var userName = "";
 var promotedAction = null;
 var storageFrozen = false;
+var vaultBound = false;
 var ctx = {
   list: () => relay.context.list(),
   publish: (c) => relay.context.publish(c)
@@ -2885,16 +2917,28 @@ var point = createPoint({
   scope: SCOPE,
   clickConnect: () => clickConnect(),
   isFrozen: () => storageFrozen,
+  // Flipping the freeze flag must also refresh the already-rendered task checkboxes: they were painted
+  // with cb.disabled=storageFrozen and there's no re-render otherwise, so without this they'd look
+  // enabled during a folder-point freeze (clicks correctly no-op but the box flips and snaps back).
   freeze: (on) => {
     storageFrozen = !!on;
+    syncFrozenUI();
   },
   buildActions: (focus) => buildActions(focus),
   onPublished: () => refreshLibrary()
 });
+function syncFrozenUI() {
+  const list = $2("next-list");
+  if (!list) return;
+  list.setAttribute("aria-disabled", storageFrozen ? "true" : "false");
+  list.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+    cb.disabled = storageFrozen;
+  });
+}
 function movePoint(toDash) {
   const s2 = $2("point-sec");
   if (!s2) return;
-  if (toDash) $2("dash").insertBefore(s2, $2("review-sec"));
+  if (toDash) $2("dash").insertBefore(s2, $2("next-sec"));
   else $2("hero").insertBefore(s2, $2("way-sec"));
 }
 mountConnect($2("chip-dock"), {
@@ -3157,6 +3201,7 @@ async function refreshLibrary() {
   way.brands = metas.filter((m) => (m.kind || "").toLowerCase() === "brand").length;
   renderWay();
   renderHero();
+  void renderNext();
   renderProjects(metas);
   renderBrands(metas);
   renderActions();
@@ -3421,7 +3466,7 @@ function renderDock() {
 }
 async function recordRecent(id) {
   if (!relay || !APP_BY_ID[id]) return;
-  if (storageFrozen) return;
+  if (storageFrozen || vaultBound) return;
   try {
     const raw = await relay.storage.get("recents");
     let list = safeParse(raw, []);
@@ -3536,6 +3581,452 @@ function renderActions() {
     box.append(a);
   }
 }
+function parseTasksMd(raw) {
+  const lines = String(raw || "").split("\n");
+  const tasks = [];
+  let section = "";
+  lines.forEach((l, i) => {
+    const hs = /^##\s+(.+)$/.exec(l);
+    if (hs) {
+      section = hs[1].trim();
+      return;
+    }
+    const m = /^\s*- \[( |x|X)\] (.+)$/.exec(l);
+    if (!m) return;
+    const text = m[2].trim();
+    const tag = WRAPP_TAG_RE.exec(text);
+    const id = tag ? tag[1].toLowerCase() : null;
+    const wrapp = id && APP_BY_ID[id] ? id : null;
+    const untagged = wrapp ? text.slice(0, tag.index).trim() : text;
+    const dm = TASK_DUE_RE.exec(untagged);
+    tasks.push({
+      line: i,
+      done: m[1] !== " ",
+      text,
+      section: section || "Inbox",
+      wrapp,
+      clean: dm ? dm[1].trim() : untagged,
+      due: dm ? dm[2].trim() : ""
+    });
+  });
+  return tasks;
+}
+function catalogDigest() {
+  return APPS.map((app) => {
+    const category = categoryOf(app.id);
+    return {
+      id: app.id,
+      name: app.name,
+      category,
+      blurb: CATEGORY_BLURB[category] || "",
+      // the SAME data-tags the search index reads (applyFilters over #store a.card) — scoped to the
+      // catalog card, not the tag-less recently-added row / featured slide that share the same id.
+      tags: document.querySelector(`#store a.card[data-app="${app.id}"]`)?.dataset.tags || "",
+      pro: !!app.pro
+    };
+  });
+}
+function keywordMatch(query) {
+  const toks = [...new Set(String(query || "").toLowerCase().split(/[^a-z0-9]+/).filter((t) => t.length > 2))];
+  if (!toks.length) return [];
+  const scored = catalogDigest().map((d) => {
+    const name = d.name.toLowerCase();
+    const hay = `${name} ${d.category.toLowerCase()} ${d.blurb.toLowerCase()} ${d.tags.toLowerCase()}`;
+    let score = 0;
+    const hit = [];
+    for (const t of toks) {
+      if (name.includes(t)) {
+        score += 3;
+        hit.push(t);
+      } else if (hay.includes(t)) {
+        score += 1;
+        hit.push(t);
+      }
+    }
+    return { id: d.id, category: d.category, score, hit };
+  }).filter((x) => x.score >= 2).sort((a, b) => b.score - a.score);
+  return scored.slice(0, 3).map((x) => ({ id: x.id, why: `keyword match on ${x.hit.slice(0, 3).join(", ")} \xB7 ${x.category}` }));
+}
+async function matchIntent(query) {
+  if (!relay) return { matches: [], none: true, reason: "not connected" };
+  const digest = catalogDigest();
+  const lib = metasCache.map((m) => `${m.name} (${m.kind || "context"})`).filter(Boolean).join(", ") || "(empty)";
+  const catalog = digest.map((d) => `${d.id} \xB7 ${d.name} \xB7 ${d.category}${d.tags ? " \xB7 " + d.tags : ""}`).join("\n");
+  const system = "You match ONE user task to wrapps in this exact catalog. You MUST choose only from the given ids. If nothing genuinely fits, say so \u2014 do not force a match.";
+  const prompt = [
+    "CATALOG (id \xB7 name \xB7 category \xB7 tags):",
+    catalog,
+    "",
+    `THE USER'S LIBRARY (names + kinds, for grounding only \u2014 never invent from it): ${lib}`,
+    "",
+    `THE TASK: ${String(query || "").slice(0, 400)}`,
+    "",
+    "Reply with ONLY JSON \u2014 no prose, no code fence. Either:",
+    '{"matches":[{"id":"<catalog id>","why":"<one short reason, second person>"}],"none":false}',
+    "with 1\u20133 matches, best first \u2014 or, if nothing genuinely fits:",
+    '{"matches":[],"none":true,"reason":"<one short honest line>"}'
+  ].join("\n");
+  let acc = "";
+  try {
+    for await (const d of relay.stream({ system, prompt, model: "sonnet", maxTokens: 400 })) {
+      if (d.type === "text") acc += d.text;
+      else if (d.type === "error") throw new Error(d.error?.message || "stream error");
+    }
+  } catch (e) {
+    return { matches: [], none: true, reason: "Couldn't check that right now \u2014 try again in a moment." };
+  }
+  const parsed = safeParse(firstJsonBlob(acc), null);
+  const matches = parsed && Array.isArray(parsed.matches) ? parsed.matches.filter((m) => m && APP_BY_ID[m.id]).map((m) => ({ id: m.id, why: String(m.why || "").slice(0, 160) })) : [];
+  if (!parsed || parsed.none === true || !matches.length) {
+    const reason = parsed && String(parsed.reason || "").slice(0, 160) || "No wrapp in the catalog clearly fits that yet.";
+    return { matches: [], none: true, reason };
+  }
+  return { matches: matches.slice(0, 3), none: false };
+}
+function firstJsonBlob(str2) {
+  const t = String(str2 || "");
+  const a = t.indexOf("{"), b = t.lastIndexOf("}");
+  return a >= 0 && b > a ? t.slice(a, b + 1) : t;
+}
+function buildTaskLine(text, wrappId) {
+  let body = String(text || "").trim();
+  if (wrappId && APP_BY_ID[wrappId]) body += ` @${wrappId}`;
+  return `- [ ] ${body}`;
+}
+async function appendTaskTagged(text, wrappId, list = "Inbox") {
+  const clean = String(text || "").trim();
+  if (!clean || !relay || storageFrozen) return false;
+  const existing = await relay.storage.get(TASKS_KEY).catch(() => null) || "";
+  const exLines = existing.split("\n");
+  for (let li = 0; li < exLines.length; li++) {
+    const m = /^\s*- \[( |x|X)\] (.+)$/.exec(exLines[li]);
+    if (!m || normTask(m[2]) !== normTask(clean)) continue;
+    const twin = m[2].trim();
+    const tg = WRAPP_TAG_RE.exec(twin);
+    const routed = tg && APP_BY_ID[tg[1].toLowerCase()];
+    if (wrappId && APP_BY_ID[wrappId] && !routed) {
+      exLines[li] = exLines[li].replace(/^(\s*- \[(?: |x|X)\] )(.+)$/, (_, mark, body) => `${mark}${body.trim()} @${wrappId}`);
+      const rewritten = exLines.join("\n");
+      try {
+        await relay.storage.set(TASKS_KEY, rewritten);
+        tasksRaw = rewritten;
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    return true;
+  }
+  const line = buildTaskLine(clean, wrappId);
+  let doc = existing.trim() ? existing.replace(/\n+$/, "\n") : "# Tasks\n";
+  const lines = doc.split("\n");
+  const hi = lines.findIndex((l) => new RegExp(`^##\\s+${escapeTaskRe(list)}\\s*$`, "i").test(l));
+  let next;
+  if (hi === -1) {
+    if (!doc.endsWith("\n")) doc += "\n";
+    next = `${doc}
+## ${list}
+${line}
+`;
+  } else {
+    let j = hi + 1;
+    while (j < lines.length && !/^##\s+/.test(lines[j])) j++;
+    let at = j;
+    while (at - 1 > hi && lines[at - 1].trim() === "") at--;
+    lines.splice(at, 0, line);
+    next = lines.join("\n");
+  }
+  try {
+    await relay.storage.set(TASKS_KEY, next);
+    tasksRaw = next;
+    return true;
+  } catch {
+    return false;
+  }
+}
+async function toggleTaskLine(task, cb) {
+  if (!relay || storageFrozen) {
+    cb.checked = task.done;
+    return;
+  }
+  const fresh = await relay.storage.get(TASKS_KEY).catch(() => null) || "";
+  const lines = fresh.split("\n");
+  const want = String(task.text || "").trim();
+  const idx = lines.findIndex((l) => {
+    const m = /^\s*- \[( |x|X)\] (.+)$/.exec(l);
+    return m && m[2].trim() === want && m[1] !== " " === task.done;
+  });
+  if (idx === -1) {
+    tasksRaw = fresh;
+    void renderNext();
+    return;
+  }
+  lines[idx] = task.done ? lines[idx].replace(/- \[[xX]\]/, "- [ ]") : lines[idx].replace("- [ ]", "- [x]");
+  const next = lines.join("\n");
+  try {
+    await relay.storage.set(TASKS_KEY, next);
+    tasksRaw = next;
+    await renderNext();
+  } catch {
+    cb.checked = task.done;
+  }
+}
+function launchAnchor(wrappId, text, label) {
+  const app = APP_BY_ID[wrappId];
+  const a = mk("a", "nt-open");
+  const base = app.href;
+  a.href = base + (base.includes("?") ? "&" : "?") + "task=" + encodeURIComponent(text);
+  a.dataset.app = wrappId;
+  const wi = mk("span", "nt-wi");
+  const f = famOf(wrappId);
+  wi.style.background = f.soft;
+  wi.style.color = f.ink;
+  wi.innerHTML = glyphSvg(wrappId);
+  a.append(wi, document.createTextNode(label), Object.assign(document.createElement("span"), { textContent: "\u2192" }));
+  return a;
+}
+function launchPill(wrappId, text, label) {
+  const app = APP_BY_ID[wrappId];
+  const a = mk("a", "nm-go");
+  const base = app.href;
+  a.href = base + (base.includes("?") ? "&" : "?") + "task=" + encodeURIComponent(text);
+  a.dataset.app = wrappId;
+  a.textContent = label;
+  return a;
+}
+function renderNextVault(info) {
+  const el2 = $2("next-vault");
+  if (!el2) return;
+  const shared = !!info && info.autoAssigned === false;
+  el2.textContent = "";
+  el2.className = "next-vault" + (shared ? "" : " sandbox");
+  el2.append(mk("span", "nv-dot"));
+  if (shared) {
+    const folder = String(info.folder || "");
+    const name = folder.split("/").filter(Boolean).pop() || "your folder";
+    const isBank = /SwitchboardBrain$/.test(folder);
+    el2.append(document.createTextNode(
+      isBank ? `shared with your Bank \xB7 ${name}` : `saved to your folder \xB7 ${name}`
+    ));
+  } else {
+    el2.append(document.createTextNode("Saved here in the store for now \u2014 connect your Bank to keep all your tasks in one place."));
+    const bind = mk("button", "nv-bind", "Connect Bank");
+    bind.type = "button";
+    bind.onclick = () => {
+      const row2 = $2("next-bindrow");
+      if (!row2) return;
+      row2.hidden = false;
+      const i = $2("next-bind-path");
+      if (i) {
+        if (!i.value.trim()) i.value = "~/SwitchboardBrain";
+        i.focus();
+        i.select();
+      }
+    };
+    el2.append(bind);
+  }
+  const row = $2("next-bindrow");
+  if (row && shared) row.hidden = true;
+}
+async function bindNextVault() {
+  if (!relay || storageFrozen) return;
+  const path = ($2("next-bind-path")?.value || "").trim();
+  if (!path) return;
+  const go = $2("next-bind-go");
+  if (go) {
+    go.disabled = true;
+    go.textContent = "connecting\u2026";
+  }
+  try {
+    const info = await relay.storage.bind(path).catch(() => null);
+    if (info) {
+      vaultBound = true;
+      $2("next-bindrow").hidden = true;
+      await renderNext();
+    }
+  } finally {
+    if (go) {
+      go.disabled = false;
+      go.textContent = "Connect \u25B8";
+    }
+  }
+}
+async function renderNext() {
+  const sec = $2("next-sec");
+  if (!sec) return;
+  if (!relay) {
+    sec.hidden = true;
+    return;
+  }
+  sec.hidden = false;
+  const raw = await relay.storage.get(TASKS_KEY).catch(() => null);
+  if (!relay) return;
+  tasksRaw = raw || "";
+  const info = await relay.storage.info().catch(() => null);
+  if (!relay) return;
+  vaultBound = !!info && info.autoAssigned === false;
+  renderNextVault(info);
+  renderNextList(parseTasksMd(tasksRaw));
+}
+function renderNextList(tasks) {
+  const box = $2("next-list");
+  if (!box) return;
+  box.textContent = "";
+  if (!tasks.length) {
+    box.append(mk(
+      "div",
+      "nl-empty",
+      "No tasks yet \u2014 type what you need above and your Claude routes it here, or send tasks in from any Claude thread and they land on this same list."
+    ));
+    return;
+  }
+  const groups = /* @__PURE__ */ new Map();
+  for (const t of tasks) {
+    const g = t.section || "Inbox";
+    (groups.get(g) ?? groups.set(g, []).get(g)).push(t);
+  }
+  for (const [section, list] of groups) {
+    const open = list.filter((t) => !t.done), done = list.filter((t) => t.done);
+    const wrap = mk("div", "next-group");
+    wrap.append(mk("div", "ng-k", `${section} \xB7 ${open.length} open`));
+    for (const t of open.concat(done)) wrap.append(nextTaskRow(t));
+    box.append(wrap);
+  }
+}
+function nextTaskRow(t) {
+  const row = mk("div", "trow-n" + (t.done ? " done" : ""));
+  const main = mk("label", "nt-main");
+  const cb = document.createElement("input");
+  cb.type = "checkbox";
+  cb.checked = t.done;
+  cb.disabled = storageFrozen;
+  cb.onchange = () => void toggleTaskLine(t, cb);
+  main.append(cb, mk("span", "nt-label", t.clean));
+  row.append(main);
+  if (t.due && !t.done) row.append(mk("span", "nt-due", t.due));
+  if (t.wrapp && APP_BY_ID[t.wrapp]) row.append(launchAnchor(t.wrapp, t.clean, `complete with ${APP_BY_ID[t.wrapp].name}`));
+  return row;
+}
+async function runConnectedIntent(q, input, go) {
+  if (!q) return;
+  const suggest = $2("next-suggest");
+  if (!suggest) return;
+  suggest.hidden = false;
+  suggest.textContent = "";
+  suggest.append(mk("div", "next-thinking", "finding the right wrapp\u2026"));
+  if (go) go.disabled = true;
+  const res = await matchIntent(q);
+  if (go) go.disabled = false;
+  suggest.textContent = "";
+  if (res.none || !res.matches.length) {
+    renderNoMatch(suggest, q, res.reason);
+    return;
+  }
+  const top = res.matches[0];
+  const saved = await appendTaskTagged(q, top.id);
+  if (input) input.value = "";
+  const app = APP_BY_ID[top.id];
+  const card = mk("div", "next-match");
+  card.append(glyphTile(top.id, 34));
+  const b = mk("span", "nm-b");
+  const n = mk("span", "nm-n");
+  n.append(document.createTextNode(saved ? `Saved \xB7 routed to ${app.name}` : `Routed to ${app.name}`));
+  n.append(mk("span", "nm-cat", categoryOf(top.id)));
+  b.append(n, mk("span", "nm-why", top.why || ""));
+  card.append(b, launchPill(top.id, q, `Open ${app.name} \u25B8`));
+  suggest.append(card);
+  if (res.matches.length > 1) {
+    const alt = mk("div", "next-alts");
+    alt.append(mk("span", "na-k", "also fits:"));
+    for (const m of res.matches.slice(1)) {
+      const p = launchPill(m.id, q, APP_BY_ID[m.id].name);
+      p.classList.add("ghost");
+      alt.append(p);
+    }
+    suggest.append(alt);
+  }
+  await renderNext();
+}
+function renderNoMatch(holder, q, reason) {
+  const box = mk("div", "next-empty");
+  box.append(mk("h5", null, "No wrapp fits that yet"));
+  box.append(mk("p", null, (reason || "Nothing in the catalog clearly matches that.") + " Forcing a bad match would waste your time \u2014 two honest moves instead:"));
+  const fb = mk("div", "next-fallbacks");
+  const p1 = mk("button", "next-fb", "Add your website \u2014 it helps match the right app");
+  p1.type = "button";
+  p1.onclick = () => point.open("site");
+  const p2 = mk("button", "next-fb", "Save it anyway (unrouted)");
+  p2.type = "button";
+  p2.onclick = async () => {
+    const ok = await appendTaskTagged(q, null);
+    if (!ok) return;
+    const i = $2("next-input");
+    if (i) i.value = "";
+    holder.textContent = "";
+    const card = mk("div", "next-match");
+    const b = mk("span", "nm-b");
+    b.append(
+      mk("span", "nm-n", "Saved to your list"),
+      mk("span", "nm-why", "no wrapp routed \u2014 it's on your one list, ready when you are")
+    );
+    card.append(b);
+    holder.append(card);
+    await renderNext();
+  };
+  fb.append(p1, p2);
+  box.append(fb);
+  holder.append(box);
+}
+function runPreIntent(q) {
+  const holder = $2("next-pre-suggest");
+  if (!holder) return;
+  if (!q) {
+    holder.hidden = true;
+    holder.textContent = "";
+    return;
+  }
+  holder.hidden = false;
+  holder.textContent = "";
+  const matches = keywordMatch(q);
+  if (!matches.length) {
+    const box = mk("div", "next-empty");
+    box.append(mk("h5", null, "No obvious match"));
+    box.append(mk("p", null, "Nothing in the catalog jumps out for those words. Connect Switchboard and your own Claude routes it properly \u2014 and saves it as a task."));
+    const fb = mk("div", "next-fallbacks");
+    const c = mk("button", "next-fb", "Connect Switchboard");
+    c.type = "button";
+    c.onclick = () => clickConnect();
+    fb.append(c);
+    box.append(fb);
+    holder.append(box);
+    return;
+  }
+  for (const m of matches) {
+    const app = APP_BY_ID[m.id];
+    const a = mk("a", "next-match");
+    a.href = detailHref(m.id);
+    a.dataset.detail = "1";
+    a.append(glyphTile(m.id, 34));
+    const b = mk("span", "nm-b");
+    const n = mk("span", "nm-n");
+    n.append(document.createTextNode(app.name));
+    n.append(mk("span", "nm-cat", categoryOf(m.id)));
+    b.append(n, mk("span", "nm-why", "connect to save this as a task"));
+    a.append(b, Object.assign(document.createElement("span"), { className: "nm-go ghost", textContent: "See it \u25B8" }));
+    holder.append(a);
+  }
+}
+function renderIntentBar(inputId, goId, run) {
+  const input = $2(inputId), go = $2(goId);
+  if (!input || !go) return;
+  go.onclick = () => run(input.value.trim(), input, go);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      run(input.value.trim(), input, go);
+    }
+  });
+}
 function renderPlan() {
   const el2 = $2("plan-card");
   el2.textContent = "";
@@ -3560,7 +4051,7 @@ async function togglePlan() {
   plan = plan === "pro" ? "free" : "pro";
   document.body.classList.toggle("plan-pro", plan === "pro");
   renderPlan();
-  if (storageFrozen) return;
+  if (storageFrozen || vaultBound) return;
   try {
     await relay?.storage.set("plan", plan);
   } catch {
@@ -3605,7 +4096,7 @@ async function buyPack(amt, price) {
   wallet.ledger = wallet.ledger.slice(0, 20);
   renderWallet();
   $2("pack-note").textContent = `SIMULATED checkout complete \u2014 ${amt.toLocaleString("en-US")} SB credited to the preview stub. ${price} was NOT charged; no card exists here. Packs never expire.`;
-  if (storageFrozen) return;
+  if (storageFrozen || vaultBound) return;
   try {
     await relay?.storage.set("wallet", JSON.stringify(wallet));
   } catch {
@@ -3735,6 +4226,18 @@ document.addEventListener("keydown", (e) => {
 });
 $2("hero-connect").onclick = () => clickConnect();
 $2("projects-new").onclick = () => point.open();
+renderIntentBar("next-input", "next-go", (q, input, go) => void runConnectedIntent(q, input, go));
+renderIntentBar("next-pre-input", "next-pre-go", (q) => runPreIntent(q));
+$2("next-bind-go")?.addEventListener("click", () => void bindNextVault());
+$2("next-bind-cancel")?.addEventListener("click", () => {
+  $2("next-bindrow").hidden = true;
+});
+$2("next-bind-path")?.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    void bindNextVault();
+  } else if (e.key === "Escape") $2("next-bindrow").hidden = true;
+});
 point.mount();
 renderNav();
 renderCats();
