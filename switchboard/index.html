@@ -8,7 +8,7 @@
 <meta name="description" content="Switchboard is a personal runtime — your AI, storage, tools and data, lent to any web app behind one permission screen. Apps become pure frontends. You stop signing up.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Doto:wght@700;900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Doto:wght@700;900&family=Inter:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --void:#050807;
@@ -719,15 +719,27 @@
     .dtab i{transition:none !important}
     .app:hover{transform:none}
   }
-  /* wrapp cards — matched to the /apps store page vibe: monogram tile + dot-font accent name + mono blurb */
-  #apps .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:9px;margin-top:28px}
-  #apps .card{display:flex;gap:13px;align-items:flex-start;padding:13px 15px;border:1px solid var(--line);background:var(--panel);text-decoration:none;transition:border-color .15s,background .15s}
-  #apps .card:hover{border-color:var(--c,var(--line-bright));background:var(--panel-2)}
-  #apps .mk{width:40px;height:40px;flex:none;border:1px solid var(--c,var(--muted));color:var(--c,var(--muted));display:grid;place-items:center;font-family:var(--dot);font-weight:900;font-size:14px;letter-spacing:.02em;background:rgba(255,255,255,.015)}
-  #apps .card .body{min-width:0;padding-top:1px}
-  #apps .card h4{margin:0 0 4px;font-family:var(--dot);font-weight:900;font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:var(--c,var(--paper));display:flex;align-items:center;gap:8px}
-  #apps .card .dot{width:6px;height:6px;border-radius:50%;background:var(--phosphor);flex:none;animation:pulse 2s ease infinite}
-  #apps .card p{margin:0;color:var(--muted);font-family:var(--mono);font-size:10.5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  /* #apps — restyled to the live /apps store aesthetic: a clean-modern storefront window
+     (neutral dark cards, Space Grotesk names, pastel icon tiles) deliberately distinct from
+     the phosphor landing. Colours are the store's own tokens as literals. */
+  #apps .store-intro{text-align:center;max-width:620px;margin:0 auto 34px}
+  #apps .store-pill{display:inline-flex;align-items:center;gap:7px;font:600 11px/1 'Inter',sans-serif;letter-spacing:.09em;text-transform:uppercase;color:#A2A2A8;border:1px solid #232327;border-radius:999px;padding:7px 13px}
+  #apps .store-pill i{width:6px;height:6px;border-radius:50%;background:#54B487;display:inline-block}
+  #apps .store-h{font:600 clamp(1.7rem,3.4vw,2.3rem)/1.08 'Space Grotesk','Inter',sans-serif;letter-spacing:-.02em;color:#F4F4F2;text-transform:none;text-shadow:none;margin:18px 0 12px}
+  #apps .store-sub{font:400 15px/1.6 'Inter',sans-serif;color:#A2A2A8;margin:0 auto 22px;max-width:560px}
+  #apps .store-cta{display:inline-flex;align-items:center;gap:8px;font:600 13px/1 'Inter',sans-serif;background:#EDEDEA;color:#0A0A0B;border-radius:999px;padding:11px 20px;text-decoration:none;transition:background .15s}
+  #apps .store-cta:hover{background:#fff}
+  #apps .store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:11px}
+  #apps .scard{display:flex;gap:13px;align-items:flex-start;background:#131315;border:1px solid #232327;border-radius:14px;padding:14px 15px;text-decoration:none;box-shadow:0 10px 30px -20px rgba(0,0,0,.8);transition:transform .14s,border-color .14s,box-shadow .14s}
+  #apps .scard:hover{transform:translateY(-3px);border-color:#2C2C31;box-shadow:0 16px 40px -22px rgba(0,0,0,.9)}
+  #apps .scard-ic{width:36px;height:36px;flex:none;border-radius:10px;display:grid;place-items:center;background:var(--tint);color:var(--gl)}
+  #apps .scard-ic svg{width:19px;height:19px}
+  #apps .scard-body{min-width:0}
+  #apps .scard-n{display:flex;align-items:center;gap:6px;font:600 14px/1.2 'Space Grotesk','Inter',sans-serif;letter-spacing:-.01em;color:#F4F4F2}
+  #apps .scard-v{width:13px;height:13px;flex:none;display:inline-flex}
+  #apps .scard-v svg{width:100%;height:100%}
+  #apps .scard-c{font:400 12.5px/1.5 'Inter',sans-serif;color:#A2A2A8;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  #apps .scard-cat{display:block;margin-top:9px;font:500 10.5px/1 ui-monospace,'SF Mono',Menlo,monospace;letter-spacing:.03em;color:#6C6C74;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -926,63 +938,76 @@
 
 <section id="apps">
   <div class="wrap">
-    <div class="sec-head center rv">
-      <p class="cap">// the wrapp store</p>
-      <h2>Yes, wrappers. <span class="lit">That's the point.</span></h2>
-      <p class="sec-sub">The apps are just open, forkable interfaces. Switchboard runs the backend — even for apps that normally need one.</p>
+    <div class="store-intro rv">
+      <span class="store-pill"><i></i>Wrapp store · runs on your own AI</span>
+      <h2 class="store-h">Apps that bring nothing but the interface.</h2>
+      <p class="store-sub">Every wrapp runs on your own Claude and your tools — the operator never holds a key or sees your data. Open one and it just works.</p>
+      <a class="store-cta" href="https://thelastprompt.ai/apps/">Open the store →</a>
     </div>
-    <div class="store-bar rv">
-      <span class="sb-l">Open source · forkable · every one runs on your Claude, zero signup</span>
-      <span class="sb-r">
-        <a class="btn btn-ghost" href="https://github.com/sameeeeeeep/switchboard/blob/main/docs/BUILDING-A-WRAPP.md">Build a wrapp →</a>
-        <a class="btn btn-solid" href="https://thelastprompt.ai/apps/">Open the store →</a>
-      </span>
-    </div>
-    <div class="cards">
-      <a class="card rv" href="https://brandbrain.thelastprompt.ai/build" style="--c:#C8F250">
-        <span class="mk">BB</span>
-        <span class="body"><h4>Brandbrain <span class="dot" title="live"></span></h4>
-        <p>A full brand studio — 32 API routes running in your tab, producing reusable context.</p></span>
+    <div class="store-grid">
+      <a class="scard rv" href="https://thelastprompt.ai/apps/huddle-landing.html">
+        <span class="scard-ic" style="--tint:#E7F1EC;--gl:#2E8B6A"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3Z"/></svg></span>
+        <span class="scard-body">
+          <span class="scard-n">Huddle <span class="scard-v"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#4C8DF6"/><path d="M8 12.3l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+          <span class="scard-c">Get on a working call with your own Claude — camera on, warm thread, grounded in a project folder.</span>
+          <span class="scard-cat">Play &amp; make</span>
+        </span>
       </a>
-      <a class="card rv" href="https://brandbrain.thelastprompt.ai/build?studio=idea" style="--c:#7DE0FF">
-        <span class="mk">IB</span>
-        <span class="body"><h4>Ideabrain <span class="dot" title="live"></span></h4>
-        <p>Validate a startup idea end to end — thesis, plan, proof, deck and reach-outs.</p></span>
+      <a class="scard rv" href="https://thelastprompt.ai/apps/reel-landing.html">
+        <span class="scard-ic" style="--tint:#F0E7F1;--gl:#B54A78"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5Z"/></svg></span>
+        <span class="scard-body">
+          <span class="scard-n">Reel <span class="scard-v"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#4C8DF6"/><path d="M8 12.3l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+          <span class="scard-c">One line to a launch reel — Claude scripts scenes, Higgsfield paints them, renders in your browser.</span>
+          <span class="scard-cat">Creative</span>
+        </span>
       </a>
-      <a class="card rv" href="https://bank.thelastprompt.ai" style="--c:#8FA3C8">
-        <span class="mk">BK</span>
-        <span class="body"><h4>Bank <span class="dot" title="live"></span></h4>
-        <p>Notes, tasks and your library — one local brain any Claude thread can push to.</p></span>
+      <a class="scard rv" href="https://thelastprompt.ai/apps/identity-landing.html">
+        <span class="scard-ic" style="--tint:#EDE8F3;--gl:#7B5EA8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></span>
+        <span class="scard-body">
+          <span class="scard-n">Identity <span class="scard-v"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#4C8DF6"/><path d="M8 12.3l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+          <span class="scard-c">Compose an AI creator persona facet by facet, then publish it as a context Cast picks up.</span>
+          <span class="scard-cat">Creative</span>
+        </span>
       </a>
-      <a class="card rv" href="https://cartridge.thelastprompt.ai" style="--c:#FF3D9A">
-        <span class="mk">CT</span>
-        <span class="body"><h4>Cartridge <span class="dot" title="live"></span></h4>
-        <p>Describe a game — your Claude builds it, playable and remixable, as one .html file.</p></span>
+      <a class="scard rv" href="https://thelastprompt.ai/apps/take-landing.html">
+        <span class="scard-ic" style="--tint:#E7F1EC;--gl:#2E8B6A"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5Z"/></svg></span>
+        <span class="scard-body">
+          <span class="scard-n">Take <span class="scard-v"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#4C8DF6"/><path d="M8 12.3l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+          <span class="scard-c">Script it, then record it — Claude writes the beats, you capture in the page. Never leaves your browser.</span>
+          <span class="scard-cat">Play &amp; make</span>
+        </span>
       </a>
-      <a class="card rv" href="https://cast.thelastprompt.ai" style="--c:#FF5A3C">
-        <span class="mk">CS</span>
-        <span class="body"><h4>Cast <span class="dot" title="live"></span></h4>
-        <p>Persona studio — brand-aware creators that stay on-model across your apps.</p></span>
+      <a class="scard rv" href="https://thelastprompt.ai/apps/batch-landing.html">
+        <span class="scard-ic" style="--tint:#F2E8D2;--gl:#B4802A"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
+        <span class="scard-body">
+          <span class="scard-n">Batch <span class="scard-v"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#4C8DF6"/><path d="M8 12.3l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+          <span class="scard-c">Your YC application, answer by answer — all 8 questions drafted on your own Claude.</span>
+          <span class="scard-cat">Ads &amp; growth</span>
+        </span>
       </a>
-      <a class="card rv" href="https://prism.thelastprompt.ai" style="--c:#8A8FFF">
-        <span class="mk">PR</span>
-        <span class="body"><h4>Prism <span class="dot" title="live"></span></h4>
-        <p>Generate on-brand images on your own compute — your brand loads in, nothing uploads.</p></span>
+      <a class="scard rv" href="https://thelastprompt.ai/apps/marquee-landing.html">
+        <span class="scard-ic" style="--tint:#E7F0F6;--gl:#3A6EA5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M8 13h8M8 16h5"/></svg></span>
+        <span class="scard-body">
+          <span class="scard-n">Marquee <span class="scard-v"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#4C8DF6"/><path d="M8 12.3l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+          <span class="scard-c">A cinematic scrolling landing page from one line — generated, hero-painted, edited in place.</span>
+          <span class="scard-cat">Brand &amp; content</span>
+        </span>
       </a>
-      <a class="card rv" href="https://adpulse.thelastprompt.ai" style="--c:#FFB224">
-        <span class="mk">AP</span>
-        <span class="body"><h4>AdPulse <span class="dot" title="live"></span></h4>
-        <p>Read your Meta ad performance — ROAS, spend, what's working — on your own AI.</p></span>
+      <a class="scard rv" href="https://thelastprompt.ai/apps/redline-landing.html">
+        <span class="scard-ic" style="--tint:#E7F0F6;--gl:#3A6EA5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1L19 8a2 2 0 0 0-3-3L5 16Z"/><path d="M14 6l3 3"/></svg></span>
+        <span class="scard-body">
+          <span class="scard-n">Redline <span class="scard-v"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#4C8DF6"/><path d="M8 12.3l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+          <span class="scard-c">Review a landing page like a document — drop comments, your Claude proposes copy &amp; edits the real file.</span>
+          <span class="scard-cat">Brand &amp; content</span>
+        </span>
       </a>
-      <a class="card rv" href="https://adforge.thelastprompt.ai" style="--c:#FF6A2B">
-        <span class="mk">AF</span>
-        <span class="body"><h4>AdForge <span class="dot" title="live"></span></h4>
-        <p>Generate Meta ad creative and copy straight from your brand.</p></span>
-      </a>
-      <a class="card rv" href="https://adgen.thelastprompt.ai" style="--c:#EE6ACD">
-        <span class="mk">AG</span>
-        <span class="body"><h4>Adgen <span class="dot" title="live"></span></h4>
-        <p>Ads from your website and brand, generated on your own Claude.</p></span>
+      <a class="scard rv" href="https://thelastprompt.ai/apps/" style="border-style:dashed">
+        <span class="scard-ic" style="--tint:#191A1D;--gl:#A2A2A8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5v14"/></svg></span>
+        <span class="scard-body">
+          <span class="scard-n">Browse the store</span>
+          <span class="scard-c">The full catalog — filter by Pro or Free, search, and point any wrapp at your work.</span>
+          <span class="scard-cat">All wrapps →</span>
+        </span>
       </a>
     </div>
   </div>
