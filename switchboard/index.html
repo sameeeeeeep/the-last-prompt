@@ -719,6 +719,15 @@
     .dtab i{transition:none !important}
     .app:hover{transform:none}
   }
+  /* wrapp cards — matched to the /apps store page vibe: monogram tile + dot-font accent name + mono blurb */
+  #apps .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:9px;margin-top:28px}
+  #apps .card{display:flex;gap:13px;align-items:flex-start;padding:13px 15px;border:1px solid var(--line);background:var(--panel);text-decoration:none;transition:border-color .15s,background .15s}
+  #apps .card:hover{border-color:var(--c,var(--line-bright));background:var(--panel-2)}
+  #apps .mk{width:40px;height:40px;flex:none;border:1px solid var(--c,var(--muted));color:var(--c,var(--muted));display:grid;place-items:center;font-family:var(--dot);font-weight:900;font-size:14px;letter-spacing:.02em;background:rgba(255,255,255,.015)}
+  #apps .card .body{min-width:0;padding-top:1px}
+  #apps .card h4{margin:0 0 4px;font-family:var(--dot);font-weight:900;font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:var(--c,var(--paper));display:flex;align-items:center;gap:8px}
+  #apps .card .dot{width:6px;height:6px;border-radius:50%;background:var(--phosphor);flex:none;animation:pulse 2s ease infinite}
+  #apps .card p{margin:0;color:var(--muted);font-family:var(--mono);font-size:10.5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 </style>
 </head>
 <body>
@@ -923,92 +932,57 @@
       <p class="sec-sub">The apps are just open, forkable interfaces. Switchboard runs the backend — even for apps that normally need one.</p>
     </div>
     <div class="store-bar rv">
-      <span class="sb-l"><b>7 wrapps</b> · open source · forkable · every one runs on your Claude, zero signup</span>
+      <span class="sb-l">Open source · forkable · every one runs on your Claude, zero signup</span>
       <span class="sb-r">
         <a class="btn btn-ghost" href="https://github.com/sameeeeeeep/switchboard/blob/main/docs/BUILDING-A-WRAPP.md">Build a wrapp →</a>
-        <a class="btn btn-solid" href="https://github.com/sameeeeeeep/switchboard">Browse the repo →</a>
+        <a class="btn btn-solid" href="https://thelastprompt.ai/apps/">Open the store →</a>
       </span>
     </div>
-    <div class="apps">
-      <a class="app rv" style="--ac:#FF2E97" href="https://cartridge.thelastprompt.ai/">
-        <div class="app-body">
-          <div class="app-head">
-            <span class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="7" width="20" height="11" rx="4.5"/><path d="M7 11.5h3M8.5 10v3" stroke-linecap="round"/><circle cx="15.5" cy="11.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="18" cy="14" r="1.1" fill="currentColor" stroke="none"/></svg></span>
-            <span><span class="name">Cartridge</span><span class="cat">Games</span></span>
-          </div>
-          <p>Describe a game — your Claude builds it, playable and remixable, as a single .html file.</p>
-        </div>
-        <span class="meta"><span class="live-dot"></span>live<span class="go">open →</span></span>
+    <div class="cards">
+      <a class="card rv" href="https://brandbrain.thelastprompt.ai/build" style="--c:#C8F250">
+        <span class="mk">BB</span>
+        <span class="body"><h4>Brandbrain <span class="dot" title="live"></span></h4>
+        <p>A full brand studio — 32 API routes running in your tab, producing reusable context.</p></span>
       </a>
-      <a class="app rv" style="--ac:#C8F250" href="https://brandbrain.thelastprompt.ai/">
-        <div class="app-body">
-          <div class="app-head">
-            <span class="app-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.3 6.4L21 10l-6.7 1.6L12 18l-2.3-6.4L3 10l6.7-1.6z"/></svg></span>
-            <span><span class="name">Brandbrain</span><span class="cat">Brand studio</span></span>
-          </div>
-          <p>A full brand studio — 32 API routes running entirely in your tab, producing reusable context.</p>
-        </div>
-        <span class="meta"><span class="live-dot"></span>live<span class="go">open →</span></span>
+      <a class="card rv" href="https://brandbrain.thelastprompt.ai/build?studio=idea" style="--c:#7DE0FF">
+        <span class="mk">IB</span>
+        <span class="body"><h4>Ideabrain <span class="dot" title="live"></span></h4>
+        <p>Validate a startup idea end to end — thesis, plan, proof, deck and reach-outs.</p></span>
       </a>
-      <a class="app rv" style="--ac:#FF5A3C" href="https://github.com/sameeeeeeep/switchboard">
-        <div class="app-body">
-          <div class="app-head">
-            <span class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 5h8v6a4 4 0 0 1-8 0z"/><path d="M13 5h8v6a4 4 0 0 1-8 0z"/></svg></span>
-            <span><span class="name">Cast</span><span class="cat">Personas</span></span>
-          </div>
-          <p>Persona studio — brand-aware creative personas that stay on-model across apps.</p>
-        </div>
-        <span class="meta">example wrapp · in the repo<span class="go">→</span></span>
+      <a class="card rv" href="https://bank.thelastprompt.ai" style="--c:#8FA3C8">
+        <span class="mk">BK</span>
+        <span class="body"><h4>Bank <span class="dot" title="live"></span></h4>
+        <p>Notes, tasks and your library — one local brain any Claude thread can push to.</p></span>
       </a>
-      <a class="app rv" style="--ac:#4F46E5" href="https://github.com/sameeeeeeep/switchboard">
-        <div class="app-body">
-          <div class="app-head">
-            <span class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M4 18l5-4.5 3.5 3 3-2.5L20 18" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <span><span class="name">Prism</span><span class="cat">Image gen</span></span>
-          </div>
-          <p>Generate on-brand images on your own compute — your brand loads in, nothing uploads.</p>
-        </div>
-        <span class="meta">example wrapp · in the repo<span class="go">→</span></span>
+      <a class="card rv" href="https://cartridge.thelastprompt.ai" style="--c:#FF3D9A">
+        <span class="mk">CT</span>
+        <span class="body"><h4>Cartridge <span class="dot" title="live"></span></h4>
+        <p>Describe a game — your Claude builds it, playable and remixable, as one .html file.</p></span>
       </a>
-      <a class="app rv" style="--ac:#8FA3C8" href="https://github.com/sameeeeeeep/switchboard">
-        <div class="app-body">
-          <div class="app-head">
-            <span class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5" stroke-linecap="round"/></svg></span>
-            <span><span class="name">Bank</span><span class="cat">Notes &amp; tasks</span></span>
-          </div>
-          <p>Notes, tasks and your library — one local place that any Claude thread can push to.</p>
-        </div>
-        <span class="meta">example wrapp · in the repo<span class="go">→</span></span>
+      <a class="card rv" href="https://cast.thelastprompt.ai" style="--c:#FF5A3C">
+        <span class="mk">CS</span>
+        <span class="body"><h4>Cast <span class="dot" title="live"></span></h4>
+        <p>Persona studio — brand-aware creators that stay on-model across your apps.</p></span>
       </a>
-      <div class="app rv" style="--ac:#6965DB">
-        <div class="app-body">
-          <div class="app-head">
-            <span class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20l4-1L19 8a2 2 0 0 0-3-3L5 16z" stroke-linejoin="round"/><path d="M14.5 7l2.5 2.5"/></svg></span>
-            <span><span class="name">Excalidraw</span><span class="cat">Whiteboard</span></span>
-          </div>
-          <p>The open-source whiteboard, its AI features rewired to your Claude.</p>
-        </div>
-        <span class="meta">ported in the pilot · deploying</span>
-      </div>
-      <div class="app rv" style="--ac:#23A094">
-        <div class="app-body">
-          <div class="app-head">
-            <span class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 4c-2 0-2 2-2 4s0 3-2 4c2 1 2 2 2 4s0 4 2 4"/><path d="M15 4c2 0 2 2 2 4s0 3 2 4c-2 1-2 2-2 4s0 4-2 4"/></svg></span>
-            <span><span class="name">JSON Crack</span><span class="cat">Dev tool</span></span>
-          </div>
-          <p>Visualize any JSON — with a ready seam for "AI explain" on your own model.</p>
-        </div>
-        <span class="meta">ported in the pilot · deploying</span>
-      </div>
-      <a class="app rv" style="--ac:#3dff88" href="https://github.com/sameeeeeeep/switchboard/blob/main/docs/BUILDING-A-WRAPP.md">
-        <div class="app-body">
-          <div class="app-head">
-            <span class="app-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
-            <span><span class="name">Yours</span><span class="cat">Build one</span></span>
-          </div>
-          <p>Port an existing app or build fresh — the guide and the skill do the heavy lifting.</p>
-        </div>
-        <span class="meta">build a wrapp<span class="go">→</span></span>
+      <a class="card rv" href="https://prism.thelastprompt.ai" style="--c:#8A8FFF">
+        <span class="mk">PR</span>
+        <span class="body"><h4>Prism <span class="dot" title="live"></span></h4>
+        <p>Generate on-brand images on your own compute — your brand loads in, nothing uploads.</p></span>
+      </a>
+      <a class="card rv" href="https://adpulse.thelastprompt.ai" style="--c:#FFB224">
+        <span class="mk">AP</span>
+        <span class="body"><h4>AdPulse <span class="dot" title="live"></span></h4>
+        <p>Read your Meta ad performance — ROAS, spend, what's working — on your own AI.</p></span>
+      </a>
+      <a class="card rv" href="https://adforge.thelastprompt.ai" style="--c:#FF6A2B">
+        <span class="mk">AF</span>
+        <span class="body"><h4>AdForge <span class="dot" title="live"></span></h4>
+        <p>Generate Meta ad creative and copy straight from your brand.</p></span>
+      </a>
+      <a class="card rv" href="https://adgen.thelastprompt.ai" style="--c:#EE6ACD">
+        <span class="mk">AG</span>
+        <span class="body"><h4>Adgen <span class="dot" title="live"></span></h4>
+        <p>Ads from your website and brand, generated on your own Claude.</p></span>
       </a>
     </div>
   </div>
