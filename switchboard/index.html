@@ -740,6 +740,49 @@
   #apps .scard-v svg{width:100%;height:100%}
   #apps .scard-c{font:400 12.5px/1.5 'Inter',sans-serif;color:#A2A2A8;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   #apps .scard-cat{display:block;margin-top:9px;font:500 10.5px/1 ui-monospace,'SF Mono',Menlo,monospace;letter-spacing:.03em;color:#6C6C74;text-transform:uppercase}
+  /* ---------- #means visual: the tax pile vs one board ---------- */
+  .board-vs{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:stretch;max-width:920px;margin:0 auto 26px}
+  .bv-side{border:1px solid var(--line);background:var(--panel);padding:18px}
+  .bv-side.them{border-color:var(--line)}
+  .bv-side.us{border-color:var(--phosphor-dim);box-shadow:0 0 40px rgba(61,255,136,.05)}
+  .bv-lab{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+  .bv-side.us .bv-lab{color:var(--phosphor-dim)}
+  .taxpile{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .wtile{border:1px solid var(--line);background:var(--void);padding:9px 10px}
+  .wtile .wt-name{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+  .wtile .wt-tax{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.02em;color:#7a3b48}
+  .wtile .wt-tax b{color:#c25566;font-weight:500}
+  .bv-note{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:14px;line-height:1.5}
+  .bv-side.us .bv-note{color:var(--muted)}
+  .bv-side.us .bv-note b{color:var(--phosphor)}
+  .bv-arrow{align-self:center;font-family:var(--mono);color:var(--phosphor-dim);font-size:20px}
+  .oneboard{border:1px solid var(--line-bright);background:var(--void);padding:16px;position:relative}
+  .ob-core{text-align:center;padding:16px 10px;border:1px solid var(--phosphor-dim);background:rgba(61,255,136,.04)}
+  .ob-core .obt{font-family:var(--dot);font-weight:900;text-transform:uppercase;font-size:15px;color:var(--phosphor);text-shadow:0 0 30px rgba(61,255,136,.4);letter-spacing:.04em}
+  .ob-core .obs{display:block;font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:6px;letter-spacing:.03em}
+  .ob-jacks{display:flex;justify-content:center;gap:14px;margin-top:14px}
+  .ob-jack{width:34px;text-align:center;position:relative}
+  .ob-jack::before{content:"";position:absolute;left:50%;top:-14px;width:1px;height:14px;background:var(--phosphor-dim)}
+  .ob-jack::after{content:"";position:absolute;left:calc(50% - 3px);top:-17px;width:6px;height:6px;border-radius:50%;background:var(--phosphor);box-shadow:0 0 8px var(--phosphor)}
+  .ob-jack span{font-family:var(--mono);font-size:8.5px;color:var(--faint);letter-spacing:.02em}
+
+  /* ---------- #team: operators patched into one board ---------- */
+  .teamboard{max-width:720px;margin:0 auto;border:1px solid var(--phosphor-dim);background:var(--panel);box-shadow:0 0 60px rgba(61,255,136,.06);padding:30px 24px 26px}
+  .tb-ops{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .tb-op{text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px}
+  .tb-av{width:42px;height:42px;display:grid;place-items:center;font-family:var(--dot);font-weight:900;font-size:17px;color:var(--void)}
+  .tb-nm{font-size:13px;color:var(--paper);font-weight:600}
+  .tb-cl{font-family:var(--mono);font-size:10px;color:var(--faint)}
+  .tb-cables{height:34px;position:relative;margin:6px 0 2px}
+  .tb-cables::before,.tb-cables::after,.tb-cables i{content:"";position:absolute;top:0;bottom:0;width:1px;background:linear-gradient(var(--phosphor),transparent);opacity:.7}
+  .tb-cables::before{left:16.6%}.tb-cables i{left:50%}.tb-cables::after{left:83.3%}
+  .tb-board{text-align:center;border:1px dashed var(--phosphor-dim);background:rgba(61,255,136,.05);padding:15px}
+  .tb-board .tbt{font-family:var(--dot);font-weight:900;text-transform:uppercase;font-size:16px;color:var(--phosphor);text-shadow:0 0 30px rgba(61,255,136,.4);letter-spacing:.05em}
+  .tb-board .tbs{display:block;font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:5px;letter-spacing:.04em}
+  @media (max-width:680px){
+    .board-vs{grid-template-columns:1fr}
+    .bv-arrow{transform:rotate(90deg)}
+  }
 </style>
 </head>
 <body>
@@ -825,6 +868,33 @@
     <div class="sec-head center rv">
       <p class="cap">// what it means</p>
       <h2>Every AI app today <span class="lit">vs. this.</span></h2>
+    </div>
+    <div class="board-vs rv">
+      <div class="bv-side them">
+        <p class="bv-lab">// every other app</p>
+        <div class="taxpile">
+          <div class="wtile"><span class="wt-name">Copywriter AI</span><span class="wt-tax"><b>acct</b> · <b>$19/mo</b> · <b>re-add ctx</b></span></div>
+          <div class="wtile"><span class="wt-name">Brand Studio</span><span class="wt-tax"><b>acct</b> · <b>$29/mo</b> · <b>re-add ctx</b></span></div>
+          <div class="wtile"><span class="wt-name">Notes AI</span><span class="wt-tax"><b>acct</b> · <b>$15/mo</b> · <b>re-add ctx</b></span></div>
+          <div class="wtile"><span class="wt-name">Deck maker</span><span class="wt-tax"><b>acct</b> · <b>$25/mo</b> · <b>re-add ctx</b></span></div>
+          <div class="wtile"><span class="wt-name">Email AI</span><span class="wt-tax"><b>acct</b> · <b>$12/mo</b> · <b>re-add ctx</b></span></div>
+          <div class="wtile"><span class="wt-name">…40 more</span><span class="wt-tax"><b>acct</b> · <b>$??/mo</b> · <b>re-add ctx</b></span></div>
+        </div>
+        <p class="bv-note">the same taxes, over and over — and your data on every one of their servers.</p>
+      </div>
+      <div class="bv-arrow">→</div>
+      <div class="bv-side us">
+        <p class="bv-lab">// with switchboard</p>
+        <div class="oneboard">
+          <div class="ob-core"><span class="obt">Your board</span><span class="obs">claude · tools · context · your machine</span></div>
+          <div class="ob-jacks">
+            <div class="ob-jack"><span>app</span></div>
+            <div class="ob-jack"><span>app</span></div>
+            <div class="ob-jack"><span>app</span></div>
+          </div>
+        </div>
+        <p class="bv-note">one board every app patches into. <b>No account, no per-app bill, context once, nothing leaves.</b></p>
+      </div>
     </div>
     <div class="compare">
       <div class="cmp old rv">
@@ -980,6 +1050,31 @@
           <span class="btn btn-solid">Approve</span>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section id="team">
+  <div class="wrap">
+    <div class="sec-head center rv">
+      <p class="cap">// new · <b>team mode</b></p>
+      <h2>Patch your team <span class="lit">into one board.</span></h2>
+      <p class="sec-sub">A switchboard was always many operators on one board. Now your team is too — share a folder and everyone works it live, each on their own Claude. No shared account to log into. Nothing uploaded to us.</p>
+    </div>
+    <div class="teamboard rv">
+      <div class="tb-ops">
+        <div class="tb-op"><span class="tb-av" style="background:var(--phosphor)">S</span><span class="tb-nm">Sameep</span><span class="tb-cl">his Claude</span></div>
+        <div class="tb-op"><span class="tb-av" style="background:#4C8DF6">I</span><span class="tb-nm">Ira</span><span class="tb-cl">her Claude</span></div>
+        <div class="tb-op"><span class="tb-av" style="background:#F6B93B">D</span><span class="tb-nm">Dev</span><span class="tb-cl">their Claude</span></div>
+      </div>
+      <div class="tb-cables"><i></i></div>
+      <div class="tb-board"><span class="tbt">Aamras studio</span><span class="tbs">the shared folder — synced live, byte for byte</span></div>
+    </div>
+    <div class="captions four" style="margin-top:14px">
+      <div class="caption rv"><b>Everyone brings their own line</b><span>each member on their own Claude, own subscription, own machine — inference never changes hands</span></div>
+      <div class="caption rv"><b>Sealed end to end</b><span>frames are encrypted with your team's key; the sync relay is a mailman, not a landlord — it can't read a byte</span></div>
+      <div class="caption rv"><b>Off by default</b><span>a switch you flip — your solo setup is untouched until you invite anyone</span></div>
+      <div class="caption rv"><b>Anywhere</b><span>same wifi, or across the world through the relay — teammates join with one code</span></div>
     </div>
   </div>
 </section>
