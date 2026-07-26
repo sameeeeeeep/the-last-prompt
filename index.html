@@ -338,7 +338,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 46px}
 <main id="top">
 
 <!-- ═══ HERO ═══ -->
-<section class="hero" id="hero">
+<section class="hero" id="hero" data-form="spark">
   <div class="hero-pin">
     <div class="hands">
       <img src="/handsnobg.png" alt="" class="hand-l" id="hand-l" crossorigin="anonymous">
@@ -836,7 +836,7 @@ var heroP  = 0;
 
 /* Where the copy actually sits. The field goes bright in the air between
    blocks and steps back under them — no permanent haze behind text. */
-var copyZones = [];
+var copyZones = [], formZones = [];
 function measureCopy(){
   copyZones = [];
   Array.prototype.forEach.call(document.querySelectorAll('.wrap'), function(el){
@@ -844,6 +844,25 @@ function measureCopy(){
     if (r.height < 40) return;
     copyZones.push([r.top + window.scrollY, r.bottom + window.scrollY]);
   });
+  formZones = [];
+  Array.prototype.forEach.call(document.querySelectorAll('[data-form]'), function(el){
+    var r = el.getBoundingClientRect();
+    formZones.push({
+      top: r.top + window.scrollY,
+      bottom: r.bottom + window.scrollY,
+      form: el.getAttribute('data-form')
+    });
+  });
+}
+/* Which formation this scroll position implies. A pure function of scrollY, so
+   scrolling up retraces scrolling down exactly. */
+function formAtScroll(){
+  if (!formZones.length) return 'spark';
+  var c = window.scrollY + innerHeight*0.5;
+  for (var i=0;i<formZones.length;i++){
+    if (c >= formZones[i].top && c < formZones[i].bottom) return formZones[i].form;
+  }
+  return c < formZones[0].top ? formZones[0].form : formZones[formZones.length-1].form;
 }
 function ambientAlpha(){
   if (!copyZones.length) return 0.9;
@@ -877,6 +896,7 @@ function toggle(el, cls, on){ if (el) el.classList[on?'add':'remove'](cls); }
 function onScroll(){
   var hh = hero.offsetHeight - innerHeight;
   heroP = Math.max(0, Math.min(1, (window.scrollY) / (hh||1)));
+  setForm(formAtScroll());
 
   var so = startOffset();
   var off = MIN_GAP + (so - MIN_GAP) * (1 - Math.min(heroP/0.75, 1));
@@ -923,10 +943,6 @@ if ('IntersectionObserver' in window){
     pbo.observe(pb);
   }
 
-  var former = new IntersectionObserver(function(es){
-    es.forEach(function(e){ if (e.isIntersecting) setForm(e.target.getAttribute('data-form')); });
-  }, {threshold:0.25});
-  Array.prototype.forEach.call(document.querySelectorAll('[data-form]'), function(el){ former.observe(el); });
 } else {
   Array.prototype.forEach.call(document.querySelectorAll('.rv'), function(el){ el.classList.add('in'); });
 }
