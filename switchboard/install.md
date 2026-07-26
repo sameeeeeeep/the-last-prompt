@@ -60,7 +60,7 @@ Two pieces, plus your first project.
 
 | Piece | What it is | Where it runs |
 | --- | --- | --- |
-| **Relay.app** | the daemon — holds your Claude and your MCP tools, brokers every request | your Mac, `/Applications` |
+| **Switchboard.app** | the daemon — holds your Claude and your MCP tools, brokers every request | your Mac, `/Applications` |
 | **Switchboard extension** | injects `window.claude` into pages so wrapps can ask | your Chrome |
 | **Your project** | a folder/repo/site your Claude reads once, that every wrapp can then borrow | your Mac, `~/.relay` + the folder you point at |
 
@@ -80,41 +80,45 @@ Two pieces, plus your first project.
 
 ```sh
 # Download (verify the checksum against the release page before opening)
-curl -L -o ~/Downloads/Relay.dmg \
-  https://github.com/sameeeeeeep/switchboard/releases/latest/download/Relay.dmg
-shasum -a 256 ~/Downloads/Relay.dmg
+curl -L -o ~/Downloads/Switchboard.dmg \
+  https://github.com/sameeeeeeep/switchboard/releases/latest/download/Switchboard.dmg
+shasum -a 256 ~/Downloads/Switchboard.dmg
 
-# Mount, copy to /Applications, unmount
-hdiutil attach ~/Downloads/Relay.dmg -nobrowse -quiet
-cp -R "/Volumes/Relay/Relay.app" /Applications/
-hdiutil detach "/Volumes/Relay" -quiet
+# Mount, copy to /Applications, unmount. The volume name carries the version
+# ("Switchboard 0.2.1"), so read the mount point from hdiutil rather than guessing it.
+VOL=$(hdiutil attach ~/Downloads/Switchboard.dmg -nobrowse | grep -o '/Volumes/.*$')
+cp -R "$VOL/Switchboard.app" /Applications/
+hdiutil detach "$VOL" -quiet
 ```
 
-**Relay must live in `/Applications`.** This is not cosmetic: macOS *translocates* quarantined apps
+**Switchboard must live in `/Applications`.** This is not cosmetic: macOS *translocates* quarantined apps
 run from `~/Downloads` to a randomised read-only path, and a LaunchAgent written from there would
 die on next login. The app detects this and refuses to install the daemon until it's moved.
 
-### The Gatekeeper hoop
+### Gatekeeper
 
-The v1 DMG is **ad-hoc signed** — there's no Apple Developer identity on it yet. macOS will say
-*"Apple could not verify 'Relay' is free of malware."*
+**Nothing to do here since 0.1.3.** The app and the DMG are both signed with an Apple Developer ID
+and notarized, with the ticket stapled — so first launch just works, offline included. There is no
+"Open Anyway", no right-click → Open, and **no reason to strip the quarantine flag**. If a guide
+tells you to run `xattr -dr com.apple.quarantine`, it is out of date; don't.
 
-**AGENT: tell your human this plainly before you run the next command.** It removes the quarantine
-flag macOS puts on downloaded apps. It is the documented alternative to
-System Settings → Privacy & Security → Open Anyway, and it is the correct moment for a human to
-decide whether they trust this project — ideally on the strength of the Step 0 audit.
+Verify it yourself before trusting it:
 
 ```sh
-xattr -dr com.apple.quarantine /Applications/Relay.app
+spctl -a -t open --context context:primary-signature -vv ~/Downloads/Switchboard.dmg
+# → accepted / source=Notarized Developer ID
 ```
+
+Step 0's audit is still the right moment to decide whether you trust this project — but that is a
+judgement about the code, not a Gatekeeper workaround.
 
 Then launch it:
 
 ```sh
-open -a Relay
+open -a Switchboard
 ```
 
-**HUMAN:** click the Relay mark in your menubar, then click **start**.
+**HUMAN:** click the Switchboard mark in your menubar, then click **start**.
 
 This writes `~/Library/LaunchAgents/com.relay.sidekick.plist` and bootstraps the daemon. It only
 ever happens on an explicit click — the app will never do it on its own, and never over an existing
@@ -139,7 +143,7 @@ open "https://chromewebstore.google.com/detail/injmjolmnekmahlnackakiamjepegagb"
 
 ## Step 3 — Pair
 
-**HUMAN:** click **token** in the Relay menubar popover, then paste it into the extension's pairing
+**HUMAN:** click **token** in the Switchboard menubar popover, then paste it into the extension's pairing
 field.
 
 The pairing token lives in `~/.relay`, mode `0600`. It never leaves your machine. Along with it,
