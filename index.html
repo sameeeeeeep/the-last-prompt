@@ -231,6 +231,19 @@ h2.big .t{color:var(--teal);font-style:italic}
 .cbtn{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;border-radius:2px;border:1px solid var(--line-2);color:var(--faint)}
 .cbtn.go{background:rgba(201,169,110,.12);border-color:rgba(201,169,110,.4);color:var(--gold)}
 .consent-foot{padding:11px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.54rem;letter-spacing:.06em;color:var(--dim)}
+button.cbtn{font:inherit;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .25s}
+button.cbtn:hover{filter:brightness(1.2)}
+.crow{transition:opacity .4s ease}
+.crow i{transition:background .45s ease,box-shadow .45s ease}
+.consent.done .crow i{background:var(--live);box-shadow:0 0 8px var(--live)}
+.consent.done .crow-k{color:var(--live);opacity:.85}
+.consent.done .consent-acts{opacity:0;pointer-events:none;height:0;padding:0;overflow:hidden;border-top:none}
+.consent-acts{transition:opacity .3s ease}
+.consent-done{display:none;padding:14px 16px;border-top:1px solid rgba(61,220,132,.2);background:rgba(61,220,132,.05);
+              font-family:var(--mono);font-size:.6rem;letter-spacing:.06em;color:var(--live)}
+.consent.done .consent-done{display:block;animation:fadein .5s ease both}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.consent-cap{transition:color .4s ease}
 .consent-cap{max-width:380px;margin-top:14px;font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-align:center}
 
 /* ── status chip ────────────────────────────────── */
@@ -265,6 +278,34 @@ h2.big .t{color:var(--teal);font-style:italic}
 .btn-s{background:transparent;color:var(--muted);border:1px solid var(--line-2)}
 .btn-s:hover{color:var(--bone);border-color:rgba(232,227,217,.34)}
 .fine{margin-top:18px;font-family:var(--mono);font-size:.6rem;line-height:1.9;color:var(--dim)}
+
+/* ── the board ──────────────────────────────────── */
+.board{margin-top:clamp(30px,5vh,48px)}
+.tickbar{display:flex;gap:3px;align-items:flex-end;height:26px}
+.tickbar i{flex:1;display:block;border-radius:1px;height:14px;background:rgba(61,220,132,.3);transition:height .5s cubic-bezier(.2,.7,.3,1),background .5s}
+.tickbar i.t-beta{background:rgba(224,169,85,.75);height:22px}
+.tickbar i.t-dev{background:rgba(167,139,250,.8);height:26px}
+.rv .tickbar i,.rv.tickwrap i{height:3px}
+.tickwrap.in .tickbar i{height:14px}
+.tickwrap.in .tickbar i.t-beta{height:22px}
+.tickwrap.in .tickbar i.t-dev{height:26px}
+.board-key{display:flex;flex-wrap:wrap;gap:18px;margin-top:14px;padding-bottom:20px;border-bottom:1px solid var(--line);
+           font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.board-key b{color:var(--bone);font-weight:400}
+.board-key span{display:flex;align-items:center;gap:7px}
+.board-key em{width:7px;height:7px;border-radius:1px;display:block;font-style:normal}
+.bk-live em{background:var(--live)}.bk-beta em{background:var(--beta)}.bk-dev em{background:var(--dev)}
+.brow{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr) auto;gap:clamp(12px,2.5vw,28px);align-items:baseline;
+      padding:20px 0;border-bottom:1px solid var(--line);text-decoration:none;transition:background .25s}
+a.brow:hover{background:rgba(255,255,255,.02)}
+.brow h4{font-family:var(--serif);font-size:1.42rem;font-weight:400;line-height:1}
+.brow p{font-size:.86rem;color:var(--faint);line-height:1.6}
+a.brow:hover p{color:var(--muted)}
+.brow .chip{align-self:center}
+@media(max-width:640px){
+  .brow{grid-template-columns:1fr auto;gap:8px 14px}
+  .brow p{grid-column:1 / -1}
+}
 
 /* ── wrapp grid ─────────────────────────────────── */
 .wgrid{margin-top:clamp(34px,5vh,52px);display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:1px;background:var(--line)}
@@ -535,10 +576,11 @@ footer{border-top:1px solid var(--line);padding:34px 0 46px}
             <div class="crow"><i></i><span class="crow-v">Acme — brand</span><span class="crow-k">context</span></div>
             <div class="crow"><i></i><span class="crow-v">~/Projects/acme</span><span class="crow-k">one folder</span></div>
           </div>
-          <div class="consent-acts"><span class="cbtn go">Approve</span><span class="cbtn">Not now</span></div>
+          <div class="consent-acts"><button class="cbtn go" id="approve" type="button">Approve</button><span class="cbtn">Not now</span></div>
+          <div class="consent-done">brandbrain is running on your Claude, in your folder. It never saw a password, and it never will.</div>
           <div class="consent-foot">scoped to this site · revocable · nothing leaves your machine</div>
         </div>
-        <div class="consent-cap">the entire onboarding</div>
+        <div class="consent-cap" id="consent-cap">the entire onboarding</div>
       </div>
     </div>
 
@@ -558,34 +600,43 @@ footer{border-top:1px solid var(--line);padding:34px 0 46px}
     <div class="rel-head rv" data-d="1"><span class="chip s-live"><i></i>live · shipping weekly</span></div>
     <h3 class="rel-name rv" data-d="1">Wrapps</h3>
     <p class="rel-tag rv" data-d="2">Apps that bring nothing but the interface.</p>
-    <p class="lede rv" data-d="2">Packaged craft — the prompts, skills and workflows behind one outcome. Some are finished; some are honestly not. The status on each is the real one.</p>
+    <p class="lede rv" data-d="2">Packaged craft — the prompts, skills and workflows behind one outcome. The status on each is the real one.</p>
 
-    <div class="wgrid">
-      <a class="wcard rv" data-d="1" href="https://brandbrain.thelastprompt.ai/build?studio=idea">
-        <div class="wcard-top"><h4>ideabrain</h4><span class="chip s-beta"><i></i>beta</span></div>
+    <div class="board">
+      <div class="rv tickwrap" data-d="2">
+        <div class="tickbar" role="img" aria-label="28 wrapps: 26 live, 1 beta, 1 dev access">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i><i class="t-beta"></i><i class="t-dev"></i>
+        </div>
+        <div class="board-key">
+          <span><b>28 on the board</b></span>
+          <span class="bk-live"><em></em>26 live</span>
+          <span class="bk-beta"><em></em>1 beta</span>
+          <span class="bk-dev"><em></em>1 dev access</span>
+        </div>
+      </div>
+
+      <a class="brow rv" data-d="2" href="https://brandbrain.thelastprompt.ai/build?studio=idea">
+        <h4>ideabrain</h4>
         <p>An idea, taken seriously — research, thesis, plan, deck, and who to call.</p>
-        <span class="wmore">Open →</span>
+        <span class="chip s-beta"><i></i>beta</span>
       </a>
-      <a class="wcard rv" data-d="2" href="https://github.com/sameeeeeeep/switchboard">
-        <div class="wcard-top"><h4>COS</h4><span class="chip s-dev"><i></i>dev access</span></div>
+      <a class="brow rv" data-d="3" href="https://github.com/sameeeeeeep/switchboard">
+        <h4>COS</h4>
         <p>Autonomous company operations. Lend it your company; the slate is drafted before you type.</p>
-        <span class="wmore">Runs from source →</span>
+        <span class="chip s-dev"><i></i>dev access</span>
       </a>
-      <a class="wcard rv" data-d="3" href="https://redline.thelastprompt.ai/">
-        <div class="wcard-top"><h4>Redline</h4><span class="chip s-live"><i></i>live</span></div>
-        <p>Review a landing page like a document. Comment on it; your Claude edits the real file.</p>
-        <span class="wmore">Open →</span>
+      <a class="brow rv" data-d="4" href="https://redline.thelastprompt.ai/">
+        <h4>Redline</h4>
+        <p>Comment on a landing page; your Claude edits the real file.</p>
+        <span class="chip s-live"><i></i>live</span>
       </a>
-      <a class="wcard more rv" data-d="4" href="/apps/">
-        <div class="wcard-top"><h4>25 more</h4><span class="chip"><i></i>store</span></div>
+      <a class="brow rv" data-d="5" href="/apps/">
+        <h4>25 more</h4>
         <p>brandbrain · Bank · AdPulse · Cast · Marquee · Huddle · Cartridge · Shelf · Reel</p>
-        <span class="wmore">Browse the store →</span>
+        <span class="chip"><i></i>the store →</span>
       </a>
-    </div>
-
-    <div class="honest rv" data-d="3">
-      <span class="honest-k">status</span>
-      <p><b>Live</b>, use it today · <b>Beta</b>, works, rough in places · <b>Dev access</b>, runs from source, not on your machine yet · <b>Research</b>, designed, not built.</p>
     </div>
   </div>
 </section>
@@ -982,17 +1033,20 @@ if ('IntersectionObserver' in window){
   }, {rootMargin:'0px 0px -12% 0px', threshold:0.08});
   Array.prototype.forEach.call(document.querySelectorAll('.rv'), function(el){ revealer.observe(el); });
 
-  var pb = document.querySelector('.pblock');
+  /* The prompt dims its own re-explaining once you've had time to read it —
+     and re-arms when you leave, so scrolling back re-plays it. */
+  var pb = document.querySelector('.pblock'), pbTimer = null;
   if (pb){
-    var pbo = new IntersectionObserver(function(es){
+    new IntersectionObserver(function(es){
       es.forEach(function(e){
+        clearTimeout(pbTimer);
         if (e.isIntersecting){
-          setTimeout(function(){ pb.classList.add('collapsed'); }, REDUCED ? 0 : 1600);
-          pbo.unobserve(e.target);
+          pbTimer = setTimeout(function(){ pb.classList.add('collapsed'); }, REDUCED ? 0 : 1500);
+        } else {
+          pb.classList.remove('collapsed');
         }
       });
-    }, {threshold:0.45});
-    pbo.observe(pb);
+    }, {threshold:0.4}).observe(pb);
   }
 
 } else {
@@ -1083,6 +1137,25 @@ onScroll();
 animate();
 setTimeout(function(){ if (hl1) hl1.classList.add('on'); }, 500);
 setTimeout(measureCopy, 1200);
+
+/* ═══ the consent card is the product — let people press it ═══ */
+var approve = document.getElementById('approve');
+if (approve){
+  approve.addEventListener('click', function(){
+    var card = approve.closest('.consent'), cap = document.getElementById('consent-cap');
+    if (!card || card.classList.contains('done')) return;
+    var rows = card.querySelectorAll('.crow');
+    card.classList.add('done');
+    Array.prototype.forEach.call(rows, function(r,i){
+      r.style.transitionDelay = (i*0.13)+'s';
+      var k = r.querySelector('.crow-k');
+      if (k) setTimeout(function(){ k.textContent = 'lent'; }, 180 + i*130);
+    });
+    var ask = card.querySelector('.consent-bar .ask');
+    if (ask) setTimeout(function(){ ask.textContent = 'connected'; ask.style.color = 'var(--live)'; }, 520);
+    if (cap) setTimeout(function(){ cap.textContent = 'that was the entire onboarding'; }, 700);
+  });
+}
 
 /* ═══ signup (Google Form) ═══ */
 var GFORM='https://docs.google.com/forms/d/e/1FAIpQLScbxN8cHzFjeOR3CEJVy46a7q-dSc9ltkRLIZT-2zAVdB4cRQ/formResponse';
