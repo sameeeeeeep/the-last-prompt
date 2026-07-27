@@ -251,6 +251,9 @@ h2.big .t{color:var(--teal);font-style:italic}
 /* ── consent card ───────────────────────────────── */
 .sbgrid{margin-top:clamp(34px,5vh,52px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:clamp(24px,4vw,52px);align-items:start}
 @media(max-width:860px){.sbgrid{grid-template-columns:1fr}}
+/* the consent card carries this on its own now */
+.sbgrid.one{grid-template-columns:1fr;justify-items:center;margin-top:clamp(40px,6vh,64px)}
+.sbgrid.one .consent,.sbgrid.one .consent-cap{max-width:420px;width:100%}
 .consent{max-width:380px;border:1px solid var(--line-2);border-radius:5px;background:rgba(9,9,12,.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
          overflow:hidden;box-shadow:0 26px 70px rgba(0,0,0,.5)}
 .consent-bar{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)}
@@ -293,6 +296,55 @@ button.cbtn:hover{filter:brightness(1.2)}
 .chip.s-dev{color:var(--dev);border-color:rgba(167,139,250,.28)}
 .chip.s-research{color:var(--research);border-color:rgba(95,119,132,.3)}
 
+/* ── product sections get their own world ───────── */
+/* Each release reads as its own landing page: its own accent, its own ground,
+   its own hero, its own proof, its own way out. */
+.prod{position:relative;--accent:var(--gold);--accent-soft:rgba(201,169,110,.14)}
+.prod::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:-1;
+              background:radial-gradient(ellipse 70% 55% at 50% 0%,var(--accent-soft),transparent 70%)}
+.prod-sb{--accent:#3ddc84;--accent-soft:rgba(61,220,132,.10)}
+.prod-wr{--accent:#c9a96e;--accent-soft:rgba(201,169,110,.10)}
+.prod-hero{max-width:34ch}
+.prod .rel-name{font-size:clamp(2.6rem,7.4vw,5rem)}
+.prod .rel-tag{color:var(--accent)}
+.prod .chip.s-live{color:var(--accent);border-color:var(--accent)}
+.prod .snum,.prod .scell-k{color:var(--accent)}
+
+/* ── the essence, as a comparison ───────────────── */
+.vs{margin-top:clamp(40px,6vh,68px);display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);
+    border:1px solid var(--line);border-radius:4px;overflow:hidden}
+@media(max-width:720px){.vs{grid-template-columns:1fr}}
+.vs-col{background:var(--void);padding:0}
+.vs-us{background:rgba(255,255,255,.015)}
+.vs-h{padding:15px 20px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:.56rem;
+      letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.vs-us .vs-h{color:var(--accent)}
+.vs-row{display:flex;align-items:flex-start;gap:12px;padding:15px 20px;font-size:.92rem;line-height:1.5;color:var(--muted)}
+.vs-row+.vs-row{border-top:1px solid rgba(232,227,217,.045)}
+.vs-them .vs-row{color:var(--faint)}
+.vs-row s{text-decoration:none;color:var(--faint)}
+.vs-mark{flex-shrink:0;width:13px;height:13px;margin-top:4px;position:relative}
+.vs-mark::before,.vs-mark::after{content:'';position:absolute;background:currentColor}
+.vs-them .vs-mark{color:#6d4a4a}
+.vs-them .vs-mark::before,.vs-them .vs-mark::after{top:6px;left:0;width:13px;height:1.5px}
+.vs-them .vs-mark::before{transform:rotate(45deg)}
+.vs-them .vs-mark::after{transform:rotate(-45deg)}
+.vs-us .vs-mark{color:var(--accent)}
+.vs-us .vs-mark::before{top:7px;left:0;width:6px;height:1.5px;transform:rotate(45deg)}
+.vs-us .vs-mark::after{top:5px;left:3px;width:11px;height:1.5px;transform:rotate(-50deg)}
+.vs-us .vs-row{color:var(--bone)}
+
+/* ── three steps ────────────────────────────────── */
+.steps{margin-top:clamp(38px,6vh,60px);display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+       border:1px solid var(--line);border-radius:4px;overflow:hidden}
+@media(max-width:720px){.steps{grid-template-columns:1fr}}
+.step{background:var(--void);padding:22px 20px 24px;display:flex;flex-direction:column;gap:9px}
+.step-n{font-family:var(--mono);font-size:.55rem;letter-spacing:.2em;color:var(--accent)}
+.step h4{font-family:var(--serif);font-size:1.3rem;font-weight:400}
+.step p{font-size:.84rem;color:var(--faint);line-height:1.6}
+.step code{font-family:var(--mono);font-size:.72rem;color:var(--muted);background:rgba(255,255,255,.03);
+           border:1px solid var(--line);border-radius:2px;padding:2px 6px;display:inline-block;margin-top:2px}
+
 /* ── release ────────────────────────────────────── */
 .rel-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
 .rel-kicker{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
@@ -314,6 +366,49 @@ button.cbtn:hover{filter:brightness(1.2)}
 .btn-s{background:transparent;color:var(--muted);border:1px solid var(--line-2)}
 .btn-s:hover{color:var(--bone);border-color:rgba(232,227,217,.34)}
 .fine{margin-top:18px;font-family:var(--mono);font-size:.6rem;line-height:1.9;color:var(--dim)}
+
+/* ── what a wrapp is, by subtraction ────────────── */
+.anat{margin-top:clamp(40px,6vh,64px);display:grid;grid-template-columns:1fr auto 1fr;gap:clamp(14px,2.4vw,28px);align-items:stretch}
+@media(max-width:760px){.anat{grid-template-columns:1fr;gap:14px}.anat-op{transform:rotate(90deg);justify-self:center}}
+.anat-box{border:1px solid var(--line);border-radius:4px;padding:20px}
+.anat-box.keep{border-color:rgba(201,169,110,.28);background:rgba(201,169,110,.035)}
+.anat-h{font-family:var(--mono);font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+.anat-box.keep .anat-h{color:var(--accent)}
+.anat-list{display:flex;flex-direction:column;gap:9px}
+.anat-list span{font-family:var(--mono);font-size:.74rem;letter-spacing:.02em;color:var(--muted)}
+.anat-box.drop .anat-list span{color:var(--faint);text-decoration:line-through;text-decoration-color:rgba(160,90,90,.55)}
+.anat-op{align-self:center;font-family:var(--serif);font-size:1.6rem;color:var(--faint)}
+.anat-note{margin-top:16px;font-family:var(--mono);font-size:.62rem;letter-spacing:.04em;color:var(--faint)}
+.anat-note b{color:var(--muted);font-weight:400}
+
+/* ── one of them, actually doing it ─────────────── */
+.demo{margin-top:clamp(38px,6vh,60px);border:1px solid var(--line);border-radius:5px;overflow:hidden;background:rgba(9,9,12,.6)}
+.demo-bar{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--line)}
+.demo-bar b{font-family:var(--serif);font-size:1.05rem;font-weight:400;color:var(--bone)}
+.demo-bar span{font-family:var(--mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.demo-bar .chip{margin-left:auto}
+.demo-body{display:grid;grid-template-columns:1fr 250px}
+@media(max-width:760px){.demo-body{grid-template-columns:1fr}}
+.demo-page{padding:26px 22px;border-right:1px solid var(--line);position:relative;min-height:190px}
+@media(max-width:760px){.demo-page{border-right:none;border-bottom:1px solid var(--line)}}
+.demo-ln{height:7px;border-radius:2px;background:rgba(232,227,217,.07);margin-bottom:11px}
+.demo-ln.t{height:13px;width:62%;background:rgba(232,227,217,.16);margin-bottom:18px}
+.demo-ln.w90{width:90%}.demo-ln.w70{width:70%}.demo-ln.w80{width:80%}
+.demo-ln.flagged{background:rgba(201,169,110,.34);box-shadow:0 0 0 3px rgba(201,169,110,.09)}
+.demo-pin{position:absolute;right:18px;width:19px;height:19px;border-radius:50%;border:1px solid rgba(201,169,110,.5);
+          background:rgba(201,169,110,.14);color:var(--accent);font-family:var(--mono);font-size:.5rem;
+          display:flex;align-items:center;justify-content:center}
+.demo-side{padding:18px 16px;display:flex;flex-direction:column;gap:12px}
+.demo-note{font-family:var(--mono);font-size:.62rem;line-height:1.7;color:var(--faint)}
+.demo-note b{color:var(--muted);font-weight:400}
+.demo-opt{border:1px solid var(--line);border-radius:3px;padding:11px 12px;font-size:.8rem;line-height:1.5;color:var(--muted)}
+.demo-opt.rec{border-color:rgba(201,169,110,.34);background:rgba(201,169,110,.05);color:var(--bone)}
+.demo-opt em{display:block;font-family:var(--mono);font-style:normal;font-size:.5rem;letter-spacing:.14em;
+             text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.demo-act{margin-top:auto;font-family:var(--mono);font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.demo-foot{padding:12px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.58rem;
+           letter-spacing:.04em;color:var(--faint)}
+.demo-foot b{color:var(--muted);font-weight:400}
 
 /* ── the board ──────────────────────────────────── */
 .board{margin-top:clamp(30px,5vh,48px)}
@@ -619,25 +714,51 @@ footer{border-top:1px solid var(--line);padding:34px 0 46px}
 </section>
 
 <!-- ═══ 05 RELEASE 01 ═══ -->
-<section class="band" id="switchboard" data-form="bridge">
+<section class="band prod prod-sb" id="switchboard" data-form="bridge">
   <div class="wrap">
     <div class="shead rv"><span class="snum">05</span><span class="srule"></span><span class="slabel">release 01</span></div>
     <div class="rel-head rv" data-d="1"><span class="chip s-live"><i></i>live · v0.2</span></div>
     <h3 class="rel-name sw rv" data-d="1">Switchboard</h3>
     <p class="rel-tag rv" data-d="2">Run AI apps privately, on your own AI.</p>
-    <p class="lede rv" data-d="2">The operator's board for AI. It patches an app through to your model, context and tools — under consent — without owning any of it.</p>
+    <p class="lede rv" data-d="2">An app asks to borrow your Claude, a context and one folder. You approve, once. It then runs on your machine, spends the plan you already pay for, and never sees a password.</p>
 
-    <div class="sbgrid">
-      <div>
-        <div class="claims rv" data-d="3">
-          <div class="claim"><div class="claim-k">your AI</div><div class="claim-v">Runs on the <b>subscription you already have</b>.</div></div>
-          <div class="claim"><div class="claim-k">your context</div><div class="claim-v">Lent, never handed over. <b>Personalised to you.</b></div></div>
-        </div>
-        <div class="claims rv" data-d="4">
-          <div class="claim"><div class="claim-k">your data</div><div class="claim-v">Stays on your machine. <b>Never shared with the developer.</b></div></div>
-          <div class="claim"><div class="claim-k">0 extra steps</div><div class="claim-v">Open the page. <b>No account, anywhere.</b></div></div>
-        </div>
+    <div class="vs rv" data-d="2">
+      <div class="vs-col vs-them">
+        <div class="vs-h">Every AI app today</div>
+        <div class="vs-row"><span class="vs-mark"></span>Their model, your card, their markup</div>
+        <div class="vs-row"><span class="vs-mark"></span>An account and a password. Another one.</div>
+        <div class="vs-row"><span class="vs-mark"></span>Your files uploaded to their server</div>
+        <div class="vs-row"><span class="vs-mark"></span>You explain yourself again, from scratch</div>
       </div>
+      <div class="vs-col vs-us">
+        <div class="vs-h">The same app, on Switchboard</div>
+        <div class="vs-row"><span class="vs-mark"></span>Your model, your plan, no markup</div>
+        <div class="vs-row"><span class="vs-mark"></span>No account — not with them, not with us</div>
+        <div class="vs-row"><span class="vs-mark"></span>Your files never leave your disk</div>
+        <div class="vs-row"><span class="vs-mark"></span>It opens already knowing you</div>
+      </div>
+    </div>
+
+    <div class="steps rv" data-d="3">
+      <div class="step">
+        <div class="step-n">01</div>
+        <h4>Add the extension</h4>
+        <p>Chrome, once. This is the board every app dials into.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <h4>Run the sidekick</h4>
+        <p>A small Mac app holding the line to the Claude you already have.</p>
+        <code>Switchboard.dmg</code>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <h4>Open any wrapp</h4>
+        <p>It asks for exactly what it needs. You approve. That is the onboarding.</p>
+      </div>
+    </div>
+
+    <div class="sbgrid one">
       <div class="rv" data-d="3">
         <div class="consent">
           <div class="consent-bar"><span class="dot"></span><b>brandbrain</b><span class="ask">wants to connect</span></div>
@@ -664,13 +785,52 @@ footer{border-top:1px solid var(--line);padding:34px 0 46px}
 </section>
 
 <!-- ═══ 06 RELEASE 02 ═══ -->
-<section class="band" id="wrapps" data-form="cluster">
+<section class="band prod prod-wr" id="wrapps" data-form="cluster">
   <div class="wrap">
     <div class="shead rv"><span class="snum">06</span><span class="srule"></span><span class="slabel">release 02</span></div>
     <div class="rel-head rv" data-d="1"><span class="chip s-live"><i></i>live · shipping weekly</span></div>
     <h3 class="rel-name rv" data-d="1">Wrapps</h3>
     <p class="rel-tag rv" data-d="2">Apps that bring nothing but the interface.</p>
-    <p class="lede rv" data-d="2">The prompts, skills and workflows behind one outcome, and nothing else. The status on each is the real one.</p>
+    <p class="lede rv" data-d="2">Someone spent a month finding the prompts that reliably get one thing right. A wrapp is that month, wrapped in a screen — and nothing else.</p>
+
+    <div class="anat rv" data-d="2">
+      <div class="anat-box keep">
+        <div class="anat-h">what it ships</div>
+        <div class="anat-list">
+          <span>the prompts</span><span>the skills</span><span>the workflow</span><span>a screen built for it</span>
+        </div>
+      </div>
+      <div class="anat-op">−</div>
+      <div class="anat-box drop">
+        <div class="anat-h">what it doesn't</div>
+        <div class="anat-list">
+          <span>a model</span><span>an account</span><span>a database</span><span>a markup</span>
+        </div>
+      </div>
+    </div>
+    <p class="anat-note rv" data-d="3">Everything on the right is <b>already yours</b> — so the app doesn't need to sell it back to you.</p>
+
+    <div class="demo rv" data-d="3">
+      <div class="demo-bar"><b>Redline</b><span>review a landing page</span><span class="chip s-live"><i></i>live</span></div>
+      <div class="demo-body">
+        <div class="demo-page">
+          <div class="demo-ln t"></div>
+          <div class="demo-ln w90"></div>
+          <div class="demo-ln flagged w80"></div>
+          <div class="demo-pin" style="top:74px">1</div>
+          <div class="demo-ln w70"></div>
+          <div class="demo-ln w90"></div>
+          <div class="demo-ln w70"></div>
+        </div>
+        <div class="demo-side">
+          <div class="demo-note"><b>You:</b> this line is doing nothing</div>
+          <div class="demo-opt rec"><em>recommended</em>Cut it. The sentence below already makes the promise.</div>
+          <div class="demo-opt">Rewrite shorter, keep the number.</div>
+          <div class="demo-act">lock &amp; write →</div>
+        </div>
+      </div>
+      <div class="demo-foot">Locking edits <b>the real index.html on your disk</b> — through your Claude, on your plan.</div>
+    </div>
 
     <div class="board">
       <div class="rv tickwrap" data-d="2">
