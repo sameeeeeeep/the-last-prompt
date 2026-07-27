@@ -372,6 +372,24 @@ a.wcard:hover .wmore{color:var(--gold)}
   .pipe{justify-content:flex-start}
 }
 
+/* ── where we actually are, at the end ──────────── */
+.endtrack{max-width:520px;margin:clamp(38px,6vh,60px) auto 0}
+/* inset so the rail runs stop-to-stop, not edge-to-edge */
+.et-rail{position:relative;height:1px;background:var(--line);margin:0 16.667%}
+.et-fill{position:absolute;left:0;top:0;height:1px;width:0;background:linear-gradient(90deg,var(--gold),var(--teal));transition:width 1.4s cubic-bezier(.2,.7,.3,1) .2s}
+.rv.in .et-fill{width:50%}
+.et-stops{display:grid;grid-template-columns:repeat(3,1fr);margin-top:-4px}
+.et-stop{display:flex;flex-direction:column;align-items:center;gap:11px}
+.et-stop i{width:7px;height:7px;border-radius:50%;background:var(--void);border:1px solid var(--dim);display:block}
+.et-stop.was i{background:var(--gold);border-color:var(--gold)}
+.et-stop.now i{background:var(--teal);border-color:var(--teal);box-shadow:0 0 0 4px rgba(126,184,168,.12),0 0 14px rgba(126,184,168,.5)}
+.et-stop b{font-family:var(--mono);font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;font-weight:400;color:var(--faint)}
+.et-stop.was b{color:var(--gold)}
+.et-stop.now b{color:var(--teal)}
+.et-here{margin-top:16px;text-align:center;font-family:var(--mono);font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.et-here b{color:var(--muted);font-weight:400}
+@media(prefers-reduced-motion:reduce){.rv.in .et-fill{transition:none}}
+
 /* ── final ──────────────────────────────────────── */
 .final{padding:clamp(96px,16vh,190px) 0 clamp(64px,9vh,110px);text-align:center;border-top:1px solid var(--line)}
 .final h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.85rem,5vw,3.4rem);line-height:1.16;letter-spacing:-.02em;max-width:18ch;margin:0 auto}
@@ -723,14 +741,25 @@ footer{border-top:1px solid var(--line);padding:34px 0 46px}
 <section class="final" id="final" data-form="ambient">
   <div class="wrap">
     <h2 class="rv">The last prompt is the one <em>you don't have to write.</em></h2>
-    <p class="rv" data-d="1">We're shipping the rungs in public. Get the note when a release lands.</p>
+
+    <div class="endtrack rv" data-d="1">
+      <div class="et-rail"><span class="et-fill"></span></div>
+      <div class="et-stops">
+        <span class="et-stop was"><i></i><b>Prompted</b></span>
+        <span class="et-stop now"><i></i><b>Primed</b></span>
+        <span class="et-stop"><i></i><b>Promptless</b></span>
+      </div>
+      <div class="et-here">shipped to here &nbsp;·&nbsp; <b>release 01 is live</b></div>
+    </div>
+
+    <p class="rv" data-d="2">We ship the rungs in public. Get the note when the next one lands.</p>
     <form class="sform rv" data-d="2" id="sform" autocomplete="off">
       <input type="email" name="email" placeholder="your@email.com" required class="sinput">
       <button type="submit" class="btn btn-p">Notify me</button>
     </form>
     <p class="snote" id="snote"></p>
     <div class="btnrow rv" data-d="3">
-      <a href="/switchboard/" class="btn btn-s">Get Switchboard</a>
+      <a href="/switchboard/" class="btn btn-p">Get Switchboard →</a>
       <a href="/apps/" class="btn btn-s">Browse wrapps</a>
       <a href="https://github.com/sameeeeeeep/switchboard" class="btn btn-s">Star on GitHub</a>
     </div>
