@@ -1,7 +1,13 @@
-// ../../packages/protocol/dist/version.js
+// ../../../../../packages/protocol/dist/version.js
 var PROVIDER_GLOBAL = "claude";
 
-// ../../packages/protocol/dist/errors.js
+// ../../../../../packages/protocol/dist/storage.js
+var STORAGE_KEY_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
+function isValidStorageKey(key) {
+  return typeof key === "string" && STORAGE_KEY_RE.test(key);
+}
+
+// ../../../../../packages/protocol/dist/errors.js
 var BYOPErrorCode = {
   /** User rejected the connect/consent request. (≈ 4001) */
   USER_REJECTED: 4001,
@@ -24,7 +30,7 @@ var BYOPErrorCode = {
   BACKEND_ERROR: 4500
 };
 
-// ../../packages/sdk/dist/connect-chip.js
+// ../../../../../packages/sdk/dist/connect-chip.js
 function rungFromError(e) {
   if (e?.code !== BYOPErrorCode.PROVIDER_UNAVAILABLE)
     return null;
@@ -422,7 +428,17 @@ function mountConnect(target, opts = {}) {
   };
 }
 
-// ../../packages/sdk/dist/index.js
+// ../../../../../packages/sdk/dist/index.js
+var warnedStorageKeys = /* @__PURE__ */ new Set();
+function warnBadStorageKey(key) {
+  if (isValidStorageKey(key) || warnedStorageKeys.has(key))
+    return;
+  warnedStorageKeys.add(key);
+  const suggestion = String(key).replace(/[^A-Za-z0-9._-]+/g, "-").replace(/^[^A-Za-z0-9]+/, "") || "key";
+  console.warn(`[relay.storage] invalid key ${JSON.stringify(key)} \u2014 this write/read WILL be rejected by the daemon and silently do nothing.
+  Keys map 1:1 to files (<key>.json) in this origin's folder, so they must match ${STORAGE_KEY_RE}.
+  ":" is not allowed (illegal on NTFS; "a:b" is Alternate Data Stream syntax on Windows). Try ${JSON.stringify(suggestion)}.`);
+}
 var Relay = class {
   provider;
   constructor(provider) {
@@ -525,14 +541,23 @@ var Relay = class {
    */
   get storage() {
     const req = (params) => this.provider.request({ method: "claude_storage", params });
+    const k = (key) => {
+      warnBadStorageKey(key);
+      return key;
+    };
     return {
-      get: (key) => req({ op: "get", key }).then((r) => r.value ?? null),
-      set: (key, value) => req({ op: "set", key, value }).then(() => void 0),
-      delete: (key) => req({ op: "delete", key }).then((r) => r.ok),
+      get: (key) => req({ op: "get", key: k(key) }).then((r) => r.value ?? null),
+      set: (key, value) => req({ op: "set", key: k(key), value }).then(() => void 0),
+      delete: (key) => req({ op: "delete", key: k(key) }).then((r) => r.ok),
       list: () => req({ op: "list" }).then((r) => r.keys ?? []),
       info: () => req({ op: "info" }).then((r) => r.info),
       /** Point this app's store at a real folder (triggers a path-consent click). */
-      bind: (path) => req({ op: "bind", path }).then((r) => r.info)
+      bind: (path) => req({ op: "bind", path }).then((r) => r.info),
+      /** Open a NATIVE folder chooser on the daemon's machine (macOS today). The user picking a
+       *  folder in an OS dialog that names this origin IS the path consent, so a successful pick
+       *  comes back already bound. Resolves undefined on cancel or when no native picker exists —
+       *  keep a typed-path `bind` as the fallback UI. */
+      pick: (reason) => req({ op: "pick", reason }).then((r) => r.info).catch(() => void 0)
     };
   }
   /**
@@ -913,13 +938,50 @@ function famOf(id) {
 function glyphSvg(id) {
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${entry(id).glyph}</svg>`;
 }
+var FAM_TILE = { gold: "#E5922B", green: "#3DA35D", pink: "#E93D82", blue: "#4C7EF3", teal: "#12A594", violet: "#8B5CF6" };
+var TILE = {
+  brandbrain: "#3DA35D",
+  ideabrain: "#F2A03D",
+  bank: "#12A594",
+  // validate-an-idea presets — deliberately spread across the wheel
+  mkt: "#4C7EF3",
+  capp: "#E93D82",
+  saas: "#5B5BD6",
+  retail: "#E5732B",
+  hardware: "#7C8CA5",
+  feature: "#2E9E6E",
+  // founder stack
+  adpulse: "#3E63DD",
+  adforge: "#EC6142",
+  shelf: "#46A758",
+  studio: "#D6409F",
+  aplus: "#F5820A",
+  batch: "#FF6B2C",
+  take: "#2AA198",
+  identity: "#8E4EC6",
+  reel: "#7C3AED",
+  marquee: "#6E56CF",
+  huddle: "#0E9C8A",
+  // after hours + play
+  natal: "#5847C7",
+  arcana: "#8B5CF6",
+  redline: "#E5484D",
+  cartridge: "#9A4EC6",
+  cast: "#E5457E",
+  prism: "#C13FAF",
+  adgen: "#EC6142"
+};
+function tileColor(id) {
+  return TILE[id] || FAM_TILE[entry(id).fam] || "#12A594";
+}
 function glyphTile(id, size = 34) {
-  const f = famOf(id);
+  const c = tileColor(id);
   const s2 = document.createElement("span");
   s2.className = "ic";
-  s2.style.background = f.soft;
-  s2.style.color = f.ink;
   s2.style.width = s2.style.height = size + "px";
+  s2.style.background = `linear-gradient(155deg, color-mix(in srgb, ${c} 76%, #fff 24%), ${c} 74%)`;
+  s2.style.color = "#fff";
+  s2.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,.34), inset 0 0 0 1px rgba(255,255,255,.10), 0 3px 8px -3px rgba(0,0,0,.6)";
   s2.innerHTML = glyphSvg(id);
   return s2;
 }
@@ -2496,7 +2558,7 @@ var SCOPE = {
 var isDemo = new URLSearchParams(location.search).has("demo") && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 var isDemoEmpty = isDemo && new URLSearchParams(location.search).get("demo") === "empty";
 var demoTasks = isDemo && !isDemoEmpty;
-var RECENTLY_ADDED = ["huddle", "reel", "identity", "take", "batch", "marquee", "redline", "chat"];
+var RECENTLY_ADDED = ["huddle", "reel", "identity", "take", "batch", "marquee", "redline"];
 var TASKS_KEY = "tasks.md";
 var WRAPP_TAG_RE = /\s+@([a-z][a-z0-9-]{0,47})\s*$/i;
 var TASK_DUE_RE = /^(.*?)\s+—\s+by\s+(.+)$/;
@@ -2651,6 +2713,7 @@ function renderCats() {
   box.textContent = "";
   const counts = categoryCounts(APPS);
   for (const cat of CATEGORIES) {
+    if (!(counts[cat] || 0)) continue;
     const f = categoryFam(cat);
     const row = mk("button", "cat-row");
     row.type = "button";
@@ -2819,36 +2882,49 @@ function decorateCards() {
     }
   });
 }
-function initFeatured() {
-  const slides = [...document.querySelectorAll("#featured .featured")];
-  const dotBox = $2("featured-dots");
-  if (!slides.length) return;
-  let fi = 0, timer = null;
-  dotBox.textContent = "";
-  const dots = slides.map((_, i) => {
-    const d = mk("button", "fdot");
-    d.type = "button";
-    d.setAttribute("aria-label", `Featured ${i + 1}`);
-    d.onclick = () => {
-      show(i);
-      restart();
+function renderBoardCounts() {
+  const n = String(APPS.length);
+  for (const id of ["board-count", "toll-count", "hero-count"]) {
+    const el2 = $2(id);
+    if (el2) el2.textContent = n;
+  }
+}
+var HERO_ART = ["brandbrain", "adforge", "arcana", "bank"];
+function renderHeroArt() {
+  const box = $2("hero-art");
+  if (!box) return;
+  box.textContent = "";
+  for (const id of HERO_ART) {
+    const app = APP_BY_ID[id];
+    if (!app) continue;
+    const a = mk("a");
+    a.href = detailHref(app.id);
+    a.title = app.name;
+    a.dataset.app = app.id;
+    const cap = mk("span", "cap");
+    cap.append(glyphTile(app.id, 22), mk("span", "nm", app.name));
+    a.append(makeThumb(app, true), cap);
+    box.append(a);
+  }
+}
+function renderBoardStrip() {
+  const box = $2("board-strip");
+  if (!box) return;
+  const counts = categoryCounts(APPS);
+  box.textContent = "";
+  for (const cat of CATEGORIES) {
+    const n = counts[cat] || 0;
+    if (!n) continue;
+    const b = mk("button");
+    b.type = "button";
+    b.append(document.createTextNode(cat), mk("span", "n", String(n)));
+    b.onclick = () => {
+      [...box.children].forEach((x) => x.classList.remove("on"));
+      b.classList.add("on");
+      [...document.querySelectorAll("#store .sec-h")].find((x) => x.dataset.cat === cat)?.scrollIntoView({ behavior: "smooth", block: "start" });
     };
-    dotBox.append(d);
-    return d;
-  });
-  function show(i) {
-    fi = (i + slides.length) % slides.length;
-    slides.forEach((sl, k) => sl.classList.toggle("on", k === fi));
-    dots.forEach((d, k) => d.classList.toggle("on", k === fi));
+    box.append(b);
   }
-  function restart() {
-    if (timer) clearInterval(timer);
-    timer = setInterval(() => show(fi + 1), 6500);
-  }
-  $2("featured").addEventListener("mouseenter", () => timer && clearInterval(timer));
-  $2("featured").addEventListener("mouseleave", restart);
-  show(0);
-  restart();
 }
 function renderRecent() {
   const box = $2("recent-list");
@@ -2953,7 +3029,7 @@ function movePoint(toDash) {
   const s2 = $2("point-sec");
   if (!s2) return;
   if (toDash) $2("dash").insertBefore(s2, $2("next-sec"));
-  else $2("hero").insertBefore(s2, $2("way-sec"));
+  else $2("call-sec").appendChild(s2);
 }
 mountConnect($2("chip-dock"), {
   scope: SCOPE,
@@ -3160,6 +3236,7 @@ function onDisconnected() {
 }
 function showDash() {
   $2("hero").hidden = true;
+  if ($2("pitch")) $2("pitch").hidden = true;
   $2("dash").hidden = false;
   $2("wallet-chip").hidden = false;
   $2("dock").hidden = false;
@@ -3174,6 +3251,7 @@ function hideDash() {
   $2("dash-body").classList.remove("on");
   promotedAction = null;
   $2("hero").hidden = false;
+  if ($2("pitch")) $2("pitch").hidden = false;
   $2("wallet-chip").hidden = true;
   $2("dock").hidden = true;
   document.body.classList.remove("plan-pro", "is-demo");
@@ -3449,8 +3527,7 @@ function renderTaskOS() {
   }
 }
 function reviewCard(it) {
-  const f = famOf(it.app);
-  return `<div class="rv"><div class="pv"><svg viewBox="0 0 300 74" preserveAspectRatio="none">${it.pv}</svg></div><div class="b"><div class="top"><span class="bav" style="background:${it.base}">${it.brand[0]}</span><span class="bname">${it.brand}</span><span class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg></span></div><div class="nm">${it.title}</div><div class="foot"><span class="wtag"><span class="wi" style="background:${f.soft};color:${f.ink}">${glyphSvg(it.app)}</span>${it.name}</span><button class="rvbtn" type="button">${it.btn}</button></div></div></div>`;
+  return `<div class="rv"><div class="pv"><svg viewBox="0 0 300 74" preserveAspectRatio="none">${it.pv}</svg></div><div class="b"><div class="top"><span class="bav" style="background:${it.base}">${it.brand[0]}</span><span class="bname">${it.brand}</span><span class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg></span></div><div class="nm">${it.title}</div><div class="foot"><span class="wtag"><span class="wi" style="background:${tileColor(it.app)};color:#fff">${glyphSvg(it.app)}</span>${it.name}</span><button class="rvbtn" type="button">${it.btn}</button></div></div></div>`;
 }
 var DOCK_FALLBACK = ["adforge", "redline", "bank", "cast", "cartridge"];
 function renderDock() {
@@ -3460,13 +3537,12 @@ function renderDock() {
   if (!ids.length) ids = DOCK_FALLBACK.filter((id) => APP_BY_ID[id]);
   for (const id of ids) {
     const app = APP_BY_ID[id];
-    const f = famOf(id);
     const a = mk("a", "di");
     a.href = app.href;
     a.dataset.app = id;
     a.title = app.name;
-    a.style.background = f.soft;
-    a.style.color = f.ink;
+    a.style.background = tileColor(id);
+    a.style.color = "#fff";
     a.innerHTML = glyphSvg(id);
     box.append(a);
   }
@@ -3792,9 +3868,8 @@ function launchAnchor(wrappId, text, label) {
   a.href = base + (base.includes("?") ? "&" : "?") + "task=" + encodeURIComponent(text);
   a.dataset.app = wrappId;
   const wi = mk("span", "nt-wi");
-  const f = famOf(wrappId);
-  wi.style.background = f.soft;
-  wi.style.color = f.ink;
+  wi.style.background = tileColor(wrappId);
+  wi.style.color = "#fff";
   wi.innerHTML = glyphSvg(wrappId);
   a.append(wi, document.createTextNode(label), Object.assign(document.createElement("span"), { textContent: "\u2192" }));
   return a;
@@ -4239,6 +4314,7 @@ document.addEventListener("keydown", (e) => {
   }
 });
 $2("hero-connect").onclick = () => clickConnect();
+if ($2("toll-connect")) $2("toll-connect").onclick = () => clickConnect();
 $2("projects-new").onclick = () => point.open();
 renderIntentBar("next-input", "next-go", (q, input, go) => void runConnectedIntent(q, input, go));
 renderIntentBar("next-pre-input", "next-pre-go", (q) => runPreIntent(q));
@@ -4256,8 +4332,10 @@ point.mount();
 renderNav();
 renderCats();
 decorateCards();
-initFeatured();
 renderRecent();
+renderBoardCounts();
+renderBoardStrip();
+renderHeroArt();
 sortCards("trending");
 applyFilters();
 //# sourceMappingURL=home.js.map
