@@ -104,9 +104,12 @@ h2.big .t{color:var(--teal);font-style:italic}
       font-family:var(--serif);font-size:clamp(1.15rem,2.4vw,1.62rem);line-height:1.42;color:var(--bone);max-width:26ch}
 .pull em{font-style:italic;color:var(--gold)}
 
-/* reveal */
-.rv{opacity:0;transform:translateY(18px);transition:opacity .85s cubic-bezier(.2,.7,.3,1),transform .85s cubic-bezier(.2,.7,.3,1)}
-.rv.in{opacity:1;transform:none}
+/* Reveal. Every hidden-until-seen state is scoped under .js, which only exists
+   if the inline script ran — so a blocked CDN or dead script leaves the page
+   fully readable instead of a wall of opacity:0. */
+.rv{transition:opacity .85s cubic-bezier(.2,.7,.3,1),transform .85s cubic-bezier(.2,.7,.3,1)}
+.js .rv{opacity:0;transform:translateY(18px)}
+.js .rv.in{opacity:1;transform:none}
 .rv[data-d="1"]{transition-delay:.08s}.rv[data-d="2"]{transition-delay:.16s}
 .rv[data-d="3"]{transition-delay:.24s}.rv[data-d="4"]{transition-delay:.32s}
 .rv[data-d="5"]{transition-delay:.4s}.rv[data-d="6"]{transition-delay:.48s}
@@ -178,20 +181,20 @@ h2.big .t{color:var(--teal);font-style:italic}
 
 /* Each rung's wireframe performs its own rung. Prompted does nothing — that is
    the argument. Primed fills itself. Promptless writes itself. Replays both ways. */
-.wf-chip{opacity:0;transform:translateY(3px);transition:opacity .45s ease,transform .45s ease}
-.rung.play .wf-chip{opacity:1;transform:none}
+.wf-chip{transition:opacity .45s ease,transform .45s ease}
+.js .rung:not(.play) .wf-chip{opacity:0;transform:translateY(3px)}
 .rung.play .wf-chip:nth-child(1){transition-delay:.30s}
 .rung.play .wf-chip:nth-child(2){transition-delay:.50s}
 .rung.play .wf-chip:nth-child(3){transition-delay:.70s}
-.wf-dt{opacity:0;transition:opacity .4s ease .25s}
-.rung.play .wf-dt{opacity:1}
-.wf-ln{transform-origin:left center;transform:scaleX(0);transition:transform .5s cubic-bezier(.2,.7,.3,1)}
-.rung.play .wf-ln{transform:scaleX(1)}
+.wf-dt{transition:opacity .4s ease .25s}
+.js .rung:not(.play) .wf-dt{opacity:0}
+.wf-ln{transform-origin:left center;transition:transform .5s cubic-bezier(.2,.7,.3,1)}
+.js .rung:not(.play) .wf-ln{transform:scaleX(0)}
 .rung.play .wf-ln:nth-of-type(2){transition-delay:.45s}
 .rung.play .wf-ln:nth-of-type(3){transition-delay:.62s}
 .rung.play .wf-ln:nth-of-type(4){transition-delay:.79s}
-.wf-acts{opacity:0;transition:opacity .5s ease 1.05s}
-.rung.play .wf-acts{opacity:1}
+.wf-acts{transition:opacity .5s ease 1.05s}
+.js .rung:not(.play) .wf-acts{opacity:0}
 .rung.play .wf-btn.go{animation:await 2.4s ease-in-out 1.5s infinite}
 @keyframes await{0%,100%{box-shadow:0 0 0 0 rgba(201,169,110,0)}50%{box-shadow:0 0 0 3px rgba(201,169,110,.09)}}
 @media(prefers-reduced-motion:reduce){
@@ -310,10 +313,7 @@ button.cbtn:hover{filter:brightness(1.2)}
 .tickbar i{flex:1;display:block;border-radius:1px;height:14px;background:rgba(61,220,132,.3);transition:height .5s cubic-bezier(.2,.7,.3,1),background .5s}
 .tickbar i.t-beta{background:rgba(224,169,85,.75);height:22px}
 .tickbar i.t-dev{background:rgba(167,139,250,.8);height:26px}
-.rv .tickbar i,.rv.tickwrap i{height:3px}
-.tickwrap.in .tickbar i{height:14px}
-.tickwrap.in .tickbar i.t-beta{height:22px}
-.tickwrap.in .tickbar i.t-dev{height:26px}
+.js .rv:not(.in) .tickbar i{height:3px}
 .board-key{display:flex;flex-wrap:wrap;gap:18px;margin-top:14px;padding-bottom:20px;border-bottom:1px solid var(--line);
            font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
 .board-key b{color:var(--bone);font-weight:400}
@@ -361,7 +361,8 @@ a.wcard:hover .wmore{color:var(--gold)}
 .pipe{display:flex;gap:4px;justify-content:flex-end}
 .pipe i{width:24px;height:5px;border-radius:1px;background:rgba(232,227,217,.07);display:block;
         transition:background .5s ease,box-shadow .5s ease}
-.rv.in .pipe i.on{background:var(--research);box-shadow:0 0 6px rgba(95,119,132,.4)}
+.pipe i.on{background:var(--research);box-shadow:0 0 6px rgba(95,119,132,.4)}
+.js .rv:not(.in) .pipe i.on{background:rgba(232,227,217,.07);box-shadow:none}
 .rv.in .pipe i.on:nth-child(1){transition-delay:.1s}
 .rv.in .pipe i.on:nth-child(2){transition-delay:.22s}
 .rv.in .pipe i.on:nth-child(3){transition-delay:.34s}
@@ -403,6 +404,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 46px}
 </style>
 </head>
 <body>
+<script>document.documentElement.className += ' js';</script>
 <div id="canvas-container"></div>
 <div id="prog"></div>
 
@@ -759,20 +761,25 @@ var SNAP = location.search.indexOf('snap') >= 0;
 
 /* ═══ particle field ═══ */
 var PC = 5200;
-var C = {
-  gold:  new THREE.Color(0xe8c887),
-  teal:  new THREE.Color(0x8fd8c2),
-  bone:  new THREE.Color(0xfffaf0),
-  dim:   new THREE.Color(0x1a1713),
-  violet:new THREE.Color(0xbba5ff)
-};
+var C = {}, HAS3D = typeof THREE !== 'undefined';
 var renderer, scene, cam, geo, mat, pts, lgeo, lmat, lns;
 var pos, col, sz, tgt, ph;
 var mouse = {x:0,y:0,nx:0,ny:0};
 var handPoints = null, tgtCache = {}, currentForm = '', linesOn = true, fieldAlpha = 0;
 
+/* If the three.js CDN is blocked, everything below is skipped and the page is
+   simply a page. Nothing here may throw before the reveals get wired up. */
 try {
-  renderer = new THREE.WebGLRenderer({antialias:true, alpha:false, powerPreference:'high-performance'});
+  if (HAS3D){
+    C = {
+      gold:  new THREE.Color(0xe8c887),
+      teal:  new THREE.Color(0x8fd8c2),
+      bone:  new THREE.Color(0xfffaf0),
+      dim:   new THREE.Color(0x1a1713),
+      violet:new THREE.Color(0xbba5ff)
+    };
+    renderer = new THREE.WebGLRenderer({antialias:true, alpha:false, powerPreference:'high-performance'});
+  }
 } catch(e){ renderer = null; }
 
 if (renderer) {
@@ -983,8 +990,24 @@ var heroP  = 0;
 
 /* Where the copy actually sits. The field goes bright in the air between
    blocks and steps back under them — no permanent haze behind text. */
-var copyZones = [], formZones = [];
+var copyZones = [], formZones = [], rvZones = [], rungZones = [], pbZone = null;
 function measureCopy(){
+  /* Cache absolute positions once so the scroll handler never reads layout. */
+  rvZones = [];
+  Array.prototype.forEach.call(document.querySelectorAll('.rv:not(.in)'), function(el){
+    rvZones.push({el: el, top: el.getBoundingClientRect().top + window.scrollY});
+  });
+  rungZones = [];
+  Array.prototype.forEach.call(document.querySelectorAll('.rung'), function(el){
+    var r = el.getBoundingClientRect();
+    rungZones.push({el: el, top: r.top + window.scrollY, bottom: r.bottom + window.scrollY});
+  });
+  var pbEl = document.querySelector('.pblock');
+  if (pbEl){
+    var pr = pbEl.getBoundingClientRect();
+    pbZone = {el: pbEl, top: pr.top + window.scrollY, bottom: pr.bottom + window.scrollY};
+  }
+
   copyZones = [];
   Array.prototype.forEach.call(document.querySelectorAll('.wrap'), function(el){
     var r = el.getBoundingClientRect();
@@ -1040,10 +1063,40 @@ function sparkAnchor(){
 
 function toggle(el, cls, on){ if (el) el.classList[on?'add':'remove'](cls); }
 
+/* Reveals and replays, driven by scroll rather than IntersectionObserver — the
+   same reason the formations are: it is a pure function of position, and it
+   cannot leave the page invisible if an observer never fires. */
+var pbArmed = false, pbTimer = null;
+function updateReveals(){
+  var y = window.scrollY, vh = innerHeight;
+  for (var i = rvZones.length - 1; i >= 0; i--){
+    if (rvZones[i].top < y + vh*0.92){
+      rvZones[i].el.classList.add('in');
+      rvZones.splice(i, 1);
+    }
+  }
+  for (var j = 0; j < rungZones.length; j++){
+    var r = rungZones[j];
+    r.el.classList.toggle('play', r.top < y + vh*0.80 && r.bottom > y + vh*0.12);
+  }
+  if (pbZone){
+    var seen = pbZone.top < y + vh*0.75 && pbZone.bottom > y + vh*0.25;
+    if (seen && !pbArmed){
+      pbArmed = true;
+      pbTimer = setTimeout(function(){ pbZone.el.classList.add('collapsed'); }, REDUCED ? 0 : 1500);
+    } else if (!seen && pbArmed){
+      pbArmed = false;
+      clearTimeout(pbTimer);
+      pbZone.el.classList.remove('collapsed');
+    }
+  }
+}
+
 function onScroll(){
   var hh = hero.offsetHeight - innerHeight;
   heroP = Math.max(0, Math.min(1, (window.scrollY) / (hh||1)));
   setForm(formAtScroll());
+  updateReveals();
 
   var so = startOffset();
   var off = MIN_GAP + (so - MIN_GAP) * (1 - Math.min(heroP/0.75, 1));
@@ -1071,40 +1124,8 @@ function onScroll(){
 }
 
 /* ═══ reveals + per-section formations ═══ */
-if ('IntersectionObserver' in window){
-  var revealer = new IntersectionObserver(function(es){
-    es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); revealer.unobserve(e.target); } });
-  }, {rootMargin:'0px 0px -12% 0px', threshold:0.08});
-  Array.prototype.forEach.call(document.querySelectorAll('.rv'), function(el){ revealer.observe(el); });
-
-  /* The prompt dims its own re-explaining once you've had time to read it —
-     and re-arms when you leave, so scrolling back re-plays it. */
-  var pb = document.querySelector('.pblock'), pbTimer = null;
-  if (pb){
-    new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        clearTimeout(pbTimer);
-        if (e.isIntersecting){
-          pbTimer = setTimeout(function(){ pb.classList.add('collapsed'); }, REDUCED ? 0 : 1500);
-        } else {
-          pb.classList.remove('collapsed');
-        }
-      });
-    }, {threshold:0.4}).observe(pb);
-  }
-
-  /* Wireframes replay on every pass, unlike the copy reveals which stay put. */
-  var rungs = document.querySelectorAll('.rung');
-  if (rungs.length){
-    var ro = new IntersectionObserver(function(es){
-      es.forEach(function(e){ e.target.classList.toggle('play', e.isIntersecting); });
-    }, {threshold:0.55});
-    Array.prototype.forEach.call(rungs, function(r){ ro.observe(r); });
-  }
-
-} else {
-  Array.prototype.forEach.call(document.querySelectorAll('.rv'), function(el){ el.classList.add('in'); });
-}
+/* Reveals are handled in updateReveals(), driven by scroll. Nothing here
+   depends on IntersectionObserver any more. */
 
 /* ═══ loop ═══ */
 var clock = renderer ? new THREE.Clock() : null;
