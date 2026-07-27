@@ -64,8 +64,9 @@ main{position:relative;z-index:2}
 @media(max-width:640px){.nav-links a:not(.cta){display:none}}
 
 /* ── hero ───────────────────────────────────────── */
-.hero{position:relative;height:300vh}
-.hero-pin{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+/* svh so a mobile URL bar hiding mid-scroll doesn't resize the pin under you */
+.hero{position:relative;height:300vh;height:300svh}
+.hero-pin{position:sticky;top:0;height:100vh;height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
 .hands{position:relative;width:100%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .hand-l,.hand-r{width:min(720px,48vw);height:auto;flex-shrink:0;opacity:.7;will-change:transform,opacity}
 .hand-l{clip-path:inset(0 50% 0 0);margin-right:max(-360px,-24vw)}
@@ -1169,7 +1170,12 @@ measureCopy();
 onScroll();
 animate();
 setTimeout(function(){ if (hl1) hl1.classList.add('on'); }, 500);
-setTimeout(measureCopy, 1200);
+setTimeout(function(){ measureCopy(); onScroll(); }, 1200);
+/* Webfonts land after first paint and reflow everything the zones were measured
+   against, so re-measure once they're actually in. */
+if (document.fonts && document.fonts.ready){
+  document.fonts.ready.then(function(){ measureCopy(); onScroll(); });
+}
 
 /* ═══ the consent card is the product — let people press it ═══ */
 var approve = document.getElementById('approve');
