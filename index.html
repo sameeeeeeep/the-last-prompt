@@ -350,9 +350,26 @@ a.wcard:hover .wmore{color:var(--gold)}
 
 /* ── research list ──────────────────────────────── */
 .rlist{margin-top:clamp(34px,5vh,52px);border-top:1px solid var(--line)}
-.ritem{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;padding:20px 0;border-bottom:1px solid var(--line)}
+.ritem{display:grid;grid-template-columns:minmax(0,1fr) 128px;gap:16px;align-items:center;padding:20px 0;border-bottom:1px solid var(--line)}
 .ritem h4{font-family:var(--serif);font-size:1.28rem;font-weight:400;margin-bottom:5px}
-.ritem p{font-size:.85rem;color:var(--faint);line-height:1.65;max-width:66ch}
+.ritem p{font-size:.85rem;color:var(--faint);line-height:1.65;max-width:60ch}
+.ritem p b{color:var(--muted);font-weight:400}
+/* How far each one actually got. All five said 'research' before, which told
+   you nothing — these differ, and the difference is the honest part. */
+.rlegend{padding:0 0 14px;text-align:right;
+         font-family:var(--mono);font-size:.52rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.pipe{display:flex;gap:4px;justify-content:flex-end}
+.pipe i{width:24px;height:5px;border-radius:1px;background:rgba(232,227,217,.07);display:block;
+        transition:background .5s ease,box-shadow .5s ease}
+.rv.in .pipe i.on{background:var(--research);box-shadow:0 0 6px rgba(95,119,132,.4)}
+.rv.in .pipe i.on:nth-child(1){transition-delay:.1s}
+.rv.in .pipe i.on:nth-child(2){transition-delay:.22s}
+.rv.in .pipe i.on:nth-child(3){transition-delay:.34s}
+@media(max-width:640px){
+  .ritem{grid-template-columns:1fr;gap:12px}
+  .rlegend{justify-content:flex-start}
+  .pipe{justify-content:flex-start}
+}
 
 /* ── final ──────────────────────────────────────── */
 .final{padding:clamp(96px,16vh,190px) 0 clamp(64px,9vh,110px);text-align:center;border-top:1px solid var(--line)}
@@ -674,25 +691,27 @@ footer{border-top:1px solid var(--line);padding:34px 0 46px}
     <p class="lede rv" data-d="2">The work between <em>primed</em> and <em>promptless</em> — written down in the open, in the repo.</p>
 
     <div class="rlist">
+      <div class="rlegend">how far each one got &nbsp;·&nbsp; sketch → spec → spike → built</div>
+
       <div class="ritem rv" data-d="1">
-        <div><h4>The airgapped runner</h4><p>A sandbox so a third-party wrapp physically cannot leak what you lend it. Until then, the catalog stays first-party.</p></div>
-        <span class="chip s-research"><i></i>research</span>
+        <div><h4>Browser-local models</h4><p>Inference inside the tab — no install, no daemon, no account. <b>Measured at 41 tok/s for an 8B on an M3 Max.</b> Not fast enough to be the default yet.</p></div>
+        <span class="pipe" role="img" aria-label="sketched, specified and spiked; not built"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>
       </div>
       <div class="ritem rv" data-d="2">
-        <div><h4>Files as a Claude</h4><p>A live image of your real folder that apps read and write through. Never a copy.</p></div>
-        <span class="chip s-research"><i></i>research</span>
+        <div><h4>The airgapped runner</h4><p>A sandbox so a third-party wrapp physically cannot leak what you lend it. Until it exists, the catalog stays first-party.</p></div>
+        <span class="pipe" role="img" aria-label="sketched and specified; not spiked or built"><i class="on"></i><i class="on"></i><i></i><i></i></span>
       </div>
       <div class="ritem rv" data-d="3">
+        <div><h4>Files as a Claude</h4><p>A live image of your real folder that apps read and write through. Never a copy.</p></div>
+        <span class="pipe" role="img" aria-label="sketched only"><i class="on"></i><i></i><i></i><i></i></span>
+      </div>
+      <div class="ritem rv" data-d="4">
         <div><h4>Standing intent</h4><p>Durable goals and permissions that let the work start without you.</p></div>
-        <span class="chip s-research"><i></i>research</span>
+        <span class="pipe" role="img" aria-label="sketched only"><i class="on"></i><i></i><i></i><i></i></span>
       </div>
-      <div class="ritem rv" data-d="4">
+      <div class="ritem rv" data-d="5">
         <div><h4>Company of record</h4><p>Back a bet — a brand, a product, a wrapp — and let COS run it end to end. Builders fund runway in compute and earn when the thing gets used.</p></div>
-        <span class="chip s-research"><i></i>research</span>
-      </div>
-      <div class="ritem rv" data-d="4">
-        <div><h4>Browser-local models</h4><p>Inference inside the tab. No install, no daemon. Measured; not fast enough yet.</p></div>
-        <span class="chip s-research"><i></i>research</span>
+        <span class="pipe" role="img" aria-label="sketched only"><i class="on"></i><i></i><i></i><i></i></span>
       </div>
     </div>
   </div>
