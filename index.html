@@ -155,7 +155,7 @@ h2.big .t{color:var(--teal);font-style:italic}
 .boxes-note b{color:var(--muted);font-weight:400}
 
 /* ── wireframes ─────────────────────────────────── */
-.wf{width:100%;max-width:230px;border:1px solid var(--line);border-radius:3px;background:rgba(9,9,12,.5);overflow:hidden;flex-shrink:0}
+.wf{width:min(238px,100%);border:1px solid var(--line);border-radius:3px;background:rgba(9,9,12,.5);overflow:hidden;flex-shrink:0}
 .wf-bar{display:flex;gap:4px;padding:7px 10px;border-bottom:1px solid var(--line)}
 .wf-bar i{width:4px;height:4px;border-radius:50%;background:var(--dim);display:block}
 .wf-body{padding:12px 11px;display:flex;flex-direction:column;gap:7px;min-height:96px}
@@ -175,10 +175,34 @@ h2.big .t{color:var(--teal);font-style:italic}
 .wf-btn{font-family:var(--mono);font-size:.46rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 8px;border:1px solid var(--line-2);border-radius:2px;color:var(--faint)}
 .wf-btn.go{border-color:rgba(201,169,110,.4);color:var(--gold)}
 
+/* Each rung's wireframe performs its own rung. Prompted does nothing — that is
+   the argument. Primed fills itself. Promptless writes itself. Replays both ways. */
+.wf-chip{opacity:0;transform:translateY(3px);transition:opacity .45s ease,transform .45s ease}
+.rung.play .wf-chip{opacity:1;transform:none}
+.rung.play .wf-chip:nth-child(1){transition-delay:.30s}
+.rung.play .wf-chip:nth-child(2){transition-delay:.50s}
+.rung.play .wf-chip:nth-child(3){transition-delay:.70s}
+.wf-dt{opacity:0;transition:opacity .4s ease .25s}
+.rung.play .wf-dt{opacity:1}
+.wf-ln{transform-origin:left center;transform:scaleX(0);transition:transform .5s cubic-bezier(.2,.7,.3,1)}
+.rung.play .wf-ln{transform:scaleX(1)}
+.rung.play .wf-ln:nth-of-type(2){transition-delay:.45s}
+.rung.play .wf-ln:nth-of-type(3){transition-delay:.62s}
+.rung.play .wf-ln:nth-of-type(4){transition-delay:.79s}
+.wf-acts{opacity:0;transition:opacity .5s ease 1.05s}
+.rung.play .wf-acts{opacity:1}
+.rung.play .wf-btn.go{animation:await 2.4s ease-in-out 1.5s infinite}
+@keyframes await{0%,100%{box-shadow:0 0 0 0 rgba(201,169,110,0)}50%{box-shadow:0 0 0 3px rgba(201,169,110,.09)}}
+@media(prefers-reduced-motion:reduce){
+  .wf-chip,.wf-dt,.wf-acts{opacity:1;transform:none;transition:none}
+  .wf-ln{transform:scaleX(1);transition:none}
+  .rung.play .wf-btn.go{animation:none}
+}
+
 /* ── ladder ─────────────────────────────────────── */
 .ladder{margin-top:clamp(40px,6vh,70px);position:relative;padding-left:34px}
 .ladder::before{content:'';position:absolute;left:5px;top:18px;bottom:18px;width:1px;background:linear-gradient(to bottom,var(--gold),var(--teal),var(--dim))}
-.rung{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(18px,3vw,44px);align-items:center;
+.rung{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 238px;gap:clamp(18px,3vw,44px);align-items:center;
       padding:26px 0;border-bottom:1px solid var(--line)}
 .rung:last-child{border-bottom:none}
 .rung::before{content:'';position:absolute;left:-34px;top:38px;width:11px;height:11px;border-radius:50%;background:var(--void);border:1px solid var(--dim)}
@@ -191,7 +215,7 @@ h2.big .t{color:var(--teal);font-style:italic}
 .rung.r-mid .rung-name{color:var(--teal)}
 .rung.r-next .rung-name{color:var(--gold)}
 .rung p{margin-top:8px;margin-left:88px;max-width:48ch;font-size:.93rem;color:var(--muted);line-height:1.75}
-@media(max-width:760px){.rung{grid-template-columns:1fr}.rung p{margin-left:0}.rung-when{min-width:0}.wf{max-width:260px}}
+@media(max-width:760px){.rung{grid-template-columns:1fr}.rung p{margin-left:0}.rung-when{min-width:0}.wf{width:min(268px,100%)}}
 
 /* ── architecture stack ─────────────────────────── */
 .stack{margin-top:clamp(38px,6vh,64px);display:flex;flex-direction:column;gap:0}
@@ -1047,6 +1071,15 @@ if ('IntersectionObserver' in window){
         }
       });
     }, {threshold:0.4}).observe(pb);
+  }
+
+  /* Wireframes replay on every pass, unlike the copy reveals which stay put. */
+  var rungs = document.querySelectorAll('.rung');
+  if (rungs.length){
+    var ro = new IntersectionObserver(function(es){
+      es.forEach(function(e){ e.target.classList.toggle('play', e.isIntersecting); });
+    }, {threshold:0.55});
+    Array.prototype.forEach.call(rungs, function(r){ ro.observe(r); });
   }
 
 } else {
