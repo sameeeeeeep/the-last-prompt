@@ -1,13 +1,7 @@
-// ../../../../../packages/protocol/dist/version.js
+// ../../packages/protocol/dist/version.js
 var PROVIDER_GLOBAL = "claude";
 
-// ../../../../../packages/protocol/dist/storage.js
-var STORAGE_KEY_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
-function isValidStorageKey(key) {
-  return typeof key === "string" && STORAGE_KEY_RE.test(key);
-}
-
-// ../../../../../packages/protocol/dist/errors.js
+// ../../packages/protocol/dist/errors.js
 var BYOPErrorCode = {
   /** User rejected the connect/consent request. (≈ 4001) */
   USER_REJECTED: 4001,
@@ -30,7 +24,7 @@ var BYOPErrorCode = {
   BACKEND_ERROR: 4500
 };
 
-// ../../../../../packages/sdk/dist/connect-chip.js
+// ../../packages/sdk/dist/connect-chip.js
 function rungFromError(e) {
   if (e?.code !== BYOPErrorCode.PROVIDER_UNAVAILABLE)
     return null;
@@ -428,17 +422,7 @@ function mountConnect(target, opts = {}) {
   };
 }
 
-// ../../../../../packages/sdk/dist/index.js
-var warnedStorageKeys = /* @__PURE__ */ new Set();
-function warnBadStorageKey(key) {
-  if (isValidStorageKey(key) || warnedStorageKeys.has(key))
-    return;
-  warnedStorageKeys.add(key);
-  const suggestion = String(key).replace(/[^A-Za-z0-9._-]+/g, "-").replace(/^[^A-Za-z0-9]+/, "") || "key";
-  console.warn(`[relay.storage] invalid key ${JSON.stringify(key)} \u2014 this write/read WILL be rejected by the daemon and silently do nothing.
-  Keys map 1:1 to files (<key>.json) in this origin's folder, so they must match ${STORAGE_KEY_RE}.
-  ":" is not allowed (illegal on NTFS; "a:b" is Alternate Data Stream syntax on Windows). Try ${JSON.stringify(suggestion)}.`);
-}
+// ../../packages/sdk/dist/index.js
 var Relay = class {
   provider;
   constructor(provider) {
@@ -541,14 +525,10 @@ var Relay = class {
    */
   get storage() {
     const req = (params) => this.provider.request({ method: "claude_storage", params });
-    const k = (key) => {
-      warnBadStorageKey(key);
-      return key;
-    };
     return {
-      get: (key) => req({ op: "get", key: k(key) }).then((r) => r.value ?? null),
-      set: (key, value) => req({ op: "set", key: k(key), value }).then(() => void 0),
-      delete: (key) => req({ op: "delete", key: k(key) }).then((r) => r.ok),
+      get: (key) => req({ op: "get", key }).then((r) => r.value ?? null),
+      set: (key, value) => req({ op: "set", key, value }).then(() => void 0),
+      delete: (key) => req({ op: "delete", key }).then((r) => r.ok),
       list: () => req({ op: "list" }).then((r) => r.keys ?? []),
       info: () => req({ op: "info" }).then((r) => r.info),
       /** Point this app's store at a real folder (triggers a path-consent click). */
@@ -974,11 +954,53 @@ var TILE = {
 function tileColor(id) {
   return TILE[id] || FAM_TILE[entry(id).fam] || "#12A594";
 }
+var ICON_IDS = /* @__PURE__ */ new Set([
+  "brandbrain",
+  "ideabrain",
+  "bank",
+  "mkt",
+  "capp",
+  "saas",
+  "retail",
+  "hardware",
+  "feature",
+  "adpulse",
+  "adforge",
+  "shelf",
+  "studio",
+  "aplus",
+  "batch",
+  "take",
+  "identity",
+  "reel",
+  "marquee",
+  "huddle",
+  "natal",
+  "arcana",
+  "redline",
+  "cartridge",
+  "cast",
+  "prism",
+  "adgen"
+]);
+var iconSrc = (id) => `./img/icons/${id}.png`;
 function glyphTile(id, size = 34) {
-  const c = tileColor(id);
   const s2 = document.createElement("span");
   s2.className = "ic";
   s2.style.width = s2.style.height = size + "px";
+  s2.style.borderRadius = Math.max(6, Math.round(size * 0.235)) + "px";
+  if (ICON_IDS.has(id)) {
+    s2.classList.add("ic-img");
+    const img = document.createElement("img");
+    img.src = iconSrc(id);
+    img.alt = "";
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.draggable = false;
+    s2.appendChild(img);
+    return s2;
+  }
+  const c = tileColor(id);
   s2.style.background = `linear-gradient(155deg, color-mix(in srgb, ${c} 76%, #fff 24%), ${c} 74%)`;
   s2.style.color = "#fff";
   s2.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,.34), inset 0 0 0 1px rgba(255,255,255,.10), 0 3px 8px -3px rgba(0,0,0,.6)";
@@ -2558,7 +2580,6 @@ var SCOPE = {
 var isDemo = new URLSearchParams(location.search).has("demo") && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 var isDemoEmpty = isDemo && new URLSearchParams(location.search).get("demo") === "empty";
 var demoTasks = isDemo && !isDemoEmpty;
-var RECENTLY_ADDED = ["huddle", "reel", "identity", "take", "batch", "marquee", "redline"];
 var TASKS_KEY = "tasks.md";
 var WRAPP_TAG_RE = /\s+@([a-z][a-z0-9-]{0,47})\s*$/i;
 var TASK_DUE_RE = /^(.*?)\s+—\s+by\s+(.+)$/;
@@ -2889,23 +2910,43 @@ function renderBoardCounts() {
     if (el2) el2.textContent = n;
   }
 }
-var HERO_ART = ["brandbrain", "adforge", "arcana", "bank"];
+var HERO_STAR = "brandbrain";
+var HERO_NEXT = ["adforge", "bank", "redline"];
 function renderHeroArt() {
   const box = $2("hero-art");
   if (!box) return;
   box.textContent = "";
-  for (const id of HERO_ART) {
+  const star = APP_BY_ID[HERO_STAR];
+  if (!star) return;
+  box.classList.add("spotlight");
+  const a = mk("a", "hero-star");
+  a.href = star.href;
+  if (/^https:/.test(star.href)) {
+    a.target = "_blank";
+    a.rel = "noreferrer";
+  }
+  a.title = `Try ${star.name}`;
+  a.dataset.app = star.id;
+  const cap = mk("span", "hs-cap");
+  const t = mk("span", "hs-t");
+  const nm = mk("span", "hs-n");
+  nm.append(document.createTextNode(star.name));
+  if (isVerified(star)) nm.insertAdjacentHTML("beforeend", verifyBadge());
+  t.append(nm, mk("span", "hs-d", "Consumer brands, built on receipts \u2014 on your own Claude."));
+  cap.append(glyphTile(star.id, 40), t, mk("span", "hs-go", "Try it \u2192"));
+  a.append(makeThumb(star, true), mk("span", "hs-badge", "Start here"), cap);
+  box.append(a);
+  const row = mk("div", "hero-next");
+  for (const id of HERO_NEXT) {
     const app = APP_BY_ID[id];
     if (!app) continue;
-    const a = mk("a");
-    a.href = detailHref(app.id);
-    a.title = app.name;
-    a.dataset.app = app.id;
-    const cap = mk("span", "cap");
-    cap.append(glyphTile(app.id, 22), mk("span", "nm", app.name));
-    a.append(makeThumb(app, true), cap);
-    box.append(a);
+    const chip = mk("a", "hn-chip");
+    pointAtDetail(chip, app);
+    chip.title = app.name;
+    chip.append(glyphTile(app.id, 26), mk("span", "hn-n", app.name));
+    row.append(chip);
   }
+  box.append(row);
 }
 function renderBoardStrip() {
   const box = $2("board-strip");
@@ -2926,29 +2967,60 @@ function renderBoardStrip() {
     box.append(b);
   }
 }
+var NA_POOL = [
+  "redline",
+  "marquee",
+  "batch",
+  "take",
+  "identity",
+  "reel",
+  "huddle",
+  "cast",
+  "prism",
+  "adgen",
+  "arcana",
+  "natal",
+  "cartridge",
+  "shelf",
+  "studio",
+  "aplus",
+  "adforge",
+  "adpulse",
+  "mkt",
+  "capp"
+].filter((id) => APP_BY_ID[id]);
+var NA_SHOWN = 12;
+var naStart = 0;
 function renderRecent() {
   const box = $2("recent-list");
+  if (!box) return;
   box.textContent = "";
-  for (const id of RECENTLY_ADDED) {
+  const n = Math.min(NA_SHOWN, NA_POOL.length);
+  for (let i = 0; i < n; i++) {
+    const id = NA_POOL[(naStart + i) % NA_POOL.length];
     const app = APP_BY_ID[id];
     if (!app) continue;
-    const row = mk("a", "recent-row");
+    const row = mk("a", "na-item");
     row.dataset.app = id;
     pointAtDetail(row, app);
-    row.append(glyphTile(id, 34));
-    const t = mk("span", "rr-t");
-    const n = mk("span", "rr-n");
-    n.append(document.createTextNode(app.name));
-    if (isVerified(app)) n.insertAdjacentHTML("beforeend", verifyBadge());
-    t.append(n, mk("span", "rr-c", firstLine(app)));
-    row.append(t, mk("span", "rr-cat", categoryOf(id)));
+    row.append(glyphTile(id, 44));
+    const t = mk("span", "na-tx");
+    const nm = mk("span", "na-n");
+    nm.append(document.createTextNode(app.name));
+    if (isVerified(app)) nm.insertAdjacentHTML("beforeend", verifyBadge());
+    t.append(nm, mk("span", "na-c", categoryOf(id)));
+    row.append(t);
     box.append(row);
   }
 }
-function firstLine(app) {
-  const card = document.querySelector(`a.card[data-app="${app.id}"] p`);
-  return card ? card.textContent : categoryOf(app.id);
+function turnNewAdditions(dir) {
+  const len = NA_POOL.length || 1;
+  naStart = (naStart + dir * 4 + len) % len;
+  renderRecent();
 }
+$2("na-prev")?.addEventListener("click", () => turnNewAdditions(-1));
+$2("na-next")?.addEventListener("click", () => turnNewAdditions(1));
+$2("na-add")?.addEventListener("click", () => $2("store")?.scrollIntoView({ behavior: "smooth", block: "start" }));
 var STEPS = [
   {
     title: "Get Switchboard",
@@ -3237,6 +3309,7 @@ function onDisconnected() {
 function showDash() {
   $2("hero").hidden = true;
   if ($2("pitch")) $2("pitch").hidden = true;
+  if ($2("why-sec")) $2("why-sec").hidden = true;
   $2("dash").hidden = false;
   $2("wallet-chip").hidden = false;
   $2("dock").hidden = false;
@@ -3252,6 +3325,7 @@ function hideDash() {
   promotedAction = null;
   $2("hero").hidden = false;
   if ($2("pitch")) $2("pitch").hidden = false;
+  if ($2("why-sec")) $2("why-sec").hidden = false;
   $2("wallet-chip").hidden = true;
   $2("dock").hidden = true;
   document.body.classList.remove("plan-pro", "is-demo");
