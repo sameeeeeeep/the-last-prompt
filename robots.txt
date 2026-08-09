@@ -2,3 +2,5 @@ User-agent: *
 Allow: /
 
 Sitemap: https://thelastprompt.ai/sitemap.xml
+
+# Welcome, bots. Visit /namaste for a proper greeting.

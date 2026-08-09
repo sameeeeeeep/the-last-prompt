@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "xzudc2a3ui");
+    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scroll Review Tool</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0a0f; color: #e2ddd3; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+
+/* Top: site iframe */
+#site-frame {
+  flex: 1; width: 100%; border: none; display: block; min-height: 0;
+}
+
+/* Bottom panel */
+#panel {
+  flex-shrink: 0;
+  background: rgba(10,10,15,0.98); backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex; flex-direction: column;
+  font-size: 13px;
+  max-height: 55vh;
+  transition: max-height 0.3s ease;
+}
+#panel.minimized { max-height: 42px; overflow: hidden; }
+#panel.minimized #toggle-bar .label::after { content: ' (click to expand)'; color: #5a564f; }
+
+#toggle-bar {
+  height: 42px; min-height: 42px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+#toggle-bar:hover { background: rgba(255,255,255,0.02); }
+.tb-left { display: flex; align-items: center; gap: 12px; }
+.tb-left .label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a847a; }
+.tb-left .pct { font-family: 'Courier New', monospace; font-size: 12px; color: #c9a96e; }
+.tb-left .scene-tag { font-size: 10px; color: #5a564f; background: rgba(255,255,255,0.04); padding: 2px 8px; border-radius: 3px; }
+#toggle-bar .arrow { color: #5a564f; font-size: 14px; transition: transform 0.3s; }
+#panel.minimized #toggle-bar .arrow { transform: rotate(180deg); }
+
+/* Continuous timeline */
+#timeline-wrap { padding: 8px 16px 4px; position: relative; }
+#timeline {
+  height: 32px; position: relative; cursor: pointer;
+  border-radius: 4px; background: rgba(255,255,255,0.03);
+  overflow: visible;
+}
+#timeline-bg {
+  position: absolute; inset: 0; display: flex; border-radius: 4px; overflow: hidden;
+}
+.tl-scene-bg {
+  height: 100%; border-right: 1px solid rgba(255,255,255,0.04);
+  display: flex; align-items: center; justify-content: center;
+}
+.tl-scene-bg:last-child { border-right: none; }
+.tl-scene-bg span { font-size: 8px; color: #3d3a36; pointer-events: none; }
+#playhead {
+  position: absolute; top: -2px; bottom: -2px; width: 2px;
+  background: #c9a96e; z-index: 10; pointer-events: none;
+  box-shadow: 0 0 6px rgba(201,169,110,0.5);
+  border-radius: 1px;
+}
+/* Pin markers on timeline */
+.tl-pin {
+  position: absolute; top: -6px; width: 12px; height: 12px;
+  margin-left: -6px; cursor: pointer; z-index: 15;
+  display: flex; align-items: center; justify-content: center;
+}
+.tl-pin-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #c9a96e; border: 1px solid rgba(10,10,15,0.8);
+  transition: transform 0.15s;
+}
+.tl-pin:hover .tl-pin-dot { transform: scale(1.4); }
+.tl-pin.active .tl-pin-dot { background: #7eb8a8; transform: scale(1.3); }
+
+/* Review cards strip */
+#cards-wrap {
+  flex: 1; overflow-y: auto; padding: 8px 16px;
+  display: flex; flex-direction: column; gap: 6px;
+  min-height: 0;
+}
+#cards-wrap::-webkit-scrollbar { width: 4px; }
+#cards-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+.review-card {
+  display: flex; gap: 10px; padding: 8px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 6px; cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  flex-shrink: 0;
+}
+.review-card:hover { border-color: rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); }
+.review-card.active { border-color: rgba(201,169,110,0.3); background: rgba(201,169,110,0.04); }
+
+.rc-thumb {
+  width: 120px; height: 72px; border-radius: 4px;
+  background: rgba(255,255,255,0.05); flex-shrink: 0;
+  overflow: hidden; position: relative;
+}
+.rc-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.rc-thumb .capturing {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: #5a564f; letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+.rc-body { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.rc-meta {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10px; color: #5a564f;
+}
+.rc-meta .rc-pct { font-family: 'Courier New', monospace; color: #c9a96e; }
+.rc-meta .rc-scene { background: rgba(255,255,255,0.04); padding: 1px 6px; border-radius: 2px; }
+.rc-text { font-size: 12px; color: #e2ddd3; line-height: 1.5; word-break: break-word; }
+.rc-del {
+  align-self: flex-start; background: none; border: none; color: #3d3a36;
+  cursor: pointer; font-size: 16px; padding: 0 4px; line-height: 1;
+}
+.rc-del:hover { color: #f87171; }
+
+/* Empty state */
+#empty-state {
+  text-align: center; padding: 24px; color: #3d3a36;
+  font-size: 12px; line-height: 1.8;
+}
+#empty-state kbd {
+  background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 3px;
+  font-family: 'Courier New', monospace; font-size: 11px; color: #5a564f;
+}
+
+/* Input row */
+#input-row {
+  display: flex; gap: 8px; padding: 8px 16px 12px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  flex-shrink: 0;
+}
+#comment-input {
+  flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 4px; padding: 8px 12px; color: #e2ddd3; font-size: 12px;
+  font-family: inherit; outline: none; resize: none; min-height: 36px; max-height: 80px;
+}
+#comment-input:focus { border-color: rgba(201,169,110,0.3); }
+#comment-input::placeholder { color: #5a564f; }
+#pin-btn {
+  background: rgba(201,169,110,0.15); color: #c9a96e; border: 1px solid rgba(201,169,110,0.2);
+  border-radius: 4px; padding: 8px 14px; font-size: 11px; cursor: pointer;
+  letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap;
+  display: flex; align-items: center; gap: 6px;
+}
+#pin-btn:hover { background: rgba(201,169,110,0.25); }
+
+/* Footer */
+#footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 16px 10px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  flex-shrink: 0;
+}
+#footer .count { font-size: 11px; color: #5a564f; }
+.footer-btns { display: flex; gap: 8px; }
+.foot-btn {
+  border-radius: 4px; padding: 5px 12px; font-size: 10px; cursor: pointer;
+  letter-spacing: 0.05em; text-transform: uppercase; border: 1px solid;
+}
+#copy-btn { background: rgba(126,184,168,0.12); color: #7eb8a8; border-color: rgba(126,184,168,0.2); }
+#copy-btn:hover { background: rgba(126,184,168,0.22); }
+#save-btn { background: rgba(167,139,250,0.12); color: #a78bfa; border-color: rgba(167,139,250,0.2); }
+#save-btn:hover { background: rgba(167,139,250,0.22); }
+
+/* Screenshot flash */
+.flash { position: fixed; inset: 0; background: rgba(201,169,110,0.06); z-index: 99999; pointer-events: none; animation: flashOut 0.3s ease forwards; }
+@keyframes flashOut { to { opacity: 0; } }
+
+/* Capture indicator */
+#capture-indicator {
+  position: fixed; top: 12px; right: 12px; z-index: 99998;
+  background: rgba(201,169,110,0.9); color: #0a0a0f;
+  padding: 6px 14px; border-radius: 4px; font-size: 11px;
+  font-weight: 600; letter-spacing: 0.05em;
+  opacity: 0; transition: opacity 0.2s;
+  pointer-events: none;
+}
+#capture-indicator.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<iframe id="site-frame" src="/index.html"></iframe>
+<div id="capture-indicator">CAPTURING...</div>
+
+<div id="panel">
+  <div id="toggle-bar">
+    <div class="tb-left">
+      <span class="label">Review</span>
+      <span class="pct" id="cur-pct">0%</span>
+      <span class="scene-tag" id="cur-scene">Scene 0 — Opening</span>
+    </div>
+    <span class="arrow" title="Minimize/Expand panel">&#9660;</span>
+  </div>
+
+  <div id="timeline-wrap">
+    <div id="timeline">
+      <div id="timeline-bg"></div>
+      <div id="playhead" style="left:0%"></div>
+    </div>
+  </div>
+
+  <div id="cards-wrap">
+    <div id="empty-state">
+      Scroll through the site and press <kbd>P</kbd> or click <strong>Pin Review</strong> to capture a frame with your note.<br>
+      Each pin saves a screenshot at the exact scroll position.
+    </div>
+  </div>
+
+  <div id="input-row">
+    <textarea id="comment-input" placeholder="What needs to change here? (Enter or P to pin)" rows="1"></textarea>
+    <button id="pin-btn">&#128204; Pin Review</button>
+  </div>
+
+  <div id="footer">
+    <span class="count" id="pin-count">0 pins</span>
+    <div class="footer-btns">
+      <button class="foot-btn" id="copy-btn">Copy Notes</button>
+      <button class="foot-btn" id="save-btn">Save Report</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var SCENES = [
+  { id: 0, name: 'Opening', range: [0, 0.12] },
+  { id: 1, name: 'Apps Trapped', range: [0.12, 0.20] },
+  { id: 2, name: 'Terminal', range: [0.20, 0.32] },
+  { id: 3, name: 'Ambient', range: [0.32, 0.42] },
+  { id: 4, name: 'ARIA', range: [0.42, 0.52] },
+  { id: 5, name: 'Screen POV', range: [0.52, 0.61] },
+  { id: 6, name: 'Voice POV', range: [0.61, 0.70] },
+  { id: 7, name: 'Vision POV', range: [0.70, 0.79] },
+  { id: 8, name: 'Neural POV', range: [0.79, 0.88] },
+  { id: 9, name: 'Final CTA', range: [0.88, 1.0] },
+];
+
+var pins = [];
+var scrollPct = 0;
+var currentScene = 0;
+var iframeReady = false;
+
+// Build scene backgrounds on timeline
+var tlBg = document.getElementById('timeline-bg');
+SCENES.forEach(function(s) {
+  var div = document.createElement('div');
+  div.className = 'tl-scene-bg';
+  div.style.width = ((s.range[1] - s.range[0]) * 100) + '%';
+  var sp = document.createElement('span');
+  sp.textContent = s.id;
+  div.appendChild(sp);
+  tlBg.appendChild(div);
+});
+
+// Panel toggle
+var panel = document.getElementById('panel');
+document.getElementById('toggle-bar').addEventListener('click', function() {
+  panel.classList.toggle('minimized');
+});
+
+// Iframe scroll tracking
+var iframe = document.getElementById('site-frame');
+iframe.addEventListener('load', function() {
+  iframeReady = true;
+  var iWin = iframe.contentWindow;
+  var iDoc = iframe.contentDocument;
+  iWin.addEventListener('scroll', function() {
+    var spacer = iDoc.getElementById('scroll-spacer');
+    if (!spacer) return;
+    var maxScroll = spacer.offsetHeight - iWin.innerHeight;
+    scrollPct = Math.min(1, Math.max(0, iWin.scrollY / maxScroll));
+    updateStatus();
+  });
+});
+
+function getScene(pct) {
+  for (var i = 0; i < SCENES.length; i++) {
+    if (pct >= SCENES[i].range[0] && pct < SCENES[i].range[1]) return i;
+  }
+  return SCENES.length - 1;
+}
+
+function updateStatus() {
+  currentScene = getScene(scrollPct);
+  document.getElementById('playhead').style.left = (scrollPct * 100) + '%';
+  document.getElementById('cur-pct').textContent = Math.round(scrollPct * 100) + '%';
+  document.getElementById('cur-scene').textContent = 'Scene ' + currentScene + ' \u2014 ' + SCENES[currentScene].name;
+}
+
+function scrollTo(pct) {
+  if (!iframeReady) return;
+  var iWin = iframe.contentWindow;
+  var iDoc = iframe.contentDocument;
+  var spacer = iDoc.getElementById('scroll-spacer');
+  if (!spacer) return;
+  var maxScroll = spacer.offsetHeight - iWin.innerHeight;
+  iWin.scrollTo({ top: pct * maxScroll, behavior: 'smooth' });
+}
+
+// Screenshot capture
+function captureScreenshot(callback) {
+  if (!iframeReady) { callback(null); return; }
+  var indicator = document.getElementById('capture-indicator');
+  indicator.classList.add('show');
+
+  try {
+    var iDoc = iframe.contentDocument;
+    var body = iDoc.body;
+    html2canvas(body, {
+      width: iframe.contentWindow.innerWidth,
+      height: iframe.contentWindow.innerHeight,
+      scrollX: 0,
+      scrollY: iframe.contentWindow.scrollY,
+      windowWidth: iframe.contentWindow.innerWidth,
+      windowHeight: iframe.contentWindow.innerHeight,
+      backgroundColor: '#030305',
+      scale: 0.5,
+      logging: false,
+      useCORS: true,
+    }).then(function(canvas) {
+      indicator.classList.remove('show');
+      callback(canvas.toDataURL('image/jpeg', 0.7));
+    }).catch(function() {
+      indicator.classList.remove('show');
+      callback(null);
+    });
+  } catch (e) {
+    indicator.classList.remove('show');
+    callback(null);
+  }
+}
+
+// Add a pin
+function addPin(text) {
+  text = (text || '').trim();
+  if (!text) {
+    document.getElementById('comment-input').focus();
+    document.getElementById('comment-input').placeholder = 'Type your note first, then pin!';
+    setTimeout(function() {
+      document.getElementById('comment-input').placeholder = 'What needs to change here? (Enter or P to pin)';
+    }, 2000);
+    return;
+  }
+
+  var pct = scrollPct;
+  var scene = currentScene;
+
+  // Flash
+  var flash = document.createElement('div');
+  flash.className = 'flash';
+  document.body.appendChild(flash);
+  setTimeout(function() { flash.remove(); }, 400);
+
+  // Create pin object with placeholder
+  var pin = { pct: pct, scene: scene, text: text, screenshot: null, id: Date.now() };
+  pins.push(pin);
+  pins.sort(function(a, b) { return a.pct - b.pct; });
+  renderAll();
+  document.getElementById('comment-input').value = '';
+
+  // Capture screenshot async
+  captureScreenshot(function(dataUrl) {
+    pin.screenshot = dataUrl;
+    renderAll();
+  });
+}
+
+function deletePin(id) {
+  pins = pins.filter(function(p) { return p.id !== id; });
+  renderAll();
+}
+
+function renderAll() {
+  renderTimeline();
+  renderCards();
+  var count = pins.length;
+  document.getElementById('pin-count').textContent = count + ' pin' + (count !== 1 ? 's' : '');
+}
+
+function renderTimeline() {
+  // Remove old pins
+  var old = document.querySelectorAll('.tl-pin');
+  old.forEach(function(el) { el.remove(); });
+
+  var tl = document.getElementById('timeline');
+  pins.forEach(function(pin) {
+    var el = document.createElement('div');
+    el.className = 'tl-pin';
+    el.style.left = (pin.pct * 100) + '%';
+    var dot = document.createElement('div');
+    dot.className = 'tl-pin-dot';
+    el.appendChild(dot);
+    el.addEventListener('click', function(e) {
+      e.stopPropagation();
+      scrollTo(pin.pct);
+      highlightCard(pin.id);
+    });
+    tl.appendChild(el);
+  });
+}
+
+function renderCards() {
+  var wrap = document.getElementById('cards-wrap');
+  while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+
+  if (pins.length === 0) {
+    var empty = document.createElement('div');
+    empty.id = 'empty-state';
+    empty.textContent = 'Scroll through the site and press P or click Pin Review to capture a frame with your note.';
+    wrap.appendChild(empty);
+    return;
+  }
+
+  pins.forEach(function(pin) {
+    var card = document.createElement('div');
+    card.className = 'review-card';
+    card.dataset.id = pin.id;
+    card.addEventListener('click', function(e) {
+      if (e.target.classList.contains('rc-del')) return;
+      scrollTo(pin.pct);
+    });
+
+    // Thumbnail
+    var thumb = document.createElement('div');
+    thumb.className = 'rc-thumb';
+    if (pin.screenshot) {
+      var img = document.createElement('img');
+      img.src = pin.screenshot;
+      img.alt = 'Frame at ' + Math.round(pin.pct * 100) + '%';
+      thumb.appendChild(img);
+    } else {
+      var cap = document.createElement('div');
+      cap.className = 'capturing';
+      cap.textContent = 'capturing...';
+      thumb.appendChild(cap);
+    }
+
+    // Body
+    var body = document.createElement('div');
+    body.className = 'rc-body';
+
+    var meta = document.createElement('div');
+    meta.className = 'rc-meta';
+    var pctSpan = document.createElement('span');
+    pctSpan.className = 'rc-pct';
+    pctSpan.textContent = Math.round(pin.pct * 100) + '%';
+    var sceneSpan = document.createElement('span');
+    sceneSpan.className = 'rc-scene';
+    sceneSpan.textContent = 'S' + pin.scene + ' ' + SCENES[pin.scene].name;
+    meta.appendChild(pctSpan);
+    meta.appendChild(sceneSpan);
+
+    var text = document.createElement('div');
+    text.className = 'rc-text';
+    text.textContent = pin.text;
+
+    body.appendChild(meta);
+    body.appendChild(text);
+
+    // Delete
+    var del = document.createElement('button');
+    del.className = 'rc-del';
+    del.textContent = '\u00D7';
+    del.addEventListener('click', function() { deletePin(pin.id); });
+
+    card.appendChild(thumb);
+    card.appendChild(body);
+    card.appendChild(del);
+    wrap.appendChild(card);
+  });
+}
+
+function highlightCard(id) {
+  document.querySelectorAll('.review-card').forEach(function(c) { c.classList.remove('active'); });
+  var card = document.querySelector('.review-card[data-id="' + id + '"]');
+  if (card) {
+    card.classList.add('active');
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+// Timeline click to scroll
+document.getElementById('timeline').addEventListener('click', function(e) {
+  var rect = this.getBoundingClientRect();
+  var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  scrollTo(pct);
+});
+
+// Input
+document.getElementById('comment-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    addPin(this.value);
+  }
+});
+document.getElementById('pin-btn').addEventListener('click', function() {
+  addPin(document.getElementById('comment-input').value);
+});
+
+// P key shortcut (when not in textarea)
+document.addEventListener('keydown', function(e) {
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+  if (e.key === 'p' || e.key === 'P') {
+    document.getElementById('comment-input').focus();
+  }
+  if (e.key === 'Escape') panel.classList.toggle('minimized');
+});
+
+// Also listen for P in iframe
+iframe.addEventListener('load', function() {
+  iframe.contentDocument.addEventListener('keydown', function(e) {
+    if (e.key === 'p' || e.key === 'P') {
+      e.preventDefault();
+      document.getElementById('comment-input').focus();
+    }
+  });
+});
+
+// Copy notes as text
+document.getElementById('copy-btn').addEventListener('click', function() {
+  if (pins.length === 0) return;
+  var lines = pins.map(function(p) {
+    return '[' + Math.round(p.pct * 100) + '% — Scene ' + p.scene + ' ' + SCENES[p.scene].name + ']\n' + p.text;
+  });
+  navigator.clipboard.writeText(lines.join('\n\n')).then(function() {
+    var btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy Notes'; }, 1500);
+  });
+});
+
+// Save as .md + screenshots zip
+document.getElementById('save-btn').addEventListener('click', function() {
+  if (pins.length === 0) return;
+  var btn = document.getElementById('save-btn');
+  btn.textContent = 'Building...';
+
+  var zip = new JSZip();
+  var imgFolder = zip.folder('screenshots');
+
+  // Build markdown
+  var md = '# Scroll Review\n\n';
+  md += '> Auto-generated review of `index.html` with pinned feedback and reference screenshots.\n\n';
+  md += '---\n\n';
+
+  pins.forEach(function(p, i) {
+    var idx = String(i + 1).padStart(2, '0');
+    var filename = 'frame-' + idx + '-' + Math.round(p.pct * 100) + 'pct.jpg';
+
+    md += '## Pin ' + (i + 1) + ' — `' + Math.round(p.pct * 100) + '%` scroll · Scene ' + p.scene + ' (' + SCENES[p.scene].name + ')\n\n';
+    md += '![Frame at ' + Math.round(p.pct * 100) + '%](./screenshots/' + filename + ')\n\n';
+    md += '**Feedback:** ' + p.text + '\n\n';
+    md += '---\n\n';
+
+    // Add image to zip
+    if (p.screenshot) {
+      // Strip data URL prefix to get raw base64
+      var base64 = p.screenshot.split(',')[1];
+      imgFolder.file(filename, base64, { base64: true });
+    }
+  });
+
+  zip.generateAsync({ type: 'blob' }).then(function(content) {
+    var url = URL.createObjectURL(content);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'scroll-review.zip';
+    a.click();
+    URL.revokeObjectURL(url);
+    btn.textContent = 'Saved!';
+    setTimeout(function() { btn.textContent = 'Save Report'; }, 2000);
+  });
+});
+
+updateStatus();
+</script>
+</body>
+</html>
