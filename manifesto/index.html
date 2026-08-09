@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "xzudc2a3ui");
+    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Last Prompt — Thesis</title>
+<meta name="description" content="Superintelligence is already here on the model side. What stands between it and you is a prompt. This is the argument for removing it — primed, not prompted.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://thelastprompt.ai/manifesto/">
+<meta property="og:title" content="The Last Prompt — Thesis">
+<meta property="og:description" content="The model isn't waiting on compute. It's waiting on you. The argument for a promptless architecture.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://thelastprompt.ai/manifesto/">
+<meta property="og:image" content="https://thelastprompt.ai/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Last Prompt — Thesis">
+<meta name="twitter:description" content="The model isn't waiting on compute. It's waiting on you. The argument for a promptless architecture.">
+<meta name="twitter:image" content="https://thelastprompt.ai/og.png">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#000000;
+  --void-2:#08080a;
+  --line:rgba(232,227,217,0.08);
+  --line-2:rgba(232,227,217,0.16);
+  --bone:#e8e3d9;
+  --muted:#8b857a;
+  --faint:#514c45;
+  --dim:#2c2a27;
+  --gold:#c9a96e;
+  --teal:#7eb8a8;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Instrument Sans',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --pad:clamp(20px,5vw,64px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--bone);font-family:var(--sans);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:rgba(201,169,110,0.24)}
+a{color:inherit}
+
+/* nav */
+#nav{position:fixed;top:0;left:0;width:100%;z-index:60;display:flex;justify-content:space-between;align-items:center;
+     padding:16px var(--pad);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+     background:linear-gradient(to bottom,rgba(5,5,6,0.82),rgba(5,5,6,0))}
+.nav-mark{display:flex;align-items:baseline;gap:10px;text-decoration:none}
+.nav-mark b{font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--bone)}
+.nav-mark span{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--faint)}
+.nav-links{display:flex;gap:22px;align-items:center}
+.nav-links a{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-decoration:none;transition:color .25s}
+.nav-links a:hover{color:var(--bone)}
+.nav-links a.cta{color:var(--gold);border:1px solid rgba(201,169,110,.28);padding:7px 13px;border-radius:2px}
+.nav-links a.cta:hover{background:rgba(201,169,110,.1);color:var(--gold)}
+@media(max-width:640px){.nav-links a:not(.cta){display:none}}
+
+/* article */
+main{max-width:720px;margin:0 auto;padding:clamp(120px,18vh,200px) var(--pad) 40px}
+.eyebrow{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:32px}
+.eyebrow .rule{flex:0 0 40px;height:1px;background:var(--line-2)}
+.eyebrow .teal{color:var(--teal)}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.6rem,7vw,4.4rem);line-height:1.02;letter-spacing:-.01em;margin-bottom:24px}
+h1 em{font-style:italic;color:var(--gold)}
+.standfirst{font-family:var(--serif);font-size:clamp(1.3rem,3.4vw,1.75rem);line-height:1.4;color:var(--muted);font-style:italic;margin-bottom:26px}
+.byline{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);padding-bottom:40px;border-bottom:1px solid var(--line);margin-bottom:56px}
+
+section.chap{margin:0 0 60px}
+.chead{display:flex;align-items:baseline;gap:14px;margin-bottom:22px}
+.chead .num{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;color:var(--gold)}
+.chead .label{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.7rem,4.4vw,2.5rem);line-height:1.12;letter-spacing:-.01em;margin-bottom:22px}
+h2 em{font-style:italic;color:var(--gold)}
+p{font-size:1.05rem;line-height:1.78;color:#cfc9bd;margin-bottom:22px}
+p strong{color:var(--bone);font-weight:600}
+p em{color:var(--teal);font-style:italic}
+.lead{font-size:1.18rem;color:var(--bone)}
+blockquote{margin:34px 0;padding:4px 0 4px 24px;border-left:2px solid rgba(201,169,110,.4)}
+blockquote p{font-family:var(--serif);font-style:italic;font-size:1.35rem;line-height:1.4;color:var(--bone);margin:0}
+hr.sep{border:0;height:1px;background:var(--line);margin:56px 0}
+.pill{display:inline-block;font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;padding:3px 9px;border:1px solid var(--line-2);border-radius:2px;color:var(--muted);margin-right:6px}
+.pill.gold{color:var(--gold);border-color:rgba(201,169,110,.3)}
+.pill.teal{color:var(--teal);border-color:rgba(126,184,168,.3)}
+
+.endcta{margin-top:70px;padding:40px 0 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.endcta p{margin:0;font-family:var(--serif);font-style:italic;font-size:1.3rem;color:var(--muted)}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:11px 18px;border-radius:2px;transition:all .25s}
+.btn.gold{background:var(--gold);color:#000}
+.btn.gold:hover{filter:brightness(1.12)}
+.btn.ghost{border:1px solid var(--line-2);color:var(--muted)}
+.btn.ghost:hover{color:var(--bone);border-color:var(--bone)}
+
+footer{max-width:720px;margin:0 auto;padding:50px var(--pad) 70px;font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--faint);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--bone)}
+</style>
+</head>
+<body id="top">
+<nav id="nav">
+  <a href="/" class="nav-mark"><b>The Last Prompt</b><span>AI LAB</span></a>
+  <div class="nav-links">
+    <a href="/#thesis">Thesis</a>
+    <a href="/#switchboard">Switchboard</a>
+    <a href="/#wrapps">Wrapps</a>
+    <a href="https://github.com/sameeeeeeep/switchboard">GitHub</a>
+    <a href="/switchboard/" class="cta">Get Switchboard</a>
+  </div>
+</nav>
+
+<main>
+  <div class="eyebrow"><span class="rule"></span><span class="teal">Thesis</span> · The Last Prompt</div>
+  <h1>The last prompt is the one <em>you don't have to write.</em></h1>
+  <p class="standfirst">Superintelligence is already here on the model side. What stands between it and you is a prompt. This is the argument for removing it.</p>
+  <div class="byline">The Last Prompt · an AI lab</div>
+
+  <p class="lead">Every few months a model crosses a line we said it wouldn't. It writes the code, drafts the contract, reads the scan, argues the case. On the benchmark, it is already superhuman. And yet the felt experience of using it has barely moved: you sit at a blank box and explain yourself, again, from scratch. The intelligence is extraordinary. The interface to it is a text field.</p>
+
+  <p>We think that gap — between how capable the model is and how little of that capability reaches an ordinary person on an ordinary day — is the most important problem in applied AI. It is not a modelling problem. It is an architecture problem. The Last Prompt is a lab built to solve it.</p>
+
+  <hr class="sep">
+
+  <section class="chap">
+    <div class="chead"><span class="num">01</span><span class="label">The bottleneck</span></div>
+    <h2>The model isn't waiting on compute. It's waiting on <em>you.</em></h2>
+    <p>Look at a real prompt — not a demo, an actual one you'd send during work. Most of it isn't the question. It's setup. <em>You're a growth marketer. We sell ceramic cookware, tone is plain. I already tried a discount push, it flopped. Here's the spend file again. Never use emojis.</em> Five lines of context to earn one line of actual work: <strong>where did the money go?</strong></p>
+    <p>You wrote all five before. The model has been told all five before. Nothing carried over, so you pay the tax again. Multiply that by every conversation, every tool, every day, and the prompt stops looking like an input and starts looking like what it is: <strong>the seam where a stateless intelligence meets a stateful life.</strong> You are the integration layer. You are the memory. You are the thing holding it all in your head.</p>
+  </section>
+
+  <section class="chap">
+    <div class="chead"><span class="num">02</span><span class="label">The workaround</span></div>
+    <h2>The prompt is a <em>workaround,</em> not a feature.</h2>
+    <p>We have dressed the prompt up as empowerment — prompt engineering, prompt libraries, the well-crafted system message. But a great prompt is evidence of a broken interface, not a skill worth having. It exists because the model can't see what you see, doesn't hold what you already told it, and can't act where the work actually lives. So you become the courier: copying context in, carrying answers out, translating between the model and your real files, your real screen, your real intent.</p>
+    <blockquote><p>Anything you have to re-explain is something the architecture failed to remember.</p></blockquote>
+    <p>The fix is not a better prompt box. It's an architecture that stands where you stand — with your context, your data, your permissions already present — so the explaining never has to happen. Remove the reason to prompt, and the prompt disappears on its own.</p>
+  </section>
+
+  <section class="chap">
+    <div class="chead"><span class="num">03</span><span class="label">Primed, not prompted</span></div>
+    <h2>From prompted, to <em>primed,</em> to promptless.</h2>
+    <p>There is a path, and it has stages. <strong>Prompted</strong> is where we are now: you carry everything to a blank box. <strong>Primed</strong> is the near future we're building: the system already holds your context, your files, your standing intentions, so a nudge is enough — the work starts closer to done. <strong>Promptless</strong> is the destination: the system sees the situation, understands what it takes, and acts before you have to assemble a request at all.</p>
+    <p>Promptless is not magic and it is not autonomy for its own sake. It's the ordinary endpoint of an interface that finally has enough context to stop asking. You don't prompt a good colleague through every step; you share a goal and they run. That is the bar. <em>The last prompt is the one you don't have to write.</em></p>
+  </section>
+
+  <section class="chap">
+    <div class="chead"><span class="num">04</span><span class="label">Release 01</span></div>
+    <h2><span class="pill gold">Live</span> Switchboard — your own AI, your context, your data.</h2>
+    <p>Switchboard is the first thing we shipped toward promptless. It's an agentic interface layer for macOS that runs AI apps <strong>on your own AI, your own context, and your own data</strong> — not in a walled tab, but across the machine where your work actually happens. It sees your screen, holds what matters, and acts with your permission. The same app you'd use anywhere becomes something different on Switchboard: primed, not prompted.</p>
+    <p>The point isn't a new destination app to visit. It's collapsing the distance between wanting something done and it being done — removing the courier work, keeping the context resident, keeping your data on your side of the line.</p>
+  </section>
+
+  <section class="chap">
+    <div class="chead"><span class="num">05</span><span class="label">Release 02</span></div>
+    <h2><span class="pill teal">Growing</span> Wrapps — small tools that inherit your context.</h2>
+    <p>If Switchboard is the layer, <strong>wrapps</strong> are what run on it: small, sharp, single-purpose tools that don't start cold. Because they sit on the layer, they inherit your context and permissions instead of demanding them line by line. A catalog that grows, each one assuming the setup work is already done — which, on the layer, it is.</p>
+    <p>Every wrapp is a bet that a whole category of prompting can be retired: not by making the box smarter, but by making the box unnecessary for that job.</p>
+  </section>
+
+  <hr class="sep">
+
+  <section class="chap">
+    <div class="chead"><span class="num">06</span><span class="label">The lab</span></div>
+    <h2>Why a lab, and why in the open.</h2>
+    <p>We call it a lab because the honest version of this work is research: the interface layer between humans and frontier models doesn't have a settled shape yet, and pretending otherwise is how you ship the wrong thing confidently. So we build in public, ship what works, and keep the code where you can read it. The measure isn't how impressive the demo is. It's how much explaining a real person stops having to do.</p>
+    <p>Superintelligence lands the moment it becomes intuitive to use — not the moment it clears a benchmark. Closing that gap is the whole job.</p>
+  </section>
+
+  <div class="endcta">
+    <p>The last prompt is the one you don't have to write.</p>
+    <div class="btns">
+      <a href="/switchboard/" class="btn gold">Get Switchboard</a>
+      <a href="/" class="btn ghost">← Back to the lab</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>© The Last Prompt — an AI lab</span>
+  <span><a href="/">Home</a> · <a href="/#wrapps">Wrapps</a> · <a href="https://github.com/sameeeeeeep/switchboard">GitHub</a></span>
+</footer>
+</body>
+</html>
