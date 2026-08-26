@@ -1,0 +1,116 @@
+# Switchboard — make any web app run on the user's own AI
+
+> Switchboard is a Mac app that brokers AI for web apps. Your page asks it for a completion,
+> a tool call, or storage; a consent gate on the user's machine approves; you get the result.
+> You never hold an API key, never pay for inference, never run a backend for it.
+> An app that does this is called a **wrapp**.
+
+If you are an agent wiring an app to Switchboard, this file is enough to do it.
+Full spec: https://github.com/sameeeeeeep/switchboard/blob/main/docs/BUILDING-A-WRAPP.md
+
+## What changes in your app
+
+Replace your own model backend with the broker. That's the whole migration.
+
+```js
+// before — your key, your bill, your server
+const r = await fetch("/api/openai", { method: "POST", body: JSON.stringify({ prompt }) });
+
+// after — the user's Claude (or their local model), no key, no server
+import { whenRelayReady } from "@relay/sdk";
+const relay = await whenRelayReady();
+const { text } = await relay.complete({ prompt, model: "claude-haiku-4-5", maxTokens: 300 });
+```
+
+Code against `@relay/sdk` (`getRelay` / `whenRelayReady`), never `window.claude` directly — the
+global is an implementation detail.
+
+## Connect first — declare exactly what you use
+
+```js
+const grant = await relay.connect({
+  models: ["claude-haiku-4-5", "claude-sonnet-5"],
+  tools:  ["WebSearch"],
+  reason: "Summarize pages you're reading",   // shown in the consent popup
+});
+```
+
+Two rules, and they are the contract:
+
+- **Exact-match, default-deny.** Calling a model or tool not in the grant is denied. The classic bug
+  is asking for `sonnet` and calling `claude-haiku-4-5` — the strings must match what you invoke.
+- **Handle partial grants.** The user may approve less than you asked. Read `grant.models` /
+  `grant.tools` and adapt; never assume you got everything.
+
+The consent popup appears only on an origin's **first** connect. Returning users connect silently.
+
+## The capability surface (BYOP 1.0.0 — all of it)
+
+| What you want | How | Consent |
+|---|---|---|
+| Feature-detect | `relay.capabilities()` | none |
+| One-shot completion | `relay.complete(params)` | within grant |
+| Streamed completion | `for await (const d of relay.stream(params))` | within grant |
+| Agentic (model uses tools) | `relay.complete({ ..., agentic: true })` | reads auto, writes prompt |
+| List / call a tool | `relay.listTools()` · `relay.callTool(name, args)` | reads auto, writes prompt |
+| Private local storage | `relay.storage.get/set/list/delete` | free |
+| Bind storage to a real folder | `relay.storage.bind(path)` | always prompts |
+| Shared cross-app context | `relay.context.publish/active/pick` | user picks |
+| Local text-to-speech | `relay.speak(text)` | within grant, on-device |
+| Who the user is | `relay.identity()` | display name only |
+
+### Streaming
+
+```js
+for await (const d of relay.stream({ prompt })) {
+  if (d.type === "text")    append(d.text);
+  if (d.type === "sources") cite(d.urls);
+  if (d.type === "done")    finish(d.result);
+}
+```
+
+Use `messages: [{ role, content }, …]` instead of `prompt` for multi-turn, `attachments` for images,
+and a stable `sessionId` to reuse a warm thread across many calls.
+
+### Agentic + tools
+
+`agentic: true` lets the model call your granted tools mid-reasoning. You don't implement the gate:
+**reads run silently within scope, writes pop a consent the user clicks.** `res.toolCalls` reports
+what ran and how each resolved. Or drive one yourself: `relay.callTool("WebSearch", { query })`.
+
+### Storage
+
+Per-app, isolated to your origin — no other wrapp can read it. Values are opaque strings; store JSON.
+
+```js
+await relay.storage.set("workspace", JSON.stringify(state));
+const raw = await relay.storage.get("workspace");   // string | null
+await relay.storage.bind("~/Documents/my-app/.data"); // one consent, shows the path
+```
+
+**Keys are filenames.** A key maps 1:1 to `<folder>/<key>.json` and must match
+`/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/`. Namespace with `-`, never `:` — a colon is illegal in NTFS
+filenames and the write silently does nothing.
+
+## What you get, and what you give up
+
+You get: the user's model (Claude or a local one), their connected tools, their project context,
+local storage, TTS — with no key, no inference bill, and no backend.
+
+You give up: holding their credentials or data. You can't widen your granted scope from a system
+prompt, and you never see their keys. That constraint is the product.
+
+## Checklist
+
+- [ ] Code against `@relay/sdk`, not `window.claude`
+- [ ] `connect()` declaring the exact model + tool strings you invoke
+- [ ] Handle a partial grant
+- [ ] Storage keys are filename-safe (`-`, never `:`)
+- [ ] Degrade honestly when Switchboard isn't present (it's a Mac app the user installs)
+
+## Links
+
+- Full spec: https://github.com/sameeeeeeep/switchboard/blob/main/docs/BUILDING-A-WRAPP.md
+- Source (MIT): https://github.com/sameeeeeeep/switchboard
+- Download Switchboard: https://github.com/sameeeeeeep/switchboard/releases/latest/download/Switchboard.dmg
+- 94 working wrapps to copy from: https://github.com/sameeeeeeep/switchboard/tree/main/examples/apps/wrapps
