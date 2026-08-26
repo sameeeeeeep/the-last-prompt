@@ -10,39 +10,70 @@ Full spec: https://github.com/sameeeeeeep/switchboard/blob/main/docs/BUILDING-A-
 
 ## What changes in your app
 
-Replace your own model backend with the broker. That's the whole migration.
+Replace your own model backend with the broker. That is the whole migration, and it needs
+**no install** — Switchboard injects `window.claude` into the page.
 
 ```js
 // before — your key, your bill, your server
 const r = await fetch("/api/openai", { method: "POST", body: JSON.stringify({ prompt }) });
 
 // after — the user's Claude (or their local model), no key, no server
-import { whenRelayReady } from "@relay/sdk";
-const relay = await whenRelayReady();
-const { text } = await relay.complete({ prompt, model: "claude-haiku-4-5", maxTokens: 300 });
+await window.claude.request({ method: "claude_connect", params: {
+  models: ["claude-haiku-4-5"],
+  reason: "Rewrite the text you paste",     // shown in the consent popup
+}});
+
+const { text } = await window.claude.request({ method: "claude_complete", params: {
+  prompt, model: "claude-haiku-4-5", maxTokens: 300,
+}});
 ```
 
-Code against `@relay/sdk` (`getRelay` / `whenRelayReady`), never `window.claude` directly — the
-global is an implementation detail.
-
-## Connect first — declare exactly what you use
+Wait for the provider before calling it — it is injected at document start, and fires an event:
 
 ```js
-const grant = await relay.connect({
-  models: ["claude-haiku-4-5", "claude-sonnet-5"],
-  tools:  ["WebSearch"],
-  reason: "Summarize pages you're reading",   // shown in the consent popup
-});
+const ready = () => window.claude?.isRelay
+  ? Promise.resolve(window.claude)
+  : new Promise(r => window.addEventListener("claude#initialized", () => r(window.claude), { once: true }));
+const claude = await ready();
 ```
 
-Two rules, and they are the contract:
+> There is a typed wrapper (`@relay/sdk`, `getRelay` / `whenRelayReady`) used inside this repo, but it is
+> **not published to npm yet** — so build against `window.claude.request` above, which is the same wire
+> protocol and is what ships today.
 
-- **Exact-match, default-deny.** Calling a model or tool not in the grant is denied. The classic bug
-  is asking for `sonnet` and calling `claude-haiku-4-5` — the strings must match what you invoke.
-- **Handle partial grants.** The user may approve less than you asked. Read `grant.models` /
-  `grant.tools` and adapt; never assume you got everything.
+## Where your app runs — read this before you deploy
 
-The consent popup appears only on an origin's **first** connect. Returning users connect silently.
+Two ways a wrapp gets the bridge, and they have different rules:
+
+| | How the bridge arrives | Origin rules |
+|---|---|---|
+| **Inside Switchboard** (a native window) | The Mac app injects it into whatever URL it loads | **Any origin. Your domain works today.** |
+| **A normal browser tab** | The Chrome extension injects it | Only an allowlist: `localhost`, `127.0.0.1`, `thelastprompt.ai`, `sameep.ai`, `sameeeeeeep.github.io` |
+
+What that means in practice:
+
+- **Developing locally? It just works** — `localhost` is allowlisted, so a browser tab gets `window.claude`.
+- **Deployed to your own domain?** It works when the user opens it **through Switchboard** (the native
+  window bridges any origin). In a plain browser tab it will silently have no `window.claude` until your
+  origin is added to the extension — open an issue to request it.
+- **Always degrade honestly**: if `window.claude` is absent, say so and tell the user to open the app in
+  Switchboard. Never fail silently.
+
+## The wire methods
+
+`window.claude.request({ method, params })` → Promise. The methods:
+
+| Method | What it does |
+|---|---|
+| `claude_capabilities` | feature-detect; always allowed |
+| `claude_connect` | request a scope (models / tools) — the consent popup |
+| `claude_complete` | one-shot completion |
+| `claude_stream` | streamed completion |
+| `claude_listTools` · `claude_callTool` | list / call a granted tool |
+| `claude_storage` | private per-app storage (`get`/`set`/`list`/`delete`/`bind`) |
+| `claude_context` | shared cross-app context |
+| `claude_speak` | on-device text-to-speech |
+| `claude_permissions` · `claude_health` | current grant · is the daemon alive |
 
 ## The capability surface (BYOP 1.0.0 — all of it)
 
@@ -102,11 +133,12 @@ prompt, and you never see their keys. That constraint is the product.
 
 ## Checklist
 
-- [ ] Code against `@relay/sdk`, not `window.claude`
+- [ ] Call `window.claude.request({ method, params })` (the SDK wrapper isn't on npm yet)
 - [ ] `connect()` declaring the exact model + tool strings you invoke
 - [ ] Handle a partial grant
 - [ ] Storage keys are filename-safe (`-`, never `:`)
-- [ ] Degrade honestly when Switchboard isn't present (it's a Mac app the user installs)
+- [ ] Degrade honestly when `window.claude` is absent — tell the user to open it in Switchboard
+- [ ] Deploying to your own domain? It works inside Switchboard; a plain browser tab needs your origin allowlisted
 
 ## Links
 

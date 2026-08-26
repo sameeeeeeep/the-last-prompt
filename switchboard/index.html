@@ -285,7 +285,8 @@
 <div class="wrap">
   <nav>
     <span class="mark"><span class="jack"></span>switchboard</span>
-    <span class="navlinks"><a href="#setup">setup</a><a href="#apps">wrapps</a><a href="#how">how</a><a href="#faq">faq</a></span>
+    <span class="navlinks"><a href="#setup">setup</a><a href="#apps">wrapps</a><a href="#how">how</a>
+      <a href="#devs">devs</a><a href="#faq">faq</a></span>
     <a class="btn" href="https://github.com/sameeeeeeep/switchboard/releases/latest/download/Switchboard.dmg">Download app</a>
   </nav>
   <header class="hero">
@@ -410,6 +411,22 @@
         <div class="noe"><div class="k">&#8213;</div><h4>You approve every connection</h4><p>Every wrapp asks before it touches a tool or file. Revoke it instantly.</p></div>
       </div>
       <p class="moatfoot">Open source (MIT) &#8212; <b>audit it yourself</b>. Team mode's end-to-end encrypted; no one reads your board, us included.</p>
+    </div>
+  </section>
+  <div class="rule"></div>
+  <section id="devs">
+    <div class="kicker">For developers</div>
+    <h2 class="sec">Ship the app. Skip the bill.</h2>
+    <p class="sub" style="margin-bottom:26px">A wrapp is just a page. It asks Switchboard for the model, the tools and the context &#8212; so the user brings the AI, and you bring the idea.</p>
+    <div class="pillars">
+      <div class="pill"><div class="num">01</div><h3>Distribute without compute costs</h3><p>Your users run it on their own Claude, or a local model. No inference bill, no backend, no scaling. A static host is your whole infrastructure.</p></div>
+      <div class="pill"><div class="num">02</div><h3>Let people try open source without setting up a project</h3><p>Today that means clone, install, get an API key, configure, run &#8212; and most people stop at step one. A wrapp is a URL that works on click.</p></div>
+      <div class="pill"><div class="num">03</div><h3>Never hold a key</h3><p>You never see their credentials or their data &#8212; the broker gates every call on their machine. Nothing to store, nothing to leak.</p></div>
+    </div>
+    <div class="insts" style="margin-top:26px">
+      <div class="inst"><div class="n">01</div><h3>Point your agent at the spec</h3><p>One line is the whole onboarding &#8212; it reads the contract and wires your app. No install, no signup.</p><code style="display:block;font-family:var(--mono);font-size:12px;color:var(--lime);background:var(--panel);border:1px solid var(--edge);border-radius:8px;padding:10px 12px;margin-top:10px;overflow-x:auto">Read thelastprompt.ai/switchboard/llms.txt and wire my app to Switchboard.</code></div>
+      <div class="inst"><div class="n">02</div><h3>Swap your backend for the broker</h3><p>Switchboard injects <b>window.claude</b> into your page. Replace your model call with one request &#8212; that&#8217;s the migration.</p><a href="https://github.com/sameeeeeeep/switchboard/blob/main/docs/BUILDING-A-WRAPP.md">Read the full spec &#8594;</a></div>
+      <div class="inst"><div class="n">03</div><h3>Copy from 94 working apps</h3><p>Every wrapp on the board is open source &#8212; fork the closest one instead of starting cold.</p><a href="https://github.com/sameeeeeeep/switchboard/tree/main/examples/apps/wrapps">Browse the source &#8594;</a></div>
     </div>
   </section>
   <div class="rule"></div>
