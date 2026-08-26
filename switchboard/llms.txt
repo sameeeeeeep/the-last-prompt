@@ -47,7 +47,7 @@ Two ways a wrapp gets the bridge, and they have different rules:
 
 | | How the bridge arrives | Origin rules |
 |---|---|---|
-| **Inside Switchboard** (a native window) | The Mac app injects it into whatever URL it loads | **Any origin. Your domain works today.** |
+| **Inside Switchboard** (a native window) | The Mac app injects it into whatever URL it loads | **Any origin. Your domain works today** — send users there with `switchboard://open?url=…` (above). |
 | **A normal browser tab** | The Chrome extension injects it | Only an allowlist: `localhost`, `127.0.0.1`, `thelastprompt.ai`, `sameep.ai`, `sameeeeeeep.github.io` |
 
 What that means in practice:
@@ -58,6 +58,42 @@ What that means in practice:
   origin is added to the extension — open an issue to request it.
 - **Always degrade honestly**: if `window.claude` is absent, say so and tell the user to open the app in
   Switchboard. Never fail silently.
+
+## Getting the user into Switchboard — one button
+
+Your page is HTML, so it can hand **itself** to the native app. This is the recommended entry point:
+it needs no extension and no allowlist, and the same button covers the user who hasn't installed yet.
+
+```html
+<a id="open-sb" href="switchboard://open?url=https://myapp.com&name=My%20App">Open in Switchboard</a>
+```
+
+```js
+// If the app is installed the page loses focus / gets hidden. If nothing happens, it isn't installed —
+// send them to the download instead. (There is no reliable "is it installed?" API; this is the pattern.)
+document.getElementById("open-sb").addEventListener("click", (e) => {
+  if (window.claude?.isRelay) return;                 // already inside Switchboard — do nothing
+  let left = false;
+  const onHide = () => { left = true; };
+  document.addEventListener("visibilitychange", onHide, { once: true });
+  window.addEventListener("blur", onHide, { once: true });
+  setTimeout(() => {
+    document.removeEventListener("visibilitychange", onHide);
+    if (!left) location.href = "https://thelastprompt.ai/switchboard/";   // not installed → get it
+  }, 1200);
+});
+```
+
+What the user sees: Switchboard asks them first — a card naming **your domain** — and only opens after
+they approve. Inside the window your page gets `window.claude`, and each model/tool grant is still asked
+for separately. Admission is not authorization.
+
+Show the button when there is no provider, and your normal UI when there is:
+
+```js
+const inSwitchboard = !!window.claude?.isRelay;
+document.body.classList.toggle("needs-switchboard", !inSwitchboard);
+```
 
 ## The wire methods
 
