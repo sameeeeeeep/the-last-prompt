@@ -59,41 +59,56 @@ What that means in practice:
 - **Always degrade honestly**: if `window.claude` is absent, say so and tell the user to open the app in
   Switchboard. Never fail silently.
 
-## Getting the user into Switchboard — one button
+## Getting the user into Switchboard — the standard button
 
-Your page is HTML, so it can hand **itself** to the native app. This is the recommended entry point:
-it needs no extension and no allowlist, and the same button covers the user who hasn't installed yet.
+**Use the canonical button. Do not hand-roll one** — every wrapp uses the same script so the
+affordance looks and behaves identically everywhere, and improves in one place.
 
 ```html
-<a id="open-sb" href="switchboard://open?url=https://myapp.com&name=My%20App">Open in Switchboard</a>
+<script src="https://thelastprompt.ai/switchboard/open-in-switchboard.js" defer></script>
+<div data-switchboard-open></div>
 ```
+
+That's the whole integration. The script handles all three states for you:
+
+| State | What happens |
+|---|---|
+| Already inside Switchboard | Renders nothing — your app just works |
+| Installed | `switchboard://open` hands **this page** to the Mac app: a native window, any origin, no Chrome extension, no allowlist. Switchboard asks the user first, naming your domain. |
+| Not installed | Falls back to the download page after ~1.2s of nothing happening |
+
+Options, as data-attributes on the mount element:
+
+| Attribute | Default | What it does |
+|---|---|---|
+| `data-name` | `document.title` | The name shown in Switchboard's consent card |
+| `data-url` | this page | The page to open |
+| `data-label` | `Open in Switchboard` | Button text |
+| `data-theme` | `dark` | `dark` or `light` |
+
+Rendering your own UI instead? The script also exposes:
 
 ```js
-// If the app is installed the page loses focus / gets hidden. If nothing happens, it isn't installed —
-// send them to the download instead. (There is no reliable "is it installed?" API; this is the pattern.)
-document.getElementById("open-sb").addEventListener("click", (e) => {
-  if (window.claude?.isRelay) return;                 // already inside Switchboard — do nothing
-  let left = false;
-  const onHide = () => { left = true; };
-  document.addEventListener("visibilitychange", onHide, { once: true });
-  window.addEventListener("blur", onHide, { once: true });
-  setTimeout(() => {
-    document.removeEventListener("visibilitychange", onHide);
-    if (!left) location.href = "https://thelastprompt.ai/switchboard/";   // not installed → get it
-  }, 1200);
-});
+window.openInSwitchboard({ url, name, onMissing });   // same handoff + fallback, your chrome
 ```
 
-What the user sees: Switchboard asks them first — a card naming **your domain** — and only opens after
-they approve. Inside the window your page gets `window.claude`, and each model/tool grant is still asked
-for separately. Admission is not authorization.
+### The URL scheme, if you need it directly
 
-Show the button when there is no provider, and your normal UI when there is:
+```
+switchboard://open?url=<encoded page url>&name=<encoded display name>
+```
+
+Only `http`/`https` targets are accepted, the user is always asked, and the card names the **host**.
+Admission is not authorization: your model and tool grants are still requested separately inside.
+
+### Show your app's state honestly
 
 ```js
 const inSwitchboard = !!window.claude?.isRelay;
 document.body.classList.toggle("needs-switchboard", !inSwitchboard);
 ```
+
+Never fail silently. If there's no provider, show the button — don't let a dead AI feature look broken.
 
 ## The wire methods
 
@@ -174,6 +189,7 @@ prompt, and you never see their keys. That constraint is the product.
 - [ ] Handle a partial grant
 - [ ] Storage keys are filename-safe (`-`, never `:`)
 - [ ] Degrade honestly when `window.claude` is absent — tell the user to open it in Switchboard
+- [ ] Ship the canonical button (`open-in-switchboard.js`) — never a hand-rolled copy
 - [ ] Deploying to your own domain? It works inside Switchboard; a plain browser tab needs your origin allowlisted
 
 ## Links
