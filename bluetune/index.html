@@ -573,8 +573,35 @@ function ofdmDecode(x,fs,symN){
 }
 // dispatchers: exact mode = standard (serial) or turbo (OFDM), both wrapped in Reed–Solomon FEC
 let EXACT_MODE='turbo';
-function demodSerial(x,s,fs,symN){ const avail=Math.floor((x.length-s)/symN), nBytes=Math.min(avail,2*400000)>>1; if(nBytes<8) return null; const b=new Uint8Array(nBytes); for(let i=0;i<nBytes;i++){ const h=symAt(x,s+(2*i)*symN,fs,symN), l=symAt(x,s+(2*i+1)*symN,fs,symN); b[i]=(h.nib<<4)|l.nib; } return b; }
-function demodOFDM(x,s,fs,symN){ const avail=Math.floor((x.length-s)/symN), nsym=Math.min(avail,200000), nBytes=(nsym*OG)>>1; if(nBytes<8) return null; const nibs=new Int16Array(nsym*OG); for(let sy=0;sy<nsym;sy++){ const st=s+sy*symN; for(let g=0;g<OG;g++) nibs[sy*OG+g]=oNib(x,st,fs,symN,g).nib; } const b=new Uint8Array(nBytes); for(let i=0;i<nBytes;i++) b[i]=(nibs[2*i]<<4)|nibs[2*i+1]; return b; }
+function demodSerial(x,s,fs,symN){
+  let nsym=Math.min(Math.floor((x.length-s)/symN),2*400000); const nB0=nsym>>1; if(nB0<8) return null; nsym=nB0*2;
+  const nib=new Int16Array(nsym), d=Math.max(1,Math.round(symN*0.09)), step=Math.max(1,Math.round(symN*0.03));
+  let pos=s, done=nsym;
+  for(let sy=0;sy<nsym;sy++){
+    if(sy%8===0){ let bestSh=0,bestC=-1; for(let sh=-d;sh<=d;sh+=step){ const p=pos+sh; if(p<0||p+symN>=x.length) continue; const c=symAt(x,p,fs,symN).conf; if(c>bestC){bestC=c;bestSh=sh;} } pos+=bestSh; }
+    if(pos<0||pos+symN>=x.length){ done=sy; break; }
+    nib[sy]=symAt(x,pos,fs,symN).nib; pos+=symN;
+  }
+  const nb=done>>1; if(nb<8) return null; const b=new Uint8Array(nb); for(let i=0;i<nb;i++) b[i]=(nib[2*i]<<4)|nib[2*i+1]; return b;
+}
+function demodOFDM(x,s,fs,symN){
+  let nsym=Math.min(Math.floor((x.length-s)/symN),200000); if((nsym*OG>>1)<8) return null;
+  const nibs=new Int16Array(nsym*OG);
+  const d=Math.max(1,Math.round(symN*0.09)), step=Math.max(1,Math.round(symN*0.03)), probe=[0,3,5,7];
+  let pos=s, done=nsym;
+  for(let sy=0;sy<nsym;sy++){
+    if(sy%5===0){ // periodically re-align to follow clock drift between the two devices
+      let bestSh=0,bestC=-1;
+      for(let sh=-d;sh<=d;sh+=step){ const p=pos+sh; if(p<0||p+symN>=x.length) continue; let c=0; for(const g of probe) c+=oNib(x,p,fs,symN,g).conf; if(c>bestC){bestC=c;bestSh=sh;} }
+      pos+=bestSh;
+    }
+    if(pos<0||pos+symN>=x.length){ done=sy; break; }
+    for(let g=0;g<OG;g++) nibs[sy*OG+g]=oNib(x,pos,fs,symN,g).nib;
+    pos+=symN;
+  }
+  const nBytes=(done*OG)>>1; if(nBytes<8) return null;
+  const b=new Uint8Array(nBytes); for(let i=0;i<nBytes;i++) b[i]=(nibs[2*i]<<4)|nibs[2*i+1]; return b;
+}
 function parseFrame(b){ if(b.length<9||b[0]!==0x53||b[1]!==0x4E) return null; const kind=b[3], nameLen=b[4]; let p=5; if(p+nameLen+4>b.length) return null; let name; try{name=new TextDecoder().decode(b.slice(p,p+nameLen));}catch(e){name='received.bin';} p+=nameLen; const dataLen=((b[p]<<24)|(b[p+1]<<16)|(b[p+2]<<8)|b[p+3])>>>0; p+=4; if(dataLen>500000||p+dataLen+4>b.length) return null; const data=b.slice(p,p+dataLen); p+=dataLen; const crc=((b[p]<<24)|(b[p+1]<<16)|(b[p+2]<<8)|b[p+3])>>>0, calc=crc32(b,p); return {kind,name,data,dataLen,crcOk:crc===calc}; }
 function exactSynth(frame,sSec,fs,reps){ const coded=rsEncodeStream(frame); return EXACT_MODE==='turbo'?ofdmSynth(coded,sSec,fs,reps):synth(coded,sSec,fs,reps); }
 function exactCodedLen(frameLen){ return 8+frameLen+Math.ceil(frameLen/RS_K)*RS_NP; }
