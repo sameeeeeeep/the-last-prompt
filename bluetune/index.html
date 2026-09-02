@@ -447,22 +447,27 @@ function buildFrame(kind,name,data){
   body[o]=(crc>>>24)&255;body[o+1]=(crc>>>16)&255;body[o+2]=(crc>>>8)&255;body[o+3]=crc&255;
   return body;
 }
-const GAP=0.12; // silence between repeated copies
+const GAP=0.12, TAIL=0.18; // silence between copies · end-marker sync burst (QR-style closing finder)
 function synth(frame,sSec,fs,reps){
-  reps=reps||1; const leadN=Math.round(LEAD*fs), symN=Math.round(sSec*fs), gapN=Math.round(GAP*fs), nib=[];
+  reps=reps||1; const leadN=Math.round(LEAD*fs), symN=Math.round(sSec*fs), gapN=Math.round(GAP*fs), tailN=Math.round(TAIL*fs), nib=[];
   for(const b of frame){ nib.push(b>>4,b&15); }
-  const one=leadN+nib.length*symN, n=reps*one+(reps-1)*gapN, out=new Float32Array(n); let ph=0, o=0;
+  const one=leadN+nib.length*symN+tailN, n=reps*one+(reps-1)*gapN, out=new Float32Array(n); let ph=0, o=0;
   for(let rep=0;rep<reps;rep++){
     for(let i=0;i<leadN;i++){ out[o++]=Math.sin(ph); ph+=2*Math.PI*FSYNC/fs; }
     for(let s=0;s<nib.length;s++){ const f=DATA[nib[s]]; for(let j=0;j<symN;j++){ out[o++]=Math.sin(ph); ph+=2*Math.PI*f/fs; } }
-    if(rep<reps-1){ o+=gapN; } // silence gap; phase paused
+    for(let i=0;i<tailN;i++){ out[o++]=Math.sin(ph); ph+=2*Math.PI*FSYNC/fs; } // end marker
+    if(rep<reps-1){ o+=gapN; }
   }
   const fN=Math.round(0.005*fs); for(let i=0;i<fN;i++){ out[i]*=i/fN; out[n-1-i]*=i/fN; }
   let pk=0; for(const v of out) pk=Math.max(pk,Math.abs(v)); const g=pk>0?0.85/pk:1; for(let i=0;i<n;i++) out[i]*=g;
   return out;
 }
 function goertzel(x,start,len,freq,fs){ const w=2*Math.PI*freq/fs,cw=Math.cos(w),c=2*cw,sw=Math.sin(w); let s1=0,s2=0; for(let i=0;i<len;i++){ const s0=x[start+i]+c*s1-s2; s2=s1; s1=s0; } const re=s1-s2*cw, im=s2*sw; return Math.sqrt(re*re+im*im); }
-function symAt(x,start,fs,symN){ const a=start+Math.round(symN*0.1), len=Math.round(symN*0.8); let best=0,bestE=-1,sum=0; for(let k=0;k<N_TONES;k++){ const e=goertzel(x,a,len,DATA[k],fs); sum+=e; if(e>bestE){bestE=e;best=k;} } return {nib:best,conf:sum>0?bestE/sum:0}; }
+let DRIFT=1; // frequency-scale factor from clock-mismatch calibration (1 = matched)
+function symAt(x,start,fs,symN){ const a=start+Math.round(symN*0.1), len=Math.round(symN*0.8); let best=0,bestE=-1,sum=0; for(let k=0;k<N_TONES;k++){ const e=goertzel(x,a,len,DATA[k]*DRIFT,fs); sum+=e; if(e>bestE){bestE=e;best=k;} } return {nib:best,conf:sum>0?bestE/sum:0}; }
+// measure the exact received pitch of the known sync tone vs its true value → the clock-mismatch factor
+function measureDrift(x,rs,re,fs,syncF){ const len=Math.min(Math.round(0.2*fs), re-rs-4); if(len<Math.round(0.05*fs)) return 1; const a=rs+Math.round((re-rs-len)/2);
+  let bf=syncF,be=-1; for(let f=syncF*0.97; f<=syncF*1.03; f+=syncF*0.0006){ const e=goertzel(x,a,len,f,fs); if(e>be){be=e;bf=f;} } return bf/syncF; }
 function magicAt(x,s,fs,symN){ if(s<0||s+symN*8>=x.length) return -1; const a=symAt(x,s,fs,symN),b=symAt(x,s+symN,fs,symN),c=symAt(x,s+2*symN,fs,symN),d=symAt(x,s+3*symN,fs,symN); return (((a.nib<<4)|b.nib)===0x53 && ((c.nib<<4)|d.nib)===0x4E)?(a.conf+b.conf+c.conf+d.conf)/4:-1; }
 // Locate every copy: find sync lead-ins cheaply, refine each to a precise symbol start.
 function findCandidates(x,fs,symN){
@@ -512,22 +517,23 @@ function decode(x,fs,symN){
 const OG=8, OTPG=16, OBASE=600, OSP=44100/4096*4, OSYNC=480; // 8 groups × 16 tones, ~43 Hz spacing, band ~600–6060 Hz
 function oFreq(g,k){ return OBASE+(g*OTPG+k)*OSP; }
 function ofdmSynth(frame,sSec,fs,reps){
-  reps=reps||1; const leadN=Math.round(LEAD*fs), symN=Math.round(sSec*fs), gapN=Math.round(GAP*fs);
+  reps=reps||1; const leadN=Math.round(LEAD*fs), symN=Math.round(sSec*fs), gapN=Math.round(GAP*fs), tailN=Math.round(TAIL*fs);
   const nib=[]; for(const b of frame){ nib.push(b>>4,b&15); } while(nib.length%OG) nib.push(0);
-  const nsym=nib.length/OG, NT=OG*OTPG, one=leadN+nsym*symN, n=reps*one+(reps-1)*gapN, out=new Float32Array(n);
+  const nsym=nib.length/OG, NT=OG*OTPG, one=leadN+nsym*symN+tailN, n=reps*one+(reps-1)*gapN, out=new Float32Array(n);
   const ph=new Float64Array(NT), dph=new Float64Array(NT); for(let g=0;g<OG;g++) for(let k=0;k<OTPG;k++) dph[g*OTPG+k]=2*Math.PI*oFreq(g,k)/fs;
   let sp=0, dsp=2*Math.PI*OSYNC/fs, o=0;
   for(let rep=0;rep<reps;rep++){
     for(let i=0;i<leadN;i++){ out[o++]=Math.sin(sp); sp+=dsp; }
     for(let s=0;s<nsym;s++){ const act=new Int32Array(OG); for(let g=0;g<OG;g++) act[g]=g*OTPG+(nib[s*OG+g]||0);
       for(let j=0;j<symN;j++){ let sm=0; for(let g=0;g<OG;g++) sm+=Math.sin(ph[act[g]]); out[o++]=sm; for(let t=0;t<NT;t++) ph[t]+=dph[t]; } }
+    for(let i=0;i<tailN;i++){ out[o++]=Math.sin(sp); sp+=dsp; } // end marker
     if(rep<reps-1) o+=gapN;
   }
   const fN=Math.round(0.005*fs); for(let i=0;i<fN;i++){ out[i]*=i/fN; out[n-1-i]*=i/fN; }
   let pk=0; for(const v of out) pk=Math.max(pk,Math.abs(v)); const g2=pk>0?0.85/pk:1; for(let i=0;i<n;i++) out[i]*=g2;
   return out;
 }
-function oNib(x,start,fs,symN,g){ const a=start+Math.round(symN*0.1), len=Math.round(symN*0.8); let best=0,be=-1,sum=0; for(let k=0;k<OTPG;k++){ const e=goertzel(x,a,len,oFreq(g,k),fs); sum+=e; if(e>be){be=e;best=k;} } return {nib:best,conf:sum>0?be/sum:0}; }
+function oNib(x,start,fs,symN,g){ const a=start+Math.round(symN*0.1), len=Math.round(symN*0.8); let best=0,be=-1,sum=0; for(let k=0;k<OTPG;k++){ const e=goertzel(x,a,len,oFreq(g,k)*DRIFT,fs); sum+=e; if(e>be){be=e;best=k;} } return {nib:best,conf:sum>0?be/sum:0}; }
 function oMagicAt(x,s,fs,symN){ if(s<0||s+symN>=x.length) return -1; const a=oNib(x,s,fs,symN,0),b=oNib(x,s,fs,symN,1),c=oNib(x,s,fs,symN,2),d=oNib(x,s,fs,symN,3); return (((a.nib<<4)|b.nib)===0x53 && ((c.nib<<4)|d.nib)===0x4E)?(a.conf+b.conf+c.conf+d.conf)/4:-1; }
 function ofdmCandidates(x,fs,symN){
   const hop=Math.round(0.02*fs), win=Math.round(0.04*fs), probe=[oFreq(0,0),oFreq(4,8),oFreq(7,15)];
@@ -578,9 +584,9 @@ function demodSerial(x,s,fs,symN){
   const nib=new Int16Array(nsym), d=Math.max(1,Math.round(symN*0.09)), step=Math.max(1,Math.round(symN*0.03));
   let pos=s, done=nsym;
   for(let sy=0;sy<nsym;sy++){
-    if(sy%8===0){ let bestSh=0,bestC=-1; for(let sh=-d;sh<=d;sh+=step){ const p=pos+sh; if(p<0||p+symN>=x.length) continue; const c=symAt(x,p,fs,symN).conf; if(c>bestC){bestC=c;bestSh=sh;} } pos+=bestSh; }
+    if(sy%8===0){ let bestSh=0,bestC=-1; for(let sh=-d;sh<=d;sh+=step){ const p=Math.round(pos+sh); if(p<0||p+symN>=x.length) continue; const c=symAt(x,p,fs,symN).conf; if(c>bestC){bestC=c;bestSh=sh;} } pos+=bestSh; }
     if(pos<0||pos+symN>=x.length){ done=sy; break; }
-    nib[sy]=symAt(x,pos,fs,symN).nib; pos+=symN;
+    nib[sy]=symAt(x,Math.round(pos),fs,symN).nib; pos+=symN;
   }
   const nb=done>>1; if(nb<8) return null; const b=new Uint8Array(nb); for(let i=0;i<nb;i++) b[i]=(nib[2*i]<<4)|nib[2*i+1]; return b;
 }
@@ -590,13 +596,13 @@ function demodOFDM(x,s,fs,symN){
   const d=Math.max(1,Math.round(symN*0.09)), step=Math.max(1,Math.round(symN*0.03)), probe=[0,3,5,7];
   let pos=s, done=nsym;
   for(let sy=0;sy<nsym;sy++){
-    if(sy%5===0){ // periodically re-align to follow clock drift between the two devices
+    if(sy%5===0){ // periodically re-align to follow any residual clock drift
       let bestSh=0,bestC=-1;
-      for(let sh=-d;sh<=d;sh+=step){ const p=pos+sh; if(p<0||p+symN>=x.length) continue; let c=0; for(const g of probe) c+=oNib(x,p,fs,symN,g).conf; if(c>bestC){bestC=c;bestSh=sh;} }
+      for(let sh=-d;sh<=d;sh+=step){ const p=Math.round(pos+sh); if(p<0||p+symN>=x.length) continue; let c=0; for(const g of probe) c+=oNib(x,p,fs,symN,g).conf; if(c>bestC){bestC=c;bestSh=sh;} }
       pos+=bestSh;
     }
     if(pos<0||pos+symN>=x.length){ done=sy; break; }
-    for(let g=0;g<OG;g++) nibs[sy*OG+g]=oNib(x,pos,fs,symN,g).nib;
+    const P=Math.round(pos); for(let g=0;g<OG;g++) nibs[sy*OG+g]=oNib(x,P,fs,symN,g).nib;
     pos+=symN;
   }
   const nBytes=(done*OG)>>1; if(nBytes<8) return null;
@@ -605,15 +611,56 @@ function demodOFDM(x,s,fs,symN){
 function parseFrame(b){ if(b.length<9||b[0]!==0x53||b[1]!==0x4E) return null; const kind=b[3], nameLen=b[4]; let p=5; if(p+nameLen+4>b.length) return null; let name; try{name=new TextDecoder().decode(b.slice(p,p+nameLen));}catch(e){name='received.bin';} p+=nameLen; const dataLen=((b[p]<<24)|(b[p+1]<<16)|(b[p+2]<<8)|b[p+3])>>>0; p+=4; if(dataLen>500000||p+dataLen+4>b.length) return null; const data=b.slice(p,p+dataLen); p+=dataLen; const crc=((b[p]<<24)|(b[p+1]<<16)|(b[p+2]<<8)|b[p+3])>>>0, calc=crc32(b,p); return {kind,name,data,dataLen,crcOk:crc===calc}; }
 function exactSynth(frame,sSec,fs,reps){ const coded=rsEncodeStream(frame); return EXACT_MODE==='turbo'?ofdmSynth(coded,sSec,fs,reps):synth(coded,sSec,fs,reps); }
 function exactCodedLen(frameLen){ return 8+frameLen+Math.ceil(frameLen/RS_K)*RS_NP; }
-function exactDecode(x,fs,symN){
-  const turbo=EXACT_MODE==='turbo', cands=(turbo?ofdmCandidates:findCandidates)(x,fs,symN);
-  if(!cands.length) return {err:'No signal found. Play it louder/closer, cut noise, then try again.'};
-  let fallback=null, trunc=null;
-  for(let i=0;i<cands.length&&i<16;i++){ const raw=(turbo?demodOFDM:demodSerial)(x,cands[i],fs,symN); if(!raw||raw[0]!==0x53||raw[1]!==0x4E) continue;
+// find sync-tone-dominant regions (start lead-in and end marker) — the QR-style finder bounds
+function syncScan(x,fs,syncF,probes){
+  const hop=Math.round(0.02*fs), win=Math.round(0.04*fs), es=[],pos=[]; let maxE=1e-9;
+  for(let p=0;p+win<x.length;p+=hop){ const e=goertzel(x,p,win,syncF,fs); let ed=0; for(const f of probes) ed+=goertzel(x,p,win,f,fs); ed/=probes.length; es.push(e>ed*1.4?e:0); pos.push(p); if(e>maxE)maxE=e; }
+  const regs=[]; let runStart=-1;
+  for(let i=0;i<es.length;i++){ const hi=es[i]>0.12*maxE; if(hi){ if(runStart<0) runStart=pos[i]; } else { if(runStart>=0 && pos[i]-runStart>0.12*fs) regs.push({s:runStart,e:pos[i]}); runStart=-1; } }
+  if(runStart>=0 && x.length-runStart>0.12*fs) regs.push({s:runStart,e:x.length});
+  return regs;
+}
+function refineStart(x,fs,symN,turbo,approx){
+  const magic=turbo?oMagicAt:magicAt, lo=Math.round(0.6*symN),hi=Math.round(1.6*symN),cstep=Math.max(1,Math.round(0.02*symN)),fstep=Math.max(1,Math.round(0.0015*symN));
+  let cb=-1,cbc=-1; for(let s=approx-lo;s<=approx+hi;s+=cstep){ const c=magic(x,s,fs,symN); if(c>cbc){cbc=c;cb=s;} }
+  if(cbc<0) return null; let best=cb,bc=cbc; for(let s=cb-cstep;s<=cb+cstep;s+=fstep){ if(s<0) continue; const c=magic(x,s,fs,symN); if(c>bc){bc=c;best=s;} } return best;
+}
+function hdrLen(x,s,fs,symN,turbo){ // read first 8 coded bytes (drift negligible over a few symbols) -> frame length
+  const nibs=[];
+  if(turbo){ const need=Math.ceil(16/OG); for(let sy=0;sy<need;sy++){ const st=s+Math.round(sy*symN); for(let g=0;g<OG;g++) nibs.push(oNib(x,st,fs,symN,g).nib); } }
+  else { for(let i=0;i<16;i++) nibs.push(symAt(x,s+Math.round(i*symN),fs,symN).nib); }
+  const b=[]; for(let i=0;i<8;i++) b.push(((nibs[2*i]||0)<<4)|(nibs[2*i+1]||0));
+  if(b[0]!==0x53||b[1]!==0x4E) return -1;
+  const maj=(p,q,r)=>(p===q||p===r)?p:(q===r?q:p);
+  const fl=(maj(b[2],b[4],b[6])<<8)|maj(b[3],b[5],b[7]); return (fl>=7&&fl<=200000)?fl:-1;
+}
+// Boundary-calibrated decode: use start+end finder to measure the true symbol rate, so a clock mismatch can't drift us off.
+function exactDecode(x,fs,symN0){
+  const turbo=EXACT_MODE==='turbo';
+  const syncF=turbo?OSYNC:FSYNC, probes=turbo?[oFreq(0,0),oFreq(4,8),oFreq(7,15)]:[F0,F0+7*DF,F0+15*DF];
+  const demod=turbo?demodOFDM:demodSerial;
+  const regs=syncScan(x,fs,syncF,probes);
+  let fallback=null, trunc=null, tried=0;
+  try{
+  for(let i=0;i<regs.length && tried<8;i++){
+    DRIFT=measureDrift(x,regs[i].s,regs[i].e,fs,syncF);            // calibrate freq+rate from the sync-tone finder
+    const symN=symN0/DRIFT;                                        // symbols are that much shorter/longer on our clock
+    const ds=refineStart(x,fs,symN,turbo,regs[i].e); if(ds==null) continue;
+    const fl=hdrLen(x,ds,fs,symN,turbo); if(fl<0) continue; tried++;
+    const raw=demod(x,ds,fs,symN); if(!raw||raw[0]!==0x53||raw[1]!==0x4E) continue;
     const rs=rsDecodeStream(raw); if(!rs) continue; if(rs.truncated){ trunc=trunc||rs; continue; } if(!rs.frame) continue;
-    const pf=parseFrame(rs.frame); if(!pf) continue; if(pf.crcOk) return pf; if(!fallback) fallback=pf; }
+    const pf=parseFrame(rs.frame); if(!pf) continue; if(pf.crcOk) return pf; if(!fallback) fallback=pf;
+  }
+  if(!fallback && !trunc){ // fallback: brute magic scan at nominal rate (no clear finder found)
+    DRIFT=1; const cands=(turbo?ofdmCandidates:findCandidates)(x,fs,symN0);
+    for(let i=0;i<cands.length&&i<8;i++){ const raw=demod(x,cands[i],fs,symN0); if(!raw||raw[0]!==0x53||raw[1]!==0x4E) continue;
+      const rs=rsDecodeStream(raw); if(!rs) continue; if(rs.truncated){ trunc=trunc||rs; continue; } if(!rs.frame) continue;
+      const pf=parseFrame(rs.frame); if(!pf) continue; if(pf.crcOk) return pf; if(!fallback) fallback=pf; }
+  }
+  } finally { DRIFT=1; }
   if(fallback) return fallback;
   if(trunc) return {err:`Still receiving (${trunc.frameLen} bytes) — let it finish, or move closer.`};
+  if(!regs.length) return {err:'No signal found. Play it louder/closer, cut noise, then try again.'};
   return {err:'Signal found but it would not decode cleanly (too much noise). Move closer, quieter, resend.'};
 }
 
