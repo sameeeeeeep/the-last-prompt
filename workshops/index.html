@@ -3,10 +3,10 @@
 <meta charset="UTF-8">
 <meta name="google-site-verification" content="QWNvZV25SwA6QShgioOIhmtgE9hVY2u63mK03ZEYLHw" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AGI is here. Are you there yet? — In-person AI coaching</title>
+<title>AI Guru — workshops & certification. AGI is here. Are you there yet?</title>
 <meta name="description" content="In-person AI coaching in Mumbai for startups, operators and creatives. One coach, your own laptop, your own work. Three levels: prompt engineering, the AI-native workspace, harness engineering.">
 <link rel="canonical" href="https://thelastprompt.ai/workshops/">
-<meta property="og:type" content="website"><meta property="og:title" content="AGI is here. Are you there yet?"><meta property="og:description" content="In-person AI coaching for startups, operators and creatives. Three levels: prompted, primed, promptless."><meta property="og:url" content="https://thelastprompt.ai/workshops/"><meta property="og:image" content="https://thelastprompt.ai/og.png">
+<meta property="og:type" content="website"><meta property="og:title" content="AI Guru — AGI is here. Are you there yet?"><meta property="og:description" content="In-person AI coaching for startups, operators and creatives. Three levels: prompted, primed, promptless."><meta property="og:url" content="https://thelastprompt.ai/workshops/"><meta property="og:image" content="https://thelastprompt.ai/og.png">
 <link rel="icon" href="/switchboard/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -57,7 +57,7 @@ section.hero{border-top:0;padding-top:clamp(48px,6vw,84px)}
 
 /* sessions calendar */
 .cal-legend{display:flex;gap:14px;font:10px/1.5 var(--mono);letter-spacing:.12em;color:#94a380;text-transform:uppercase;padding-bottom:6px}
-.cal-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e6eadf;margin-right:6px;vertical-align:-1px}.cal-legend i.free{background:var(--lime)}.cal-legend i.full{background:#3a4432}
+.cal-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e6eadf;margin-right:6px;vertical-align:-1px}.cal-legend i.free{background:var(--lime)}.cal-legend i.full{background:#3a4432}.cal-legend i.win{background:#1e2a19;border:1px solid #3a4432}.cal-legend i.conf{background:#e6eadf;box-shadow:0 0 6px #e6eadf}
 .calwrap{display:grid;grid-template-columns:340px 1fr;gap:22px;margin-top:30px;align-items:start}
 @media(max-width:900px){.calwrap{grid-template-columns:1fr}}
 .cal{position:sticky;top:20px;background:#050705;border:1px solid #1e2a19;border-radius:14px;padding:16px}
@@ -71,6 +71,7 @@ section.hero{border-top:0;padding-top:clamp(48px,6vw,84px)}
 .cal-grid button.has::after{content:"";position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:#e6eadf}
 .cal-grid button.has.free::after{background:var(--lime);box-shadow:0 0 8px #c8f25099}.cal-grid button.has.full::after{background:#3a4432}
 .cal-grid button.has:hover,.cal-grid button.sel{border-color:#97b663;background:var(--lime-soft)}
+.cal-grid button.win{background:#0f150c;border-color:#1e2a19;color:#b9c4ad}.cal-grid button.win.dayok{color:var(--ink)}
 .cal-grid button.today{font-weight:600;text-decoration:underline;text-underline-offset:3px}
 .cal-note{margin-top:12px;font:10px/1.5 var(--mono);letter-spacing:.06em;color:#6f7d66}
 .sess{display:grid;gap:12px}
@@ -86,6 +87,9 @@ section.hero{border-top:0;padding-top:clamp(48px,6vw,84px)}
 .guide{display:flex;align-items:center;gap:8px}.av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#c8f250,#5a6f38);color:#0b1005;display:grid;place-items:center;font:700 10px var(--sans);flex:none}
 .going{display:flex;align-items:center;gap:6px}.going .dots{display:flex}.going .dots i{width:18px;height:18px;border-radius:50%;background:#1e2a19;border:2px solid var(--card);margin-left:-6px}.going .dots i:first-child{margin-left:0}.going .dots i.on{background:#5a6f38}
 .sx .cta{margin-left:auto;font:600 11px var(--mono);color:var(--lime)}
+.demand{display:grid;gap:5px;margin-top:10px}.demand>div{display:grid;grid-template-columns:110px 1fr 40px;align-items:center;gap:8px;font:10px/1.4 var(--mono);color:#94a380}.demand i{display:block;height:6px;border-radius:3px;background:#182315;overflow:hidden;position:relative}.demand i::after{content:"";position:absolute;inset:0;width:var(--w);background:var(--lime);opacity:.85}.demand b{font-weight:500;color:#b9c4ad;text-align:right}.demand .form b{color:var(--lime)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips button{background:#0b0e0c;border:1px solid #2a3325;color:#b9c4ad;border-radius:99px;padding:6px 11px;font:12px var(--sans)}.chips button[aria-pressed=true]{border-color:#97b663;background:var(--lime-soft);color:var(--ink)}
+.sheet .batches{display:grid;gap:8px;margin-top:8px}.sheet .batches label{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid #2a3325;border-radius:10px;background:#0b0e0c;font:13px var(--sans);color:var(--ink);text-transform:none;letter-spacing:0;cursor:pointer}.sheet .batches label small{margin-left:auto;font:10px var(--mono);color:#94a380}.sheet .batches input{width:auto}
 .sheet[hidden]{display:none}.sheet{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px}
 .sheet-bg{position:absolute;inset:0;background:#000a;backdrop-filter:blur(6px)}
 .sheet-card{position:relative;width:min(760px,100%);max-height:92vh;overflow:auto;background:#0a0d0b;border:1px solid #2a3325;border-radius:18px;padding:26px;box-shadow:0 40px 120px #000}
@@ -248,17 +252,17 @@ footer nav{display:flex;gap:20px}
 </style></head>
 <body>
 <header><div class="wrap nav">
- <a class="logo" href="/switchboard/"><svg viewBox="0 0 26 26" aria-hidden="true"><g fill="#c8f250"><circle cx="3" cy="3" r="2"/><circle cx="8" cy="3" r="2"/><circle cx="13" cy="3" r="2"/><circle cx="18" cy="3" r="2"/><circle cx="23" cy="3" r="2"/><circle cx="3" cy="8" r="2"/><circle cx="8" cy="8" r="2"/><circle cx="13" cy="8" r="2"/><circle cx="18" cy="8" r="2" fill="#3a4432"/><circle cx="23" cy="8" r="2"/><circle cx="3" cy="13" r="2"/><circle cx="8" cy="13" r="2"/><circle cx="13" cy="13" r="2"/><circle cx="18" cy="13" r="2"/><circle cx="23" cy="13" r="2"/><circle cx="3" cy="18" r="2"/><circle cx="8" cy="18" r="2"/><circle cx="13" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="23" cy="18" r="2"/><circle cx="3" cy="23" r="2"/><circle cx="8" cy="23" r="2"/><circle cx="13" cy="23" r="2"/><circle cx="18" cy="23" r="2"/><circle cx="23" cy="23" r="2"/></g></svg>Switchboard</a>
- <nav><a href="#sessions">Sessions</a><a href="#who">Who it’s for</a><a href="#how">How we coach</a><a href="#levels">Levels</a><a href="#faq">FAQ</a><a class="btn" href="#sessions" style="padding:10px 14px">See the calendar</a></nav>
+ <a class="logo" href="/workshops/"><svg viewBox="0 0 26 26" aria-hidden="true"><g fill="#c8f250"><circle cx="3" cy="3" r="2"/><circle cx="8" cy="3" r="2"/><circle cx="13" cy="3" r="2"/><circle cx="18" cy="3" r="2"/><circle cx="23" cy="3" r="2"/><circle cx="3" cy="8" r="2"/><circle cx="8" cy="8" r="2"/><circle cx="13" cy="8" r="2"/><circle cx="18" cy="8" r="2" fill="#3a4432"/><circle cx="23" cy="8" r="2"/><circle cx="3" cy="13" r="2"/><circle cx="8" cy="13" r="2"/><circle cx="13" cy="13" r="2"/><circle cx="18" cy="13" r="2"/><circle cx="23" cy="13" r="2"/><circle cx="3" cy="18" r="2"/><circle cx="8" cy="18" r="2"/><circle cx="13" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="23" cy="18" r="2"/><circle cx="3" cy="23" r="2"/><circle cx="8" cy="23" r="2"/><circle cx="13" cy="23" r="2"/><circle cx="18" cy="23" r="2"/><circle cx="23" cy="23" r="2"/></g></svg>AI Guru</a>
+ <nav><a href="#sessions">Workshops</a><a href="#cert">Certification</a><a href="#who">Who it’s for</a><a href="#levels">Levels</a><a href="#faq">FAQ</a><a class="btn" href="#sessions" style="padding:10px 14px">See the calendar</a></nav>
 </div></header>
 
 <main>
 <section class="hero"><div class="wrap hero-grid">
  <div class="reveal">
-  <div class="kicker"><i></i>In-person AI coaching · startups, operators, creatives · Mumbai</div>
+  <div class="kicker"><i></i>AI Guru · workshops &amp; certification · Mumbai · in person</div>
   <h1>AGI is here. <em class="q">Are you there yet?<i class="cur"></i></em></h1>
-  <p class="lead">Superintelligence is already here on the model side. What stands between it and you is a prompt. We coach startups, operators and creatives across that gap, in person, on your own laptop, on your own work. One day per level. You leave there, with it running.</p>
-  <div class="cta-row"><a class="btn" href="#sessions">See upcoming sessions ↗</a><a class="btn ghost" href="#levels">Where are you?</a><small>THE MODEL IS THERE. THE INTERFACE TO IT IS STILL A TEXT FIELD. · MUMBAI · SMALL GROUPS OR 1:1</small></div>
+  <p class="lead">Superintelligence is already here on the model side. What stands between it and you is a prompt. AI Guru is a workshop, in person, for startups, operators and creatives: one guide, your own laptop, your own work. One day per level, from prompted to promptless. You leave with it running. One workshop, the certification, examines you on it.</p>
+  <div class="cta-row"><a class="btn" href="#sessions">See upcoming sessions ↗</a><a class="btn ghost" href="#levels">Where are you?</a><small>FREE · SPONSORED · IN-OFFICE · PAID BATCHES · ONE WORKSHOP CERTIFIES YOU</small></div>
  </div>
  <div class="reveal" style="transition-delay:.15s">
   <div class="stages" id="stages">
@@ -296,10 +300,28 @@ footer nav{display:flex;gap:20px}
 </div></section>
 
 <section id="sessions"><div class="wrap">
- <div class="reveal" style="display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end"><div><div class="kicker"><i></i>Upcoming sessions · Mumbai</div><h2>Pick a day. <em>Take a seat.</em></h2><p class="lead">One room, one guide, one audience per session. Some are free and only ask that you turn up ready. Tap a date on the calendar, or a card.</p></div><div class="cal-legend"><span><i class="free"></i>free</span><span><i></i>paid</span><span><i class="full"></i>full</span></div></div>
+ <div class="reveal" style="display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end"><div><div class="kicker"><i></i>Sessions · Mumbai · batches form on demand</div><h2>Pick a workshop. <em>Tell us when and where.</em></h2><p class="lead">Each workshop runs inside a window, at a few tentative areas. You ask for the day, the slot and the area that suit you. When enough people ask for the same one, a batch forms and everyone on it gets the date. Some are free. Some seats are sponsored. Some run inside your office. One of them is the certification: two days, an exam, and a numbered AI Guru certificate.</p></div><div class="cal-legend"><span><i class="free"></i>free / sponsored</span><span><i></i>paid / in-office</span><span><i class="win"></i>window</span><span><i class="conf"></i>confirmed batch</span></div></div>
  <div class="calwrap reveal">
-  <div class="cal" id="cal"><div class="cal-hd"><button type="button" id="cal-prev" aria-label="Previous month">‹</button><b id="cal-title"></b><button type="button" id="cal-next" aria-label="Next month">›</button></div><div class="cal-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div><div class="cal-grid" id="cal-grid"></div><div class="cal-note">All sessions 10:00 – 17:30 IST unless marked. Venue shared on confirmation.</div></div>
+  <div class="cal" id="cal"><div class="cal-hd"><button type="button" id="cal-prev" aria-label="Previous month">‹</button><b id="cal-title"></b><button type="button" id="cal-next" aria-label="Next month">›</button></div><div class="cal-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div><div class="cal-grid" id="cal-grid"></div><div class="cal-note">Shaded days are the window a session can run in. A solid dot is a confirmed batch you can book directly. Pick a session card to see its window.</div></div>
   <div class="sess" id="sess"></div>
+ </div>
+ <div class="worlds reveal" style="margin-top:22px">
+  <div class="card"><div class="kicker">Sponsor a batch</div><h3 style="font:900 22px/1 var(--display);text-transform:uppercase;margin:10px 0 8px">Free seats, your name on them</h3><p>A company, a college or a fund pays for a batch. The seats go free to creatives, students or founders you pick or we pick. Your name on the certificate line and on the room. <a href="#book" style="color:#c8f250">Ask about sponsoring →</a></p></div>
+  <div class="card"><div class="kicker">In-office</div><h3 style="font:900 22px/1 var(--display);text-transform:uppercase;margin:10px 0 8px">Your team, your space, your work</h3><p>We bring the workshop to your office for a team of six to twenty. Any level, or the two-day ladder. Everyone who clears the level is certified. <a href="#book" style="color:#c8f250">Ask about in-office →</a></p></div>
+ </div>
+</div></section>
+
+<section id="cert"><div class="wrap">
+ <div class="reveal"><div class="kicker"><i></i>AI Guru certification</div><h2>Certified for what you <em>can run,</em> not what you sat through.</h2><p class="lead">The certification is its own workshop: two days, eight seats. Day one you climb the whole ladder on your own laptop. Day two is the exam: your harness against plain Claude Code on the same brief, on the clock, in front of the room. Clear it and you get a numbered AI Guru certificate with what you built written on it. The other workshops get you ready for it. <a href="#s=guru-cert" style="color:#c8f250">See the certification workshop →</a></p></div>
+ <div class="tabs" style="margin-top:30px">
+  <div class="card reveal"><div class="kicker">AI Guru · Level 1</div><h3 style="font:900 22px/1 var(--display);text-transform:uppercase;margin:10px 0 8px">Prompted</h3><p style="font-size:14px;line-height:1.55;color:#b9c4ad">You can brief a model the way you’d brief a good freelancer, and you’ve done it on one real job.</p><p style="margin-top:10px;font:11px/1.6 var(--mono);color:#94a380">EXAMINED ON: YOUR PROMPT SET, RUN LIVE</p></div>
+  <div class="card reveal" style="transition-delay:.08s"><div class="kicker">AI Guru · Level 2</div><h3 style="font:900 22px/1 var(--display);text-transform:uppercase;margin:10px 0 8px">Primed</h3><p style="font-size:14px;line-height:1.55;color:#b9c4ad">Your own AI, tools and context are connected once, and real apps run on them. You can set this up for someone else.</p><p style="margin-top:10px;font:11px/1.6 var(--mono);color:#94a380">EXAMINED ON: YOUR SETUP, ONE PROJECT THROUGH THREE APPS</p></div>
+  <div class="card reveal" style="transition-delay:.16s"><div class="kicker">AI Guru · Level 3</div><h3 style="font:900 22px/1 var(--display);text-transform:uppercase;margin:10px 0 8px">Promptless</h3><p style="font-size:14px;line-height:1.55;color:#b9c4ad">You built the thing that does the job without being asked, and it passed the parity run against plain Claude Code.</p><p style="margin-top:10px;font:11px/1.6 var(--mono);color:#94a380">EXAMINED ON: ONE HARNESS, SHIPPED, THE PARITY RUN</p></div>
+ </div>
+ <div class="facts reveal" style="grid-template-columns:repeat(3,1fr)">
+  <div><b>Numbered, not templated</b>Each certificate carries a number, the level, the date, the guide, and one line naming what you built.</div>
+  <div><b>Sponsors on the line</b>If a sponsor paid for your seat, their name sits on the certificate too.</div>
+  <div><b>All three levels, one certificate</b>The certification workshop examines all three levels in one sitting. You can arrive from any workshop here, or from running this every day on your own.</div>
  </div>
 </div></section>
 
@@ -395,6 +417,7 @@ footer nav{display:flex;gap:20px}
   <details><summary>Does our data leave our machines?</summary><p>Switchboard runs locally. Context and data stay in folders you own. When an app calls a cloud model, that request goes to the provider you chose, and each app has to be granted access first. You watch the calls during the consent block.</p></details>
   <details><summary>Windows or Linux?</summary><p>Not yet. Switchboard is a Mac app, macOS 13 or later on Apple Silicon. For on-site sessions we can pair a few Macs for a mixed team; tell us the mix when you book.</p></details>
   <details><summary>What should we bring?</summary><p>A laptop, a sign-in for Claude Code or Codex for Levels 2 and 3, and one real project: a brand, a product, a client, a weekly job.</p></details>
+  <details><summary>Is the AI Guru certificate real?</summary><p>It is a numbered certificate from The Last Prompt, issued by your guide at the end of the certification workshop, with what you built written on it. It is not a university credit. It says one specific thing: this person can run this, and here is what they ran.</p></details>
   <details><summary>Who coaches?</summary><p>Sameep, and the people building Switchboard at The Last Prompt. We run our own company on these tools every day. You get the same people beside you, not a trainer reading slides.</p></details>
   <details><summary>How many people in the room?</summary><p>Small. An open day is a handful of founders, operators and creatives, one coach. 1:1 is you and the coach.</p></details>
   <details><summary>What happens after the day?</summary><p>You keep a group with your coach for the weeks after. Ask when something breaks, send what you built, and tell us when you’re ready for the next level.</p></details>
@@ -406,7 +429,7 @@ footer nav{display:flex;gap:20px}
  <div class="book">
   <form id="bookform" class="reveal" novalidate>
    <label>Level<div class="seg" id="lvl"><button type="button" data-v="Level 1" aria-pressed="true">1 · Prompts</button><button type="button" data-v="Level 2" aria-pressed="false">2 · Workspace</button><button type="button" data-v="Level 3" aria-pressed="false">3 · Harness</button><button type="button" data-v="Not sure" aria-pressed="false">Not sure</button></div></label>
-   <label>Format<div class="seg" id="seg"><button type="button" data-v="Mumbai open day" aria-pressed="true">Mumbai open day</button><button type="button" data-v="1:1 / my startup" aria-pressed="false">1:1 / my startup</button></div></label>
+   <label>Format<div class="seg" id="seg"><button type="button" data-v="Mumbai open day" aria-pressed="true">Mumbai open day</button><button type="button" data-v="1:1 / my startup" aria-pressed="false">1:1 / my startup</button><button type="button" data-v="In-office" aria-pressed="false">In-office</button><button type="button" data-v="Sponsor a batch" aria-pressed="false">Sponsor</button></div></label>
    <label>Name<input name="name" required autocomplete="name" placeholder="Your name"></label>
    <label>Work email<input name="email" type="email" required autocomplete="email" placeholder="you@company.com"></label>
    <label>Company or studio, and your role<input name="company" required autocomplete="organization" placeholder="Founder at … · designer · ops · 3 of us"></label>
@@ -445,30 +468,39 @@ footer nav{display:flex;gap:20px}
  setStage(1);if(!reduced)stagesEl.classList.add('run');cycle();
  stages.forEach(s=>s.addEventListener('click',()=>{setStage(+s.dataset.s);restartBar();cycle();}));
 
- /* sessions: data lives here — edit dates, prices, seats, going */
+ /* sessions: data lives here — edit windows, locations, prices, batchAt, and add confirmed batches */
  const GUIDES={sameep:{name:'Sameep Rehlan',initials:'SR',role:'Founder, The Last Prompt. Builds Switchboard and runs his own company on it. Your guide for every session unless noted.'}};
+ const LOCS=['Bandra','Lower Parel','Andheri','Powai','South Mumbai','Navi Mumbai'];
+ const SLOTS={morning:'Morning · 10–13',afternoon:'Afternoon · 14–17',full:'Full day · 10–17:30',evening:'Evening · 18–21'};
+ const DAYS=['Sat','Sun','Weekday'];
+ // DEMAND_CSV: publish the Google Form's response sheet to the web as CSV and paste the link here; requests then aggregate live. Empty = show windows only.
+ const DEMAND_CSV='';
  const SESSIONS=[
-  {id:'creatives-sep',title:'AGI for creatives',date:'2026-09-19',start:'15:00',end:'19:00',level:1,price:0,seats:12,going:0,guide:'sameep',venue:'Mumbai · Bandra · venue shared on confirmation',
+  {id:'creatives',title:'AGI for creatives',kind:'free',level:1,price:0,batchAt:8,seats:12,guide:'sameep',range:['2026-09-19','2026-10-25'],days:['Sat','Sun'],slots:['afternoon','evening'],locations:['Bandra','Andheri','Lower Parel'],batches:[],
    who:'Designers, editors, writers, photographers. Freelance or in a studio. You use ChatGPT or Claude sometimes and it still feels like typing to a stranger.',
    learn:['Brief a model the way you brief a good assistant: the five lines, written once','Give it the file, not a description of the file','Logo directions in Crest, cuts in Cut, dictation in Flow on a local model','Your taste file: the one document that makes every output sound like you'],
    requires:['A laptop','Switchboard installed before you arrive (we send the link)','One real piece of work in progress']},
-  {id:'d2c-founders-sep',title:'AGI for D2C founders',date:'2026-09-26',start:'10:00',end:'17:30',level:2,price:null,seats:10,going:0,guide:'sameep',venue:'Mumbai · venue shared on confirmation',
+  {id:'d2c-founders',title:'AGI for D2C founders',kind:'paid',level:2,price:null,batchAt:6,seats:10,guide:'sameep',range:['2026-09-26','2026-11-01'],days:['Sat','Weekday'],slots:['full','morning'],locations:['Lower Parel','Bandra','Powai'],batches:[],
    who:'Founders of consumer brands, pre-launch to ₹10 Cr. You are the marketing team, the ops team and the person the inbox lands on.',
    learn:['Set up Claude Code or Codex with Switchboard once, on your Mac','The brand brief in Brandbrain, the first ads in AdForge, the site reviewed in Redline, all on the same context','Meta Ads connected: what the model can read and what it may never touch','A routine that drafts tomorrow’s moves overnight and waits for your yes'],
    requires:['A Mac, macOS 13+, Apple Silicon','Your Claude Code or Codex sign-in','Your brand: logo, product shots, the notes you already have']},
-  {id:'agency-oct',title:'AGI for agency teams',date:'2026-10-03',start:'10:00',end:'17:30',level:2,price:null,seats:12,going:0,guide:'sameep',venue:'Mumbai · venue shared on confirmation',
+  {id:'agency',title:'AGI for agency teams',kind:'in-office',level:2,price:null,batchAt:6,seats:12,guide:'sameep',range:['2026-10-03','2026-11-08'],days:['Sat','Weekday'],slots:['full'],locations:['Lower Parel','Andheri','Bandra'],batches:[],
    who:'Account, strategy and creative leads at agencies. Two to four people from the same agency work best.',
    learn:['One client, one context vault, every app reads from it','From brief to campaign concepts to site review in an afternoon, on your own subscriptions','Consent per client: what leaves the machine, what never does','How to stop re-explaining the client to the model every Monday'],
    requires:['A Mac per person, macOS 13+, Apple Silicon','Claude Code or Codex sign-ins','One live client you can bring, with their permission']},
-  {id:'d2c-teams-oct',title:'AGI for D2C teams',date:'2026-10-10',start:'10:00',end:'17:30',level:2,price:null,seats:12,going:0,guide:'sameep',venue:'Mumbai · venue shared on confirmation',
+  {id:'d2c-teams',title:'AGI for D2C teams',kind:'in-office',level:2,price:null,batchAt:6,seats:12,guide:'sameep',range:['2026-10-10','2026-11-15'],days:['Sat','Weekday'],slots:['full'],locations:['Lower Parel','Powai','Navi Mumbai'],batches:[],
    who:'Marketing, ops and growth people inside a consumer brand. Come as a team of three or more.',
    learn:['The brand vault: one folder the whole team’s AI reads from','Weekly jobs as wrapps: the report, the listing, the reply, the ad refresh','AdPulse on your real spend, Redline on your real site','Who approves what: gates for anything outward'],
    requires:['A Mac per person, macOS 13+, Apple Silicon','Claude Code or Codex sign-ins','Access to your ad account and site, read-only is fine']},
-  {id:'mba-oct',title:'AGI for MBA students',date:'2026-10-17',start:'11:00',end:'16:00',level:1,price:0,seats:20,going:0,guide:'sameep',venue:'Mumbai · campus or venue shared on confirmation',
-   who:'Current MBA students and recent grads. You will run teams that use this, so learn to run it yourself first.',
+  {id:'mba',title:'AGI for MBA students',kind:'sponsored',level:1,price:0,batchAt:12,seats:20,guide:'sameep',range:['2026-10-17','2026-11-29'],days:['Sat','Sun','Weekday'],slots:['morning','afternoon','evening'],locations:['Powai','South Mumbai','Bandra','Navi Mumbai'],batches:[],
+   who:'Current MBA students and recent grads. You will run teams that use this, so learn to run it yourself first. Ask for a batch on your campus.',
    learn:['Why prompting is a workaround, and what replaces it','A real business case, worked end to end on AI: research, positioning, deck, numbers','What an operator does when the model does the work','How to tell a real AI setup from a demo in an interview'],
    requires:['A laptop','A valid student ID','A case you actually care about']},
-  {id:'creatives-oct',title:'AGI for creatives · level 2',date:'2026-10-24',start:'10:00',end:'17:30',level:2,price:null,seats:10,going:0,guide:'sameep',venue:'Mumbai · Bandra · venue shared on confirmation',
+  {id:'guru-cert',title:'AI Guru certification',cert:true,kind:'paid',level:3,price:null,batchAt:6,seats:8,guide:'sameep',range:['2026-11-07','2026-12-13'],days:['Sat','Sun'],slots:['full'],locations:['Bandra','Lower Parel'],batches:[],
+   who:'Anyone who has done a workshop here, or already runs their work on Claude Code or Codex every day. Two days: the first to build, the second to be examined on what you built. Eight seats so the guide can sit with each of you.',
+   learn:['Day one: the full ladder on your own laptop, prompted to primed to promptless, with the guide beside you','Your harness for one real job, built and run on your own subscription','Day two: the exam. Your harness against plain Claude Code on the same brief, on the clock, in front of the room','Clear it and you leave with a numbered AI Guru certificate naming what you built'],
+   requires:['A Mac, macOS 13+, Apple Silicon','Claude Code or Codex sign-in','One real weekly job you want to stop doing by hand','Both days. There is no certificate for day one alone']},
+  {id:'creatives-2',title:'AGI for creatives · level 2',kind:'paid',level:2,price:null,batchAt:6,seats:10,guide:'sameep',range:['2026-10-24','2026-11-29'],days:['Sat','Sun'],slots:['full'],locations:['Bandra','Andheri'],batches:[],
    who:'Creatives who did the free session, or who already prompt well every day and want the setup done once.',
    learn:['Your Mac, your AI, your files, connected once','Crest, Cut and Flow running on your own subscription with your taste file loaded','A context vault for each client you work with','One small tool you build for the job you do every week'],
    requires:['A Mac, macOS 13+, Apple Silicon','Claude Code or Codex sign-in','Your portfolio and one live brief']},
@@ -476,39 +508,64 @@ footer nav{display:flex;gap:20px}
  const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
  const today=new Date();today.setHours(0,0,0,0);
  const sessEl=document.getElementById('sess'),calGrid=document.getElementById('cal-grid'),calTitle=document.getElementById('cal-title');
- let view=new Date(2026,8,1);let selDate=null;
- const fmtDate=d=>{const x=new Date(d+'T00:00:00');return {dow:x.toLocaleDateString('en-GB',{weekday:'short'}).toUpperCase(),day:x.getDate(),mon:x.toLocaleDateString('en-GB',{month:'short'}).toUpperCase(),long:x.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})};};
- const priceLabel=x=>x.price===0?'FREE':x.price?'₹'+x.price.toLocaleString('en-IN'):'PAID · PRICE ON BOOKING';
- const isFull=x=>x.going>=x.seats;
- function dots(x){const n=Math.min(6,x.seats);let h='';for(let i=0;i<n;i++)h+=`<i class="${i<x.going?'on':''}"></i>`;return `<span class="dots">${h}</span>`;}
- function renderSessions(){const list=SESSIONS.filter(x=>!selDate||x.date===selDate).sort((a,b)=>a.date.localeCompare(b.date));
-  sessEl.innerHTML=(selDate?`<div style="font:10px/1.5 var(--mono);letter-spacing:.12em;color:#94a380">SHOWING ${fmtDate(selDate).long.toUpperCase()} · <a href="#sessions" id="clear-date" style="color:#c8f250">SHOW ALL</a></div>`:'')+list.map(x=>{const d=fmtDate(x.date),g=GUIDES[x.guide],full=isFull(x);
-   return `<article class="sx${full?' full':''}${selDate===x.date?' sel':''}" data-id="${x.id}" tabindex="0"><div class="d"><small>${d.dow}</small><b>${d.day}</b><em>${d.mon} · ${x.start}–${x.end}</em></div><div><h3>${x.title}</h3><div class="row"><span class="pill${x.price===0?' free':''}">${priceLabel(x)}</span><span class="pill lvl">LEVEL ${x.level} · ${['','PROMPTED','PRIMED','PROMPTLESS'][x.level]}</span><span>${x.venue}</span></div><p>${x.who}</p><div class="meta"><span class="guide"><span class="av">${g.initials}</span>${g.name} · guide</span><span class="going">${dots(x)}${full?'full':x.going?x.going+' going · '+(x.seats-x.going)+' seats left':x.seats+' seats · be the first'}</span><span class="cta">${full?'JOIN WAITLIST →':'SEE DETAILS & BOOK →'}</span></div></div></article>`;}).join('')||'<p style="color:#94a380;font-size:14px">Nothing on that day. Pick another date.</p>';
-  const c=document.getElementById('clear-date');if(c)c.addEventListener('click',e=>{e.preventDefault();selDate=null;renderCal();renderSessions();});
-  sessEl.querySelectorAll('.sx').forEach(a=>{a.addEventListener('click',()=>openSheet(a.dataset.id));a.addEventListener('keydown',e=>{if(e.key==='Enter')openSheet(a.dataset.id);});});}
+ let view=new Date(2026,8,1);let selSess=null;
+ const fmtD=d=>{const x=new Date(d+'T00:00:00');return x.toLocaleDateString('en-GB',{day:'numeric',month:'short'});};
+ const fmtLong=d=>new Date(d+'T00:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+ const KINDS={free:'FREE',sponsored:'FREE · SPONSORED SEATS',paid:'PAID · PRICE ON CONFIRMATION','in-office':'IN-OFFICE · YOUR TEAM, YOUR SPACE'};
+ const priceLabel=x=>x.price?'₹'+x.price.toLocaleString('en-IN'):KINDS[x.kind]||'PAID';
+ const dayName=iso=>['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(iso+'T00:00:00').getDay()];
+ const inWin=(x,iso)=>iso>=x.range[0]&&iso<=x.range[1];
+ const dayOk=(x,iso)=>{const d=dayName(iso);return x.days.includes(d)||(x.days.includes('Weekday')&&!['Sat','Sun'].includes(d));};
+ /* demand: live from CSV if configured, plus this visitor's own requests */
+ const demand={};const mine=JSON.parse(localStorage.getItem('sb-requests')||'[]');
+ function addDemand(id,loc,slot,day){const d=demand[id]=demand[id]||{n:0,loc:{},slot:{},day:{}};d.n++;d.loc[loc]=(d.loc[loc]||0)+1;d.slot[slot]=(d.slot[slot]||0)+1;d.day[day]=(d.day[day]||0)+1;}
+ mine.forEach(r=>addDemand(r.id,r.loc,r.slot,r.day));
+ async function loadDemand(){if(!DEMAND_CSV)return;try{const t=await (await fetch(DEMAND_CSV,{cache:'no-store'})).text();Object.keys(demand).forEach(k=>delete demand[k]);
+  t.split(/\r?\n/).forEach(line=>{const m=line.match(/\[request · ([a-z0-9-]+) · day=([^·\]]+) · slot=([^·\]]+) · loc=([^·\]]+)\]/);if(m)addDemand(m[1],m[4].trim(),m[3].trim(),m[2].trim());});renderSessions();}catch(e){}}
+ function demandHtml(x){const d=demand[x.id];if(!d||!d.n)return `<div class="demand"><div><span>REQUESTS</span><i style="--w:0%"></i><b>0</b></div></div><div style="font:10px/1.5 var(--mono);color:#6f7d66;margin-top:6px">A batch forms at ${x.batchAt}. Be the first to ask.</div>`;
+  const locs=Object.entries(d.loc).sort((a,b)=>b[1]-a[1]).slice(0,3);const top=locs[0];const forming=top&&top[1]>=x.batchAt;
+  return `<div class="demand">${locs.map(([l,n])=>`<div class="${n>=x.batchAt?'form':''}"><span>${l.toUpperCase()}</span><i style="--w:${Math.min(100,n/x.batchAt*100)}%"></i><b>${n}/${x.batchAt}</b></div>`).join('')}</div><div style="font:10px/1.5 var(--mono);color:${forming?'var(--lime)':'#6f7d66'};margin-top:6px">${d.n} request${d.n>1?'s':''} · ${forming?top[0]+' batch is forming, dates going out':'a batch forms at '+x.batchAt+' for one area'}</div>`;}
+ function renderSessions(){sessEl.innerHTML=SESSIONS.map(x=>{const g=GUIDES[x.guide];const conf=x.batches.filter(b=>b.date>=today.toISOString().slice(0,10));
+   return `<article class="sx${selSess===x.id?' sel':''}" data-id="${x.id}" tabindex="0"><div class="d"><small>${dayName(x.range[0])==='Sat'?'FROM':'FROM'}</small><b>${fmtD(x.range[0]).split(' ')[0]}</b><em>${fmtD(x.range[0]).split(' ')[1].toUpperCase()} → ${fmtD(x.range[1]).toUpperCase()}</em></div><div><h3>${x.title}</h3><div class="row"><span class="pill${x.price===0?' free':''}">${priceLabel(x)}</span><span class="pill lvl">LEVEL ${x.level}${x.cert?' · CERTIFICATION':''}</span><span class="pill">${x.days.join(' / ')} · ${x.slots.map(k=>SLOTS[k].split(' ·')[0]).join(' / ')}</span></div><div class="row" style="margin-top:6px">${x.locations.map(l=>'<span class="pill">'+l+'</span>').join('')}<span style="color:#6f7d66">tentative</span></div><p>${x.who}</p>${conf.length?`<div class="row" style="margin-top:8px"><span class="pill" style="border-color:#e6eadf;color:#e6eadf">CONFIRMED</span>${conf.map(b=>'<span>'+fmtLong(b.date)+' · '+b.loc+' · '+SLOTS[b.slot].split(' ·')[0]+' · '+(b.seats-b.going)+' seats left</span>').join('')}</div>`:''}${demandHtml(x)}<div class="meta"><span class="guide"><span class="av">${g.initials}</span>${g.name} · guide</span><span class="cta">${conf.length?'BOOK OR REQUEST →':'REQUEST A SLOT →'}</span></div></div></article>`;}).join('');
+  sessEl.querySelectorAll('.sx').forEach(a=>{a.addEventListener('mouseenter',()=>{selSess=a.dataset.id;renderCal();});a.addEventListener('click',()=>openSheet(a.dataset.id));a.addEventListener('keydown',e=>{if(e.key==='Enter')openSheet(a.dataset.id);});});}
  function renderCal(){const y=view.getFullYear(),m=view.getMonth();calTitle.textContent=MONTHS[m]+' '+y;const first=new Date(y,m,1);let pad=(first.getDay()+6)%7;const days=new Date(y,m+1,0).getDate();let h='';for(let i=0;i<pad;i++)h+='<button class="pad" tabindex="-1"></button>';
-  for(let d=1;d<=days;d++){const iso=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ss=SESSIONS.filter(x=>x.date===iso);const dt=new Date(y,m,d);const cls=['has'.repeat(ss.length?1:0),ss.some(x=>x.price===0)?'free':'',ss.length&&ss.every(isFull)?'full':'',dt<today?'past':'',dt.getTime()===today.getTime()?'today':'',selDate===iso?'sel':''].filter(Boolean).join(' ');
-   h+=`<button class="${cls}" data-iso="${iso}" ${ss.length?'':'disabled'} aria-label="${iso}${ss.length?' · '+ss.map(x=>x.title).join(', '):''}">${d}</button>`;}
-  calGrid.innerHTML=h;calGrid.querySelectorAll('button.has').forEach(b=>b.addEventListener('click',()=>{selDate=selDate===b.dataset.iso?null:b.dataset.iso;renderCal();renderSessions();}));}
+  const sx=SESSIONS.find(z=>z.id===selSess);
+  for(let d=1;d<=days;d++){const iso=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const dt=new Date(y,m,d);const conf=SESSIONS.flatMap(z=>z.batches.filter(b=>b.date===iso).map(b=>({...b,sess:z})));const win=sx?inWin(sx,iso):SESSIONS.some(z=>inWin(z,iso));const ok=sx?dayOk(sx,iso):SESSIONS.some(z=>inWin(z,iso)&&dayOk(z,iso));
+   const cls=[conf.length?'has':'',conf.some(b=>b.sess.price===0)?'free':'',win?'win':'',win&&ok?'dayok':'',dt<today?'past':'',dt.getTime()===today.getTime()?'today':''].filter(Boolean).join(' ');
+   h+=`<button class="${cls}" data-iso="${iso}" ${conf.length||(win&&ok&&dt>=today)?'':'disabled'} title="${conf.map(b=>b.sess.title+' · '+b.loc).join(', ')||(win&&ok?'ask for this day':'')}">${d}</button>`;}
+  calGrid.innerHTML=h;calGrid.querySelectorAll('button:not([disabled])').forEach(b=>b.addEventListener('click',()=>{const iso=b.dataset.iso;const conf=SESSIONS.find(z=>z.batches.some(bb=>bb.date===iso));openSheet((conf||sx||SESSIONS.find(z=>inWin(z,iso)&&dayOk(z,iso))).id,iso);}));}
  document.getElementById('cal-prev').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);renderCal();});
  document.getElementById('cal-next').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);renderCal();});
- renderCal();renderSessions();
- /* sheet */
+ renderCal();renderSessions();loadDemand();
+ /* sheet: book a confirmed batch, or request a slot */
  const sheet=document.getElementById('sheet'),sheetBody=document.getElementById('sheet-body');
- function openSheet(id){const x=SESSIONS.find(z=>z.id===id);if(!x)return;const d=fmtDate(x.date),g=GUIDES[x.guide],full=isFull(x);
-  sheetBody.innerHTML=`<div class="kicker"><i></i>${d.long} · ${x.start}–${x.end} IST</div><h3 id="sheet-title">${x.title}</h3><div class="row" style="display:flex;flex-wrap:wrap;gap:8px"><span class="pill${x.price===0?' free':''}">${priceLabel(x)}</span><span class="pill lvl">LEVEL ${x.level}</span><span class="pill">${x.venue}</span><span class="pill">${full?'FULL':x.seats-x.going+' OF '+x.seats+' SEATS LEFT'}</span></div>
-   <div class="grid2"><div><h4>Who it’s for</h4><p style="font-size:14px;line-height:1.55;color:#b9c4ad">${x.who}</p><h4 style="margin-top:16px">Your guide</h4><div class="g"><span class="av">${g.initials}</span><div><b>${g.name}</b><span>${g.role}</span></div></div><h4 style="margin-top:16px">Who’s joining</h4><div class="going" style="font:12px var(--sans);color:#9aab91">${dots(x)}<span style="margin-left:8px">${x.going?x.going+' booked so far':'No one yet. Be the first name on the list.'}</span></div></div>
+ function chips(name,opts,labels,multi){return `<div class="chips" data-name="${name}" data-multi="${multi?1:0}">${opts.map((o,i)=>`<button type="button" data-v="${o}" aria-pressed="${i===0&&!multi?'true':'false'}">${labels?labels[o]||o:o}</button>`).join('')}</div>`;}
+ function openSheet(id,iso){const x=SESSIONS.find(z=>z.id===id);if(!x)return;const g=GUIDES[x.guide];const conf=x.batches.filter(b=>b.date>=today.toISOString().slice(0,10));
+  sheetBody.innerHTML=`<div class="kicker"><i></i>${fmtD(x.range[0])} → ${fmtD(x.range[1])} · ${x.days.join(' / ')} · Mumbai</div><h3 id="sheet-title">${x.title}</h3><div style="display:flex;flex-wrap:wrap;gap:8px"><span class="pill${x.price===0?' free':''}">${priceLabel(x)}</span><span class="pill lvl">LEVEL ${x.level}</span>${x.locations.map(l=>'<span class="pill">'+l+'</span>').join('')}<span class="pill" style="color:#6f7d66">tentative · you pick</span></div>
+   <div class="grid2"><div><h4>Who it’s for</h4><p style="font-size:14px;line-height:1.55;color:#b9c4ad">${x.who}</p><h4 style="margin-top:16px">Your guide</h4><div class="g"><span class="av">${g.initials}</span><div><b>${g.name}</b><span>${g.role}</span></div></div><h4 style="margin-top:16px">How a batch forms</h4><p style="font-size:13px;line-height:1.55;color:#9aab91">You ask for a day, a slot and an area. When ${x.batchAt} people ask for the same area, we fix a date inside the window and mail everyone on that batch. More than one batch can form. ${x.price===0?'Free seats are confirmed once you reply to that mail.':'The price and a payment link come with that mail; nothing is charged before.'}</p>${demandHtml(x)}</div>
    <div><h4>What you’ll learn</h4><ul>${x.learn.map(l=>'<li>'+l+'</li>').join('')}</ul><h4 style="margin-top:16px">${x.price===0?'Free, but it requires':'Bring'}</h4><ul>${x.requires.map(l=>'<li>'+l+'</li>').join('')}</ul></div></div>
-   <form class="sheet-form" data-session="${x.id}" novalidate><label>Name<input name="name" required autocomplete="name" placeholder="Your name"></label><label>Email<input name="email" type="email" required autocomplete="email" placeholder="you@company.com"></label><label>What you do, and what you’d bring<input name="company" required placeholder="e.g. designer at a studio · a rebrand in progress"></label><button class="btn" type="submit">${full?'Join the waitlist ↗':x.price===0?'Take a free seat ↗':'Book a seat ↗'}</button><div class="req">${x.price===0?'<b>Free.</b> A seat is yours once you confirm the requirements above by email. No-shows lose the seat.':'<b>Paid.</b> We reply within a day with the price and a payment link. Nothing is charged until you confirm.'}</div></form>`;
-  sheet.hidden=false;document.body.style.overflow='hidden';sheetBody.querySelector('input').focus();
-  sheetBody.querySelector('form').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,fd=new FormData(f);const name=(fd.get('name')||'').trim(),email=(fd.get('email')||'').trim(),co=(fd.get('company')||'').trim();if(!name||!email||!co){f.reportValidity();return;}
-   const body=new URLSearchParams();body.set(FORM.name,name);body.set(FORM.email,email);body.set(FORM.company,`[session · ${x.id} · ${x.date} · ${full?'waitlist':'book'}] ${co}`);
-   try{await fetch(FORM.action,{method:'POST',mode:'no-cors',body});f.innerHTML=`<div class="sent" style="display:block"><b>${full?'On the list.':'Seat requested.'}</b>We write back within a day${x.price===0?' to confirm your seat':' with the price and a payment link'}. If you don’t hear from us, mail <a href="mailto:sameep@stayoften.com" style="color:#c8f250">sameep@stayoften.com</a>.</div>`;}
-   catch(err){location.href='mailto:sameep@stayoften.com?subject='+encodeURIComponent(x.title+' · '+x.date)+'&body='+encodeURIComponent(`${name}\n${email}\n${co}`);}});}
+   <form class="sheet-form" novalidate>
+    ${conf.length?`<h4>Confirmed batches · book directly</h4><div class="batches">${conf.map((b,i)=>`<label><input type="radio" name="batch" value="${b.date}|${b.loc}|${b.slot}"${i===0?' checked':''}> ${fmtLong(b.date)} · ${b.loc} · ${SLOTS[b.slot]}<small>${b.seats-b.going} left</small></label>`).join('')}<label><input type="radio" name="batch" value=""${conf.length?'':' checked'}> None of these — request another slot</label></div>`:''}
+    <div id="req-fields"><h4 style="margin-top:${conf.length?'16px':'0'}">Your preferred day</h4>${chips('day',x.days,null,true)}<h4 style="margin-top:14px">Slot</h4>${chips('slot',x.slots,SLOTS,false)}<h4 style="margin-top:14px">Area</h4>${chips('loc',x.locations,null,false)}${iso?`<div style="font:11px/1.6 var(--mono);color:var(--lime);margin-top:8px">You picked ${fmtLong(iso)} on the calendar. We’ll note it.</div>`:''}</div>
+    <label style="margin-top:14px">Name<input name="name" required autocomplete="name" placeholder="Your name"></label><label>Email<input name="email" type="email" required autocomplete="email" placeholder="you@company.com"></label><label>What you do, and what you’d bring<input name="company" required placeholder="e.g. designer at a studio · a rebrand in progress"></label>
+    <button class="btn" type="submit">${conf.length?'Book or request ↗':'Request this slot ↗'}</button><div class="req"><b>No payment now.</b> You get a mail when your batch forms, with the date${x.price===0?'':', the price'} and the venue.</div></form>`;
+  sheet.hidden=false;document.body.style.overflow='hidden';
+  const form=sheetBody.querySelector('form');
+  if(iso){const dn=dayName(iso);const dchip=form.querySelector(`.chips[data-name=day] button[data-v="${['Sat','Sun'].includes(dn)?dn:'Weekday'}"]`);if(dchip)dchip.setAttribute('aria-pressed','true');}else{const f=form.querySelector('.chips[data-name=day] button');if(f)f.setAttribute('aria-pressed','true');}
+  form.querySelectorAll('.chips').forEach(c=>c.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(c.dataset.multi==='1'){b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');}else{[...c.children].forEach(z=>z.setAttribute('aria-pressed',z===b));}}));
+  form.querySelectorAll('input[name=batch]').forEach(r=>r.addEventListener('change',()=>{form.querySelector('#req-fields').style.display=r.value?'none':'';}));
+  form.addEventListener('submit',async e=>{e.preventDefault();const fd=new FormData(form);const name=(fd.get('name')||'').trim(),email=(fd.get('email')||'').trim(),co=(fd.get('company')||'').trim();if(!name||!email||!co){form.reportValidity();return;}
+   const batch=fd.get('batch')||'';const pick=n=>[...form.querySelectorAll(`.chips[data-name=${n}] button[aria-pressed=true]`)].map(b=>b.dataset.v);const day=pick('day').join('/')||x.days[0],slot=pick('slot')[0]||x.slots[0],loc=pick('loc')[0]||x.locations[0];
+   const tag=batch?`[book · ${x.id} · ${batch.replace(/\|/g,' · ')}]`:`[request · ${x.id} · day=${day} · slot=${slot} · loc=${loc}${iso?' · date='+iso:''}]`;
+   const body=new URLSearchParams();body.set(FORM.name,name);body.set(FORM.email,email);body.set(FORM.company,`${tag} ${co}`);
+   try{await fetch(FORM.action,{method:'POST',mode:'no-cors',body});if(!batch){mine.push({id:x.id,loc,slot,day:day.split('/')[0]});localStorage.setItem('sb-requests',JSON.stringify(mine));addDemand(x.id,loc,slot,day.split('/')[0]);renderSessions();}
+    form.innerHTML=`<div class="sent" style="display:block"><b>${batch?'Seat requested.':'Slot requested.'}</b>${batch?'We confirm by mail within a day.':'You’re counted for '+loc+', '+SLOTS[slot].split(' ·')[0].toLowerCase()+', '+day+'. When the batch forms you get the date by mail.'} If you don’t hear from us, mail <a href="mailto:sameep@stayoften.com" style="color:#c8f250">sameep@stayoften.com</a>.</div>`;}
+   catch(err){location.href='mailto:sameep@stayoften.com?subject='+encodeURIComponent(x.title+' · '+tag)+'&body='+encodeURIComponent(`${name}\n${email}\n${co}`);}});}
  function closeSheet(){sheet.hidden=true;document.body.style.overflow='';}
  sheet.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click',closeSheet));
  addEventListener('keydown',e=>{if(e.key==='Escape'&&!sheet.hidden)closeSheet();});
  if(location.hash.startsWith('#s=')){openSheet(location.hash.slice(3));}
+ addEventListener('hashchange',()=>{if(location.hash.startsWith('#s='))openSheet(location.hash.slice(3));});
 
  /* locator */
  const lq=[...document.querySelectorAll('.locate-q button')],lout=document.getElementById('locate-out'),youbar=document.getElementById('youbar'),youlbl=document.getElementById('youlbl'),lcta=document.getElementById('locate-cta');
