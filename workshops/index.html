@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="google-site-verification" content="QWNvZV25SwA6QShgioOIhmtgE9hVY2u63mK03ZEYLHw" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGI is here. Are you there yet? — In-person AI coaching</title>
+<meta name="description" content="In-person AI coaching in Mumbai for startups, operators and creatives. One coach, your own laptop, your own work. Three levels: prompt engineering, the AI-native workspace, harness engineering.">
+<link rel="canonical" href="https://thelastprompt.ai/workshops/">
+<meta property="og:type" content="website"><meta property="og:title" content="AGI is here. Are you there yet?"><meta property="og:description" content="In-person AI coaching for startups, operators and creatives. Three levels: prompted, primed, promptless."><meta property="og:url" content="https://thelastprompt.ai/workshops/"><meta property="og:image" content="https://thelastprompt.ai/og.png">
+<link rel="icon" href="/switchboard/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="/switchboard/fonts/Doto.ttf" as="font" type="font/ttf" crossorigin>
+<style>
+@font-face{font-family:Doto;src:url('/switchboard/fonts/Doto.ttf') format('truetype');font-weight:100 900;font-display:swap}
+:root{--bg:#080b09;--ink:#e6eadf;--muted:#9aab91;--dim:#6f7d66;--edge:#82916530;--lime:#c8f250;--lime-soft:#c8f25012;--card:#0d110e;--display:'Doto',ui-monospace,monospace;--mono:'JetBrains Mono',ui-monospace,monospace;--sans:'Instrument Sans',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);letter-spacing:-.015em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+em{color:var(--lime);font-style:normal}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,4vw,44px)}
+header{border-bottom:1px solid var(--edge)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.logo{display:flex;align-items:center;gap:10px;font:900 20px/1 var(--display);letter-spacing:.03em;text-transform:uppercase}
+.logo svg{width:26px;height:26px}
+.nav nav{display:flex;gap:24px;align-items:center;font:12px/1.4 var(--mono);color:#a6b499}
+.nav nav a:hover{color:var(--lime)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:14px;background:var(--lime);border:1px solid #dcff87;color:#142003;border-radius:5px;padding:14px 20px;font:600 12px/1.2 var(--mono);white-space:nowrap;transition:transform .2s,background .2s}
+.btn:hover{background:#ddff8f;transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:#3a4432}.btn.ghost:hover{border-color:#97b663;background:#c8f25008}
+.kicker{font:10px/1.5 var(--mono);letter-spacing:.14em;color:#94a380;display:flex;gap:8px;align-items:center;text-transform:uppercase}
+.kicker i{width:5px;height:5px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px #c8f25066}
+h1{font:900 clamp(34px,5vw,64px)/1 var(--display);letter-spacing:-.05em;text-transform:uppercase;margin:18px 0 22px;text-wrap:balance}
+h2{font:900 clamp(30px,4.2vw,52px)/1.02 var(--display);letter-spacing:-.04em;text-transform:uppercase;margin:14px 0 18px;text-wrap:balance}
+h3{font:600 17px/1.3 var(--sans);letter-spacing:-.02em}
+p.lead{font-size:clamp(16px,1.5vw,19px);line-height:1.55;color:#c2ccb6;max-width:640px}
+section{padding:clamp(64px,8vw,110px) 0;border-top:1px solid var(--edge)}
+section.hero{border-top:0;padding-top:clamp(48px,6vw,84px)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}*{animation:none!important}}
+
+/* hero */
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(30px,5vw,70px);align-items:start}.hero-grid>.reveal:first-child{padding-top:clamp(20px,6vw,90px)}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.cta-row small{display:block;width:100%;font:10px/1.6 var(--mono);letter-spacing:.1em;color:#7f8f73;margin-top:6px}
+/* dot-matrix panel */
+.panel{background:#050705;border:1px solid #1e2a19;border-radius:14px;padding:22px;box-shadow:0 40px 100px #000,inset 0 0 0 1px #0f150c}
+.panel .mx{display:grid;gap:3px;grid-template-columns:repeat(var(--cols),1fr)}
+.panel .mx i{aspect-ratio:1;border-radius:50%;background:#182315;display:block;transition:background .25s,box-shadow .25s}
+.panel .mx i.on{background:var(--lime);box-shadow:0 0 8px #c8f25099}
+.panel .lbl{display:flex;justify-content:space-between;margin-top:16px;font:10px/1.5 var(--mono);letter-spacing:.12em;color:#7f8f73}
+.panel .lbl b{color:var(--lime);font-weight:500}
+
+/* play: live question, locator, gap bar, verbs */
+h1 .q{position:relative}
+h1 .cur{display:inline-block;width:.12em;height:.85em;background:var(--lime);vertical-align:-.08em;margin-left:.08em;animation:bl 1s steps(2) infinite}
+.locate{margin-top:12px;background:#050705;border:1px solid #1e2a19;border-radius:14px;padding:14px}
+.locate-hd{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.locate-hd b{font:900 13px var(--display);letter-spacing:.08em;color:var(--lime);text-transform:uppercase;white-space:nowrap}
+.locate-q{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.locate-q button{text-align:left;background:#0b0e0c;border:1px solid #2a3325;color:#b9c4ad;border-radius:8px;padding:9px 10px;font:12px/1.35 var(--sans);transition:border-color .2s,background .2s,color .2s}
+.locate-q button[aria-pressed=true]{border-color:#97b663;background:var(--lime-soft);color:var(--ink)}
+.locate-q button:hover{border-color:#5a6f38}
+.gapbar{display:grid;gap:6px;margin-top:12px;font:10px/1.4 var(--mono);letter-spacing:.1em;color:#94a380}
+.gapbar>div{display:grid;grid-template-columns:70px 1fr 150px;align-items:center;gap:10px}
+.gapbar i{display:block;height:8px;border-radius:4px;background:#182315;position:relative;overflow:hidden}
+.gapbar i::after{content:"";position:absolute;inset:0;width:var(--w);background:var(--lime);box-shadow:0 0 10px #c8f25088;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.gapbar b{font-weight:500;color:#c8f250;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.locate .btn{margin-top:12px;width:100%}
+h2.verbs span{opacity:.35;transition:opacity .3s,text-shadow .3s}
+h2.verbs span.on{opacity:1;text-shadow:0 0 18px #c8f25055}
+@media(max-width:520px){.locate-q{grid-template-columns:1fr}.gapbar>div{grid-template-columns:56px 1fr 110px}}
+
+/* three stages */
+.stages{position:relative;display:grid;grid-template-columns:1fr;gap:10px}
+.stage{background:#050705;border:1px solid #1e2a19;border-radius:14px;padding:14px 14px 12px;display:grid;grid-template-columns:118px 1fr;gap:14px;align-items:center;transition:border-color .3s,background .3s;opacity:.55}
+.stage.on{border-color:#5a6f38;background:#0a0f09;opacity:1;box-shadow:0 20px 60px #000}
+.stage-hd small{display:block;font:10px/1.4 var(--mono);letter-spacing:.14em;color:#94a380}
+.stage.on .stage-hd small{color:var(--lime)}
+.stage-hd b{display:block;font:900 20px/1.05 var(--display);text-transform:uppercase;letter-spacing:-.02em;margin-top:4px}
+.stage-cap{grid-column:1/-1;font:11px/1.5 var(--mono);color:#7f8f73;letter-spacing:.02em}
+.scr{height:112px;border-radius:8px;background:#0b0e0c;border:1px solid #1e2a19;overflow:hidden;position:relative;font-family:var(--sans)}
+.chat{padding:10px 12px}
+.chat-msg{display:flex;gap:8px;font-size:10.5px;color:#cfd7c7;line-height:1.35;height:62px;overflow:hidden}.chat-role{flex:none;font:10px var(--mono);color:#94a380;padding-top:2px}
+.chat-msg p{white-space:pre-wrap}
+.chat-box{position:absolute;left:10px;right:10px;bottom:8px;padding:6px 10px;border:1px solid #2a3325;border-radius:6px;font-size:11px;color:#6f7d66;display:flex;justify-content:space-between}
+.chat-box i{width:2px;height:12px;background:#cfd7c7;animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:0}}
+.desk{background:linear-gradient(180deg,#141a12,#0b0e0c)}
+.desk-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:70px;height:16px;border-radius:0 0 10px 10px;background:#000;display:flex;gap:3px;justify-content:center;align-items:center}
+.desk-notch i{width:3px;height:3px;border-radius:50%;background:var(--lime);opacity:.5}.stage.on .desk-notch i{animation:lampsweep 1.6s ease-in-out infinite}
+.desk-notch i:nth-child(2){animation-delay:.3s}.desk-notch i:nth-child(3){animation-delay:.6s}
+@keyframes lampsweep{50%{opacity:1}}
+.desk-apps{position:absolute;left:14px;top:26px;display:flex;gap:8px}.desk-apps img{width:26px;height:26px;border-radius:7px;object-fit:cover}
+.desk-chips{position:absolute;left:12px;right:12px;bottom:8px;display:flex;gap:4px;flex-wrap:wrap}.desk-chips span{padding:2px 6px;border:1px solid #2a3325;border-radius:99px;font:9px var(--mono);color:#94a380}
+.stage.on .desk-chips span{border-color:#5a6f38;color:#c8f250}
+.term{padding:9px 12px;font:10.5px/1.6 var(--mono);color:#cfd7c7}
+.t-ln em{color:var(--lime);font-style:normal;margin-right:6px}
+.t-ln.gate{margin-top:2px;padding:3px 7px;border:1px solid #5a6f38;border-radius:4px;color:#e6eadf;display:flex;gap:6px}.t-ln.gate b{color:var(--lime);font-weight:500}.t-ln.gate span{margin-left:auto;color:#94a380}
+.t-ln.no{color:#6f7d66}.t-ln.no s{color:#4a5544;margin-right:6px}
+.stage .t-ln{opacity:0;transform:translateY(4px)}.stage.on .t-ln{animation:rowin .4s forwards}
+.stage.on .t-ln:nth-child(1){animation-delay:.2s}.stage.on .t-ln:nth-child(2){animation-delay:.7s}.stage.on .t-ln:nth-child(3){animation-delay:1.2s}.stage.on .t-ln:nth-child(4){animation-delay:1.8s}.stage.on .t-ln:nth-child(5){animation-delay:2.4s}
+@keyframes rowin{to{opacity:1;transform:none}}
+.stage-bar{height:2px;background:#1e2a19;border-radius:1px;overflow:hidden}.stage-bar i{display:block;height:100%;width:0;background:var(--lime)}
+.stages.run .stage-bar i{animation:bar 4.2s linear infinite}
+@keyframes bar{to{width:100%}}
+@media(max-width:520px){.stage{grid-template-columns:1fr}}
+
+/* two worlds */
+.worlds{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px}
+@media(max-width:760px){.worlds{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:24px}
+.card .kicker{margin-bottom:12px}
+.card p{font-size:15px;line-height:1.55;color:#b9c4ad}
+.card blockquote{font-size:clamp(17px,1.6vw,21px);line-height:1.45;color:var(--ink);margin:0 0 14px}
+.gap{margin-top:18px;padding:18px 22px;border:1px dashed #3a4432;border-radius:10px;font:13px/1.6 var(--mono);color:#b9c4ad}
+.gap em{color:var(--lime)}
+
+/* the day */
+.day{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px);align-items:start;margin-top:34px}
+@media(max-width:900px){.day{grid-template-columns:1fr}}
+.sched{border:1px solid var(--edge);border-radius:12px;overflow:hidden;background:var(--card)}
+.slot{display:grid;grid-template-columns:76px 1fr;gap:16px;padding:16px 18px;border-top:1px solid var(--edge);cursor:pointer;transition:background .2s}
+.slot:first-child{border-top:0}
+.slot:hover,.slot.on{background:var(--lime-soft)}
+.slot time{font:500 12px/1.6 var(--mono);color:#94a380}
+.slot.on time{color:var(--lime)}
+.slot h3{font-size:15px}
+.slot p{font-size:13px;line-height:1.5;color:#9aab91;margin-top:4px}
+.slot .tag{display:inline-block;margin-top:8px;padding:2px 7px;border:1px solid #3a4432;border-radius:3px;font:10px/1.5 var(--mono);letter-spacing:.08em;color:#94a380}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:30px}
+@media(max-width:760px){.tabs{grid-template-columns:1fr}}
+.tabs button{text-align:left;background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:18px 18px 16px;color:var(--ink);display:grid;gap:6px;transition:border-color .2s,background .2s}
+.tabs button small{font:10px/1.4 var(--mono);letter-spacing:.14em;color:#94a380}
+.tabs button b{font:900 22px/1 var(--display);letter-spacing:-.02em;text-transform:uppercase}
+.tabs button span{font-size:13px;color:#9aab91}
+.tabs button:hover{border-color:#5a6f38}
+.tabs button[aria-pressed=true]{border-color:#97b663;background:var(--lime-soft)}
+.tabs button[aria-pressed=true] small{color:var(--lime)}
+/* patch bay */
+.bay{position:sticky;top:24px;background:#050705;border:1px solid #1e2a19;border-radius:14px;padding:18px;box-shadow:0 40px 100px #000}
+.bay svg{width:100%;height:auto;display:block}
+.bay .lamp{fill:#182315}.bay .lamp.on{fill:var(--lime);filter:drop-shadow(0 0 6px #c8f250aa)}
+.bay .cord{stroke:#3a4432;stroke-width:2.5;fill:none;stroke-linecap:round}.bay .cord.on{stroke:var(--lime);filter:drop-shadow(0 0 4px #c8f25099)}
+.bay .cord.on{stroke-dasharray:6 6;animation:flow 1.2s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-12}}
+.bay .cap{margin-top:12px;font:10px/1.5 var(--mono);letter-spacing:.12em;color:#7f8f73;display:flex;justify-content:space-between}
+.bay .cap b{color:var(--lime);font-weight:500}
+
+/* leave with */
+.leave{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px}
+@media(max-width:900px){.leave{grid-template-columns:1fr 1fr}}@media(max-width:520px){.leave{grid-template-columns:1fr}}
+.leave .card{padding:22px}
+.leave .n{font:900 34px/1 var(--display);color:var(--lime);margin-bottom:12px}
+.leave h3{font-size:15px;margin-bottom:6px}.leave p{font-size:13px;line-height:1.5;color:#9aab91}
+
+/* formats */
+.formats{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px}
+@media(max-width:760px){.formats{grid-template-columns:1fr}}
+.fmt{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:28px;display:flex;flex-direction:column;gap:14px}
+.fmt.hot{border-color:#5a6f38;background:linear-gradient(180deg,#0f150c,#0d110e)}
+.fmt h3{font:900 26px/1 var(--display);letter-spacing:-.02em;text-transform:uppercase}
+.fmt ul{list-style:none;padding:0;display:grid;gap:8px;font-size:14px;color:#b9c4ad}
+.fmt li{display:flex;gap:10px;align-items:flex-start}.fmt li i{flex:none;width:14px;height:14px;border-radius:50%;background:var(--lime-soft);border:1px solid #5a6f38;margin-top:3px;position:relative}.fmt li i::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--lime)}
+.fmt .price{font:500 12px/1.6 var(--mono);color:#94a380;letter-spacing:.06em}
+.fmt .btn{align-self:flex-start;margin-top:auto}
+
+/* facts */
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--edge);border-radius:12px;overflow:hidden;margin-top:34px}
+@media(max-width:800px){.facts{grid-template-columns:1fr 1fr}}
+.facts div{padding:20px 18px;border-right:1px solid var(--edge);font-size:13px;line-height:1.5;color:#9aab91}
+.facts div:last-child{border-right:0}
+.facts b{display:block;font:600 14px var(--sans);color:var(--ink);margin-bottom:6px}
+.facts img{height:16px;width:auto;vertical-align:-3px;margin-right:6px;filter:grayscale(1) brightness(1.4)}
+
+/* faq */
+.faq{margin-top:26px;border-top:1px solid var(--edge)}
+.faq details{border-bottom:1px solid var(--edge)}
+.faq summary{list-style:none;cursor:pointer;padding:18px 0;display:flex;justify-content:space-between;gap:20px;font-size:16px;font-weight:500}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:400 18px var(--mono);color:#94a380}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding:0 0 18px;font-size:14px;line-height:1.6;color:#9aab91;max-width:720px}
+
+/* form */
+.book{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px);align-items:start;margin-top:10px}
+@media(max-width:860px){.book{grid-template-columns:1fr}}
+form{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:26px;display:grid;gap:14px}
+label{display:grid;gap:6px;font:10px/1.5 var(--mono);letter-spacing:.12em;color:#94a380;text-transform:uppercase}
+input,select,textarea{font:15px var(--sans);color:var(--ink);background:#0a0d0b;border:1px solid #2a3325;border-radius:6px;padding:12px 14px;width:100%;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#97b663}
+.seg{display:flex;gap:6px}.seg button{flex:1;background:#0a0d0b;border:1px solid #2a3325;color:#b9c4ad;border-radius:6px;padding:11px;font:500 12px var(--mono)}
+.seg button[aria-pressed=true]{border-color:#97b663;background:var(--lime-soft);color:var(--ink)}
+.form-note{font:11px/1.6 var(--mono);color:#7f8f73}
+.sent{display:none;padding:26px;border:1px solid #5a6f38;border-radius:14px;background:var(--lime-soft);font-size:15px;line-height:1.6}
+.sent b{display:block;font:900 22px var(--display);text-transform:uppercase;margin-bottom:8px;color:var(--lime)}
+
+footer{border-top:1px solid var(--edge);padding:30px 0 50px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font:12px/1.5 var(--mono);color:#a6b499}
+footer nav{display:flex;gap:20px}
+</style></head>
+<body>
+<header><div class="wrap nav">
+ <a class="logo" href="/switchboard/"><svg viewBox="0 0 26 26" aria-hidden="true"><g fill="#c8f250"><circle cx="3" cy="3" r="2"/><circle cx="8" cy="3" r="2"/><circle cx="13" cy="3" r="2"/><circle cx="18" cy="3" r="2"/><circle cx="23" cy="3" r="2"/><circle cx="3" cy="8" r="2"/><circle cx="8" cy="8" r="2"/><circle cx="13" cy="8" r="2"/><circle cx="18" cy="8" r="2" fill="#3a4432"/><circle cx="23" cy="8" r="2"/><circle cx="3" cy="13" r="2"/><circle cx="8" cy="13" r="2"/><circle cx="13" cy="13" r="2"/><circle cx="18" cy="13" r="2"/><circle cx="23" cy="13" r="2"/><circle cx="3" cy="18" r="2"/><circle cx="8" cy="18" r="2"/><circle cx="13" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="23" cy="18" r="2"/><circle cx="3" cy="23" r="2"/><circle cx="8" cy="23" r="2"/><circle cx="13" cy="23" r="2"/><circle cx="18" cy="23" r="2"/><circle cx="23" cy="23" r="2"/></g></svg>Switchboard</a>
+ <nav><a href="#here">Already here</a><a href="#who">Who it’s for</a><a href="#how">How we coach</a><a href="#levels">Levels</a><a href="#formats">Formats</a><a href="#faq">FAQ</a><a class="btn" href="#book" style="padding:10px 14px">Book coaching</a></nav>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap hero-grid">
+ <div class="reveal">
+  <div class="kicker"><i></i>In-person AI coaching · startups, operators, creatives · Mumbai</div>
+  <h1>AGI is here. <em class="q">Are you there yet?<i class="cur"></i></em></h1>
+  <p class="lead">Superintelligence is already here on the model side. What stands between it and you is a prompt. We coach startups, operators and creatives across that gap, in person, on your own laptop, on your own work. One day per level. You leave there, with it running.</p>
+  <div class="cta-row"><a class="btn" href="#book">Book coaching ↗</a><a class="btn ghost" href="#levels">Where are you?</a><small>THE MODEL IS THERE. THE INTERFACE TO IT IS STILL A TEXT FIELD. · MUMBAI · SMALL GROUPS OR 1:1</small></div>
+ </div>
+ <div class="reveal" style="transition-delay:.15s">
+  <div class="stages" id="stages">
+   <div class="stage on" data-s="1">
+    <div class="stage-hd"><small>LEVEL 1</small><b>Prompted</b></div>
+    <div class="scr chat"><div class="chat-msg"><span class="chat-role">you</span><p id="typed"></p></div><div class="chat-box">Ask anything<i></i></div></div>
+    <div class="stage-cap">Still here? You carry everything to a blank box, every time.</div>
+   </div>
+   <div class="stage" data-s="2">
+    <div class="stage-hd"><small>LEVEL 2</small><b>Primed</b></div>
+    <div class="scr desk"><div class="desk-notch"><i></i><i></i><i></i></div><div class="desk-apps"><img src="/switchboard/wrapps/brandbrain.png" alt=""><img src="/switchboard/wrapps/adforge.png" alt=""><img src="/switchboard/wrapps/redline.png" alt=""></div><div class="desk-chips"><span>Claude Code</span><span>Files</span><span>Notion</span><span>brand vault</span></div></div>
+    <div class="stage-cap">Here? The system already holds your context, your files, your standing intentions.</div>
+   </div>
+   <div class="stage" data-s="3">
+    <div class="stage-hd"><small>LEVEL 3</small><b>Promptless</b></div>
+    <div class="scr term"><div class="t-ln"><em>✓</em> read brand vault</div><div class="t-ln"><em>✓</em> research 14 competitors</div><div class="t-ln"><em>✓</em> draft positioning</div><div class="t-ln gate"><b>GATE</b> publish to site? <span>you approve</span></div><div class="t-ln no"><s>prompt &gt; _</s> no prompt box</div></div>
+    <div class="stage-cap">Or here? It sees the situation and acts before you have to assemble a request.</div>
+   </div>
+   <div class="stage-bar"><i></i></div>
+  </div>
+  <div class="locate" id="locate">
+   <div class="locate-hd"><span class="kicker"><i></i>Where are you? tap what’s true</span><b id="locate-out">TAP TO FIND OUT</b></div>
+   <div class="locate-q">
+    <button data-p="1">I paste the same context into the box every time</button>
+    <button data-p="1">I explain my project again in every new chat</button>
+    <button data-p="2">My tools and files are connected to my AI</button>
+    <button data-p="2">I open an app for the job, not a chat window</button>
+    <button data-p="3">Something runs for me overnight and waits for my yes</button>
+    <button data-p="3">I built the thing that does my weekly job</button>
+   </div>
+   <div class="gapbar"><div><span>THE MODEL</span><i style="--w:100%"></i><b>superhuman on the benchmark</b></div><div><span>YOU</span><i id="youbar" style="--w:8%"></i><b id="youlbl">not there yet</b></div></div>
+   <a class="btn" href="#book" id="locate-cta" style="display:none">Book Level 1 ↗</a>
+  </div>
+ </div>
+</div></section>
+
+<section id="here"><div class="wrap">
+ <div class="reveal"><div class="kicker"><i></i>Already here</div><h2 class="verbs"><span>It writes the code.</span> <span>Drafts the contract.</span> <span>Reads the scan.</span> <span>Argues the case.</span> <em>On the benchmark, it is already superhuman.</em></h2></div>
+ <div class="worlds">
+  <div class="card reveal"><div class="kicker">And yet</div><p style="font-size:clamp(17px,1.6vw,21px);line-height:1.45;color:var(--ink)">The felt experience of using it has barely moved: you sit at a blank box and explain yourself, again, from scratch. The intelligence is extraordinary. The interface to it is a text field.</p></div>
+  <div class="card reveal" style="transition-delay:.1s"><div class="kicker">The gap</div><p style="font-size:clamp(17px,1.6vw,21px);line-height:1.45;color:var(--ink)">Between how capable the model is and how little of that capability reaches you on an ordinary day. It is not a modelling problem. It is a setup problem. You can close it in a day, with someone beside you.</p></div>
+ </div>
+</div></section>
+
+<section id="who"><div class="wrap">
+ <div class="reveal"><div class="kicker"><i></i>Who it’s for</div><h2>It’s here for everyone. <em>Are you using it like it is?</em></h2></div>
+ <div class="tabs" style="margin-top:30px">
+  <div class="card reveal"><div class="kicker">Startups</div><h3 style="font:900 22px/1 var(--display);text-transform:uppercase;margin:10px 0 8px">Launching something</h3><p style="font-size:14px;line-height:1.55;color:#b9c4ad">Still hiring for what the model already does? A brand to build, ads to make, a site to fix, a deck to send. We coach you through all of it on your own AI: the brief in Brandbrain, the ads in AdForge, the site in Redline.</p><p style="margin-top:10px;font:11px/1.6 var(--mono);color:#94a380">YOU WALK OUT WITH: THE BRAND BRIEF, THE FIRST ADS, THE SITE REVIEWED</p></div>
+  <div class="card reveal" style="transition-delay:.08s"><div class="kicker">Operators</div><h3 style="font:900 22px/1 var(--display);text-transform:uppercase;margin:10px 0 8px">Running the thing</h3><p style="font-size:14px;line-height:1.55;color:#b9c4ad">Still the person the inbox lands on? Ops, chief of staff, the one holding it all in their head. We coach you into a workspace where the model already holds your context, and a routine that drafts tomorrow’s moves overnight and waits for your yes.</p><p style="margin-top:10px;font:11px/1.6 var(--mono);color:#94a380">YOU WALK OUT WITH: A CONTEXT VAULT, ONE ROUTINE ON THE CLOCK</p></div>
+  <div class="card reveal" style="transition-delay:.16s"><div class="kicker">Creatives</div><h3 style="font:900 22px/1 var(--display);text-transform:uppercase;margin:10px 0 8px">Making the thing</h3><p style="font-size:14px;line-height:1.55;color:#b9c4ad">Still doing the busywork around the work? Designers, editors, writers: keep the taste, lose the rest. Logo directions in Crest, cuts in Cut, dictation in Flow on a local model that never leaves your Mac.</p><p style="margin-top:10px;font:11px/1.6 var(--mono);color:#94a380">YOU WALK OUT WITH: YOUR TOOLS ON YOUR AI, YOUR TASTE FILE</p></div>
+ </div>
+</div></section>
+
+<section id="how"><div class="wrap">
+ <div class="reveal"><div class="kicker"><i></i>How we coach</div><h2>Getting there is a day, <em>not a degree.</em></h2></div>
+ <div class="leave" style="margin-top:30px">
+  <div class="card reveal"><div class="n">01</div><h3>You bring the job</h3><p>A brand, a client, a weekly report, a support queue. The day is built on it. No sample projects.</p></div>
+  <div class="card reveal" style="transition-delay:.08s"><div class="n">02</div><h3>We sit next to you</h3><p>A small group, or just you. When yours doesn’t work, we fix it with you at your keyboard, not from the front.</p></div>
+  <div class="card reveal" style="transition-delay:.16s"><div class="n">03</div><h3>You leave with it running</h3><p>Every level ends with something working on your own laptop: a prompt set, a workspace, a harness. Not notes.</p></div>
+  <div class="card reveal" style="transition-delay:.24s"><div class="n">04</div><h3>We stay reachable</h3><p>A group with your coach for the weeks after. When it breaks on a Tuesday, you ask, and we answer.</p></div>
+ </div>
+ <div class="worlds">
+  <div class="card reveal"><div class="kicker">Why we do it this way</div><blockquote>“My feed is full of people building with AI. Most people I know just want an easier way to get something done.”</blockquote><p>Between those two groups sits a setup problem: install this, connect that, bring an API key, explain your project again. Coaching is how we close it for one person at a time.</p></div>
+  <div class="card reveal" style="transition-delay:.1s"><div class="kicker">Why now</div><blockquote>“Superintelligence is here. It just doesn’t feel like it yet.”</blockquote><p>Superintelligence lands the moment it becomes intuitive to use, not the moment it clears a benchmark. Closing that gap is the whole job. For you, it’s a day.</p></div>
+ </div>
+</div></section>
+
+<section id="levels"><div class="wrap">
+ <div class="reveal"><div class="kicker"><i></i>The levels</div><h2>Where are you? <em>Start there.</em></h2><p class="lead">Prompted, primed or promptless. Each level is one coached day. Pick the one that matches where you are and we tell you honestly if it’s the wrong one. The board shows how much of your setup you’ll be running by the end of it.</p></div>
+ <div class="tabs reveal" id="tabs">
+  <button data-l="1" aria-pressed="true"><small>LEVEL 1 · PROMPTED</small><b>Prompt engineering</b><span>You’re here: typing everything into a box. By five, you brief a model the way you’d brief a good freelancer.</span></button>
+  <button data-l="2" aria-pressed="false"><small>LEVEL 2 · PRIMED</small><b>The AI-native workspace</b><span>Closer: the setup is done once, the model holds your context, real apps run on your own AI.</span></button>
+  <button data-l="3" aria-pressed="false"><small>LEVEL 3 · PROMPTLESS</small><b>Harness engineering</b><span>There: you’ve built the thing that does the job without being asked.</span></button>
+ </div>
+ <div class="day">
+  <div class="sched reveal" id="sched"></div>
+  <div class="bay reveal" id="bay">
+   <svg viewBox="0 0 520 420" aria-label="Patch bay: what each level connects">
+    <defs><linearGradient id="pl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d120c"/><stop offset="1" stop-color="#070907"/></linearGradient></defs>
+    <rect x="8" y="8" width="504" height="404" rx="14" fill="url(#pl)" stroke="#1e2a19"/>
+    <text x="24" y="34" font-family="Doto,monospace" font-weight="900" font-size="14" fill="#c8f250" letter-spacing="2">SWITCHBOARD</text>
+    <text x="496" y="34" font-family="JetBrains Mono,monospace" font-size="9" fill="#6f7d66" text-anchor="end">YOUR MACHINE · NOTHING LEAVES WITHOUT A GRANT</text>
+    <g font-family="JetBrains Mono,monospace" font-size="9" fill="#6f7d66" letter-spacing="1.5">
+     <text x="24" y="50">YOUR AI</text><text x="24" y="128">YOUR CONNECTORS</text><text x="24" y="206">YOUR CONTEXT · YOUR DATA</text><text x="24" y="284">APPS</text><text x="24" y="362">HARNESSES · ROUTINES</text>
+    </g>
+    <g id="jacks" font-family="Instrument Sans,system-ui" font-size="10" fill="#9aab91"></g>
+    <g id="cords"></g>
+   </svg>
+   <div class="cap"><span id="baycap">LEVEL 1 · PROMPT ENGINEERING</span><b id="baystep">1 / 3</b></div>
+  </div>
+ </div>
+</div></section>
+
+<section id="leave"><div class="wrap">
+ <div class="reveal"><div class="kicker"><i></i>What “there” looks like</div><h2>Something running. <em>And someone to call.</em></h2></div>
+ <div class="leave">
+  <div class="card reveal"><div class="n">L1</div><h3>Your prompts, written once</h3><p>The five lines for your work, reviewed, kept where you work.</p></div>
+  <div class="card reveal" style="transition-delay:.08s"><div class="n">L2</div><h3>Switchboard on your Mac</h3><p>Your own AI, your own context, your own data. The context resident. Real apps running on it.</p></div>
+  <div class="card reveal" style="transition-delay:.16s"><div class="n">L3</div><h3>One harness you built</h3><p>Tools, instructions, context and a process for one real job. Running on your own setup.</p></div>
+  <div class="card reveal" style="transition-delay:.24s"><div class="n">+</div><h3>Your coach, after</h3><p>A group with your coach for the weeks after. Questions answered, breakages fixed, next level when you’re ready.</p></div>
+ </div>
+</div></section>
+
+<section id="formats"><div class="wrap">
+ <div class="reveal"><div class="kicker"><i></i>Formats</div><h2>A room in Mumbai, <em>or your studio.</em></h2></div>
+ <div class="formats">
+  <div class="fmt reveal"><div class="kicker"><i></i>Open coaching day · Mumbai</div><h3>A small group, one coach, one level</h3><ul><li><i></i>10:00 – 17:30, one room, lunch in. Founders, operators, creatives in the same room</li><li><i></i>Level 1: any laptop. Levels 2–3: macOS 13+, Apple Silicon, your Claude Code or Codex sign-in</li><li><i></i>Bring what you’re working on. The day runs on it</li><li><i></i>Levels run in order; take one or all three</li></ul><div class="price">SEATS OPEN ON REQUEST · ASK FOR THE NEXT DATE</div><a class="btn" href="#book" data-format="mumbai">Ask for a seat ↗</a></div>
+  <div class="fmt hot reveal" style="transition-delay:.1s"><div class="kicker"><i></i>1:1 · or your startup</div><h3>Your studio, your work, your coach for the day</h3><ul><li><i></i>Just you, or you and your co-founders, or the whole early team</li><li><i></i>Any level, or a two-day ladder on the one thing you’re launching</li><li><i></i>Your real brand, real files, real weekly job</li><li><i></i>Mumbai and Pune in person. Elsewhere, ask</li></ul><div class="price">PRICED PER SESSION · TELL US HOW MANY OF YOU</div><a class="btn" href="#book" data-format="onsite">Book 1:1 or your startup ↗</a></div>
+ </div>
+ <div class="facts reveal">
+  <div><b><img src="/switchboard/brands/claude-code.png" alt="">Claude Code and Codex</b>Today, that includes Claude Code and Codex. Levels 2 and 3 run on the access your team already has.</div>
+  <div><b>Local models</b>Local models for supported tasks such as voice and text processing. On the machine.</div>
+  <div><b>Your work stays yours</b>Your context and files stay in folders you own. Each app needs your permission to use them.</div>
+  <div><b>In the open</b>We build in public, ship what works, and keep the code where you can read it.</div>
+ </div>
+</div></section>
+
+<section id="faq"><div class="wrap">
+ <div class="reveal"><div class="kicker"><i></i>A few things to know</div><h2>Before you <em>book.</em></h2></div>
+ <div class="faq reveal">
+  <details><summary>Do we need API keys or a new subscription?</summary><p>No. Level 1 uses whatever your team already uses. Levels 2 and 3 run on the Claude Code or Codex access your team already has. Your provider’s usage limits still apply. Local models cover voice and some text tasks with no account at all.</p></details>
+  <details><summary>I’m not technical. Is this for me?</summary><p>Yes. Most people in the room aren’t. Level 1 and Level 2 need no code at all. Level 3 is for anyone who wants to build the thing that runs their job; we write the seventy lines together.</p></details>
+  <details><summary>Can we skip a level?</summary><p>Yes. A team that prompts well every day starts at Level 2. A team with Claude Code already in the workflow starts at Level 3. Tell us where you are when you book.</p></details>
+  <details><summary>Does our data leave our machines?</summary><p>Switchboard runs locally. Context and data stay in folders you own. When an app calls a cloud model, that request goes to the provider you chose, and each app has to be granted access first. You watch the calls during the consent block.</p></details>
+  <details><summary>Windows or Linux?</summary><p>Not yet. Switchboard is a Mac app, macOS 13 or later on Apple Silicon. For on-site sessions we can pair a few Macs for a mixed team; tell us the mix when you book.</p></details>
+  <details><summary>What should we bring?</summary><p>A laptop, a sign-in for Claude Code or Codex for Levels 2 and 3, and one real project: a brand, a product, a client, a weekly job.</p></details>
+  <details><summary>Who coaches?</summary><p>Sameep, and the people building Switchboard at The Last Prompt. We run our own company on these tools every day. You get the same people beside you, not a trainer reading slides.</p></details>
+  <details><summary>How many people in the room?</summary><p>Small. An open day is a handful of founders, operators and creatives, one coach. 1:1 is you and the coach.</p></details>
+  <details><summary>What happens after the day?</summary><p>You keep a group with your coach for the weeks after. Ask when something breaks, send what you built, and tell us when you’re ready for the next level.</p></details>
+ </div>
+</div></section>
+
+<section id="book"><div class="wrap">
+ <div class="reveal"><div class="kicker"><i></i>Book</div><h2>Not there yet? <em>Say where you are.</em></h2><p class="lead">What you’re building or running, how you use AI today, how many of you. We write back within a day with the level we’d start you on, dates, and the price.</p></div>
+ <div class="book">
+  <form id="bookform" class="reveal" novalidate>
+   <label>Level<div class="seg" id="lvl"><button type="button" data-v="Level 1" aria-pressed="true">1 · Prompts</button><button type="button" data-v="Level 2" aria-pressed="false">2 · Workspace</button><button type="button" data-v="Level 3" aria-pressed="false">3 · Harness</button><button type="button" data-v="Not sure" aria-pressed="false">Not sure</button></div></label>
+   <label>Format<div class="seg" id="seg"><button type="button" data-v="Mumbai open day" aria-pressed="true">Mumbai open day</button><button type="button" data-v="1:1 / my startup" aria-pressed="false">1:1 / my startup</button></div></label>
+   <label>Name<input name="name" required autocomplete="name" placeholder="Your name"></label>
+   <label>Work email<input name="email" type="email" required autocomplete="email" placeholder="you@company.com"></label>
+   <label>Company or studio, and your role<input name="company" required autocomplete="organization" placeholder="Founder at … · designer · ops · 3 of us"></label>
+   <label>Where are you with AI, and what would you bring?<textarea name="project" rows="3" placeholder="e.g. ChatGPT daily, tried Claude Code once; I’d bring the brand I’m launching in November"></textarea></label>
+   <button class="btn" type="submit">Send ↗</button>
+   <div class="form-note">Goes straight to us. No newsletter. If the form is blocked on your network, mail <a href="mailto:sameep@stayoften.com" style="color:#c8f250">sameep@stayoften.com</a>.</div>
+  </form>
+  <div class="sent" id="sent"><b>Got it.</b>We will write back within a day with dates and a plan for your project. If you do not hear from us, mail <a href="mailto:sameep@stayoften.com" style="color:#c8f250">sameep@stayoften.com</a>.</div>
+  <div class="reveal" style="transition-delay:.1s">
+   <div class="card"><div class="kicker">Or the short version</div><p style="font-size:15px;line-height:1.6;color:#b9c4ad;margin-top:10px">Mail <a href="mailto:sameep@stayoften.com?subject=Switchboard%20workshop" style="color:#c8f250">sameep@stayoften.com</a> with your team size and city. Same reply, same day.</p></div>
+   <div class="card" style="margin-top:14px"><div class="kicker">Before the day · levels 2 and 3</div><p style="font-size:14px;line-height:1.6;color:#9aab91;margin-top:10px">Download Switchboard from the <a href="https://github.com/sameeeeeeep/switchboard/releases/latest" style="color:#c8f250">latest release</a> and sign in to Claude Code or Codex. Both take a few minutes. Level 1 needs nothing but a laptop and one weekly task you want done better.</p></div>
+  </div>
+ </div>
+</div></section>
+</main>
+
+<footer><div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-left:0;padding-right:0"><a class="logo" href="/switchboard/">Switchboard</a><nav><a href="/switchboard/">The product</a><a href="/switchboard/developers/">For developers</a><a href="https://github.com/sameeeeeeep/switchboard">GitHub ↗</a></nav><span>© The Last Prompt · an AI lab</span></div></footer>
+
+<script>
+(function(){
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ /* reveal */
+ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.2});
+ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+ setTimeout(()=>{if(!document.querySelector('.reveal.in'))document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));},1800);
+
+ /* three stages: cycle + typing */
+ const stages=[...document.querySelectorAll('.stage')],stagesEl=document.getElementById('stages'),typed=document.getElementById('typed');
+ const PROMPT="You're a growth marketer. We sell ceramic cookware, tone is plain. I tried a discount push, it flopped. Spend file attached again. No emojis. Where did the money go?";
+ let si=0,typeTimer=null;
+ function typePrompt(){clearInterval(typeTimer);let n=0;typed.textContent='';typeTimer=setInterval(()=>{typed.textContent=PROMPT.slice(0,++n);if(n>=PROMPT.length)clearInterval(typeTimer);},18);}
+ function setStage(n){si=n;stages.forEach(s=>s.classList.toggle('on',+s.dataset.s===n));if(n===1)typePrompt();}
+ let cyc=null;function cycle(){clearTimeout(cyc);if(reduced)return;cyc=setTimeout(()=>{setStage(si%3+1);cycle();},4200);}
+ function restartBar(){const b=stagesEl.querySelector('.stage-bar i');b.style.animation='none';void b.offsetWidth;b.style.animation='';}
+ setStage(1);if(!reduced)stagesEl.classList.add('run');cycle();
+ stages.forEach(s=>s.addEventListener('click',()=>{setStage(+s.dataset.s);restartBar();cycle();}));
+
+ /* locator */
+ const lq=[...document.querySelectorAll('.locate-q button')],lout=document.getElementById('locate-out'),youbar=document.getElementById('youbar'),youlbl=document.getElementById('youlbl'),lcta=document.getElementById('locate-cta');
+ let lvl=0;
+ function locate(){const on=lq.filter(b=>b.getAttribute('aria-pressed')==='true');if(!on.length){lout.textContent='TAP TO FIND OUT';youbar.style.setProperty('--w','8%');youlbl.textContent='not there yet';lcta.style.display='none';return;}
+  const p1=on.filter(b=>b.dataset.p==='1').length,p2=on.filter(b=>b.dataset.p==='2').length,p3=on.filter(b=>b.dataset.p==='3').length;
+  let n=1;if(p3>=1&&p2>=1)n=3;else if(p2>=1&&p1===0)n=2;else if(p2>=1)n=2;
+  const w=n===1?'18%':n===2?'55%':'92%';const lab=n===1?'prompted · start at level 1':n===2?'primed · start at level 2':'nearly there · level 3';
+  lout.textContent=['','YOU’RE AT LEVEL 1 · PROMPTED','YOU’RE AT LEVEL 2 · PRIMED','YOU’RE AT LEVEL 3 · PROMPTLESS'][n];youbar.style.setProperty('--w',w);youlbl.textContent=lab;lcta.textContent='Book Level '+n+' ↗';lcta.style.display='';lvl=n;
+  setStage(n);restartBar();cycle();if(typeof setLevel==='function')setLevel(n);}
+ lq.forEach(b=>b.addEventListener('click',()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');locate();}));
+ /* verbs light up in turn */
+ const verbs=[...document.querySelectorAll('h2.verbs span')];let vi=0;setInterval(()=>{verbs.forEach((v,k)=>v.classList.toggle('on',k<=vi));vi=(vi+1)%(verbs.length+1);},900);
+
+ /* levels: schedule + board */
+ const LEVELS={
+  1:{name:'PROMPTED · PROMPT ENGINEERING',slots:[
+   ['10:00','Your prompt, taken apart','Bring one you actually sent this week. We read it together. Most of it isn’t the question. It’s setup.','START HERE'],
+   ['10:45','The five lines','“You’re a growth marketer. We sell ceramic cookware, tone is plain. I already tried a discount push, it flopped. Here’s the spend file again. Never use emojis.” Five lines of context to earn one line of actual work.','CONTEXT'],
+   ['12:00','What carries over. What doesn’t.','You wrote all five before. The model has been told all five before. Nothing carried over, so you pay the tax again. How to stop paying it twice.','MEMORY'],
+   ['14:00','You are the integration layer','You are the memory. You are the thing holding it all in your head. Multiply that by every conversation, every tool, every day. Your team’s prompts, written once, shared.','WORKFLOWS'],
+   ['15:30','Your job, live, with the coach','One task you do every week. We build the prompt set that does it, at your keyboard, and run it on the real thing.','YOUR PROJECT'],
+   ['17:00','Where prompting stops','A great prompt is evidence of a broken interface, not a skill worth having. That is Level 2.','→ PRIMED']]},
+  2:{name:'PRIMED · THE AI-NATIVE WORKSPACE',slots:[
+   ['10:00','Set up, once, together','Claude Code or Codex signed in, Switchboard paired, on your laptop. We don’t move on until it works.','YOUR AI'],
+   ['10:40','Connect','It sees your screen, holds what matters, and acts with your permission. Files, the web, GitHub, Notion, Meta Ads: each one a jack on the board.','CONNECTORS · CONTEXT'],
+   ['12:00','One project, three apps','A brand studio can run on your Claude Code. An ad creator can use the brand brief you already built. A website reviewer can work with the same project.','BRANDBRAIN · ADFORGE · REDLINE'],
+   ['14:00','Your side of the line','Keeping the context resident, keeping your data on your side of the line. There’s an initial setup, and individual apps need permission to use it.','GRANTS · LOCAL MODELS'],
+   ['15:00','Wrapps','Small, sharp, single-purpose tools that don’t start cold. They inherit your context and permissions instead of demanding them line by line.','THE CATALOG'],
+   ['16:30','Leave it running','We check every machine before you go. The app changes. You don’t have to rebuild your entire AI setup.','CHECKED OUT']]},
+  3:{name:'PROMPTLESS · HARNESS ENGINEERING',slots:[
+   ['10:00','What a harness is','The model provides intelligence. The harness supplies tools, instructions, context, and a process for doing useful work. Read one real harness end to end.','ANATOMY'],
+   ['11:00','Coding is one application','Building a brand can have its own harness. Running that brand can have another. Each a purpose-built experience, connected to the user’s existing AI and resources.','THE PATTERN'],
+   ['12:00','Make AI routable','Model access, tools, context and data become resources that can be connected to different harnesses and interfaces. Grants, not keys.','ROUTING · GRANTS'],
+   ['14:00','Build one, paired','Your real weekly job as a harness, about seventy lines, written with the coach beside you. Runs on your own subscription.','SDK · WRAPP'],
+   ['15:30','Retire a category of prompting','Every wrapp is a bet that a whole category of prompting can be retired: not by making the box smarter, but by making the box unnecessary for that job. Same brief, plain Claude Code versus your harness, on the clock.','EVAL · PARITY'],
+   ['17:00','The bar','You don’t prompt a good colleague through every step; you share a goal and they run. That is the bar. We ship it with you: private, or on the public directory.','SHIP']]}};
+
+ const J=[[110,72,'Claude Code',2],[190,72,'Codex',2],[290,72,'a chat window',1],[400,72,'local models',2],
+          [110,150,'Files',2],[180,150,'Web',2],[250,150,'GitHub',2],[330,150,'Notion',2],[410,150,'Meta Ads',2],
+          [140,228,'context vault',2],[260,228,'product notes',2],[390,228,'your files',2],
+          [110,306,'Brandbrain',2],[220,306,'AdForge',2],[330,306,'Redline',2],[440,306,'your wrapp',3],
+          [120,384,'your harness',3],[260,384,'parity gate',3],[400,384,'routines',2]];
+ const jacks=document.getElementById('jacks'),cords=document.getElementById('cords');
+ J.forEach(([x,y,l,s])=>{jacks.insertAdjacentHTML('beforeend',`<g><circle cx="${x}" cy="${y-16}" r="9" fill="#0b0f0a" stroke="#2a3325" stroke-width="2"/><circle class="lamp" data-l="${s}" cx="${x}" cy="${y-16}" r="4"/><text x="${x}" y="${y+6}" text-anchor="middle">${l}</text></g>`);});
+ const C=[[290,56,290,134,1],[110,56,110,134,2],[190,56,250,134,2],[110,134,140,212,2],[250,134,260,212,2],[140,212,110,290,2],[260,212,220,290,2],[110,290,330,290,2],[400,56,220,290,2],[110,290,400,368,2],[440,290,440,368,3],[120,368,260,368,3],[440,368,260,368,3],[140,212,120,368,3]];
+ C.forEach(([x1,y1,x2,y2,s])=>{const my=(y1+y2)/2;cords.insertAdjacentHTML('beforeend',`<path class="cord" data-l="${s}" d="M${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}"/>`);});
+ const sched=document.getElementById('sched'),cap=document.getElementById('baycap'),stepEl=document.getElementById('baystep'),tabs=document.getElementById('tabs');
+ function setLevel(n){[...tabs.children].forEach(b=>b.setAttribute('aria-pressed',+b.dataset.l===n));
+  sched.innerHTML=LEVELS[n].slots.map(([t,h,p,tag],i)=>`<div class="slot${i===0?' on':''}"><time>${t}</time><div><h3>${h}</h3><p>${p}</p><span class="tag">${tag}</span></div></div>`).join('');
+  document.querySelectorAll('.lamp,.cord').forEach(el=>el.classList.toggle('on',+el.dataset.l<=n&&!(n>1&&+el.dataset.l===1&&el.classList.contains('cord'))));
+  cap.textContent='LEVEL '+n+' · '+LEVELS[n].name;stepEl.textContent=n+' / 3';
+  sched.querySelectorAll('.slot').forEach(sl=>sl.addEventListener('click',()=>{sched.querySelectorAll('.slot').forEach(x=>x.classList.remove('on'));sl.classList.add('on');}));
+  const lv=document.getElementById('lvl');if(lv)[...lv.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v==='Level '+n));lvlv='Level '+n;}
+ tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b)setLevel(+b.dataset.l);});
+ let lvlv='Level 1';setLevel(1);
+ const lvlSeg=document.getElementById('lvl');lvlSeg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;lvlv=b.dataset.v;[...lvlSeg.children].forEach(x=>x.setAttribute('aria-pressed',x===b));});
+
+ /* format buttons prefill */
+ const seg=document.getElementById('seg');let fmt='Mumbai open day';
+ seg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;fmt=b.dataset.v;[...seg.children].forEach(x=>x.setAttribute('aria-pressed',x===b));});
+ document.querySelectorAll('[data-format]').forEach(a=>a.addEventListener('click',()=>{const v=a.dataset.format==='onsite'?'1:1 / my startup':'Mumbai open day';[...seg.children].forEach(x=>{x.setAttribute('aria-pressed',x.dataset.v===v);});fmt=v;}));
+
+ /* form → silent Google Form post, mailto fallback */
+ const FORM={action:'https://docs.google.com/forms/d/e/1FAIpQLSfZIxGXFMbuqbICFD9xKmt5RXOtaQ_ivs8F9wZ-QW9yPhxUBg/formResponse',name:'entry.1412016144',email:'entry.1545493625',company:'entry.280725317'};
+ const form=document.getElementById('bookform');
+ form.addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(form);const name=f.get('name').trim(),email=f.get('email').trim(),company=f.get('company').trim(),project=f.get('project').trim();
+  if(!name||!email||!company){form.reportValidity();return;}
+  const body=new URLSearchParams();body.set(FORM.name,name);body.set(FORM.email,email);body.set(FORM.company,`[workshop · ${lvlv} · ${fmt}] ${company}${project?' · '+project:''}`);
+  try{await fetch(FORM.action,{method:'POST',mode:'no-cors',body});form.style.display='none';document.getElementById('sent').style.display='block';}
+  catch(err){location.href='mailto:sameep@stayoften.com?subject='+encodeURIComponent('Switchboard workshop · '+fmt)+'&body='+encodeURIComponent(`${name}\n${email}\n${company}\n\n${project}`);}
+ });
+})();
+</script>
+</body></html>
