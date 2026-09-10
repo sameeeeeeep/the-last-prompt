@@ -55,6 +55,50 @@ section.hero{border-top:0;padding-top:clamp(48px,6vw,84px)}
 .panel .lbl{display:flex;justify-content:space-between;margin-top:16px;font:10px/1.5 var(--mono);letter-spacing:.12em;color:#7f8f73}
 .panel .lbl b{color:var(--lime);font-weight:500}
 
+/* sessions calendar */
+.cal-legend{display:flex;gap:14px;font:10px/1.5 var(--mono);letter-spacing:.12em;color:#94a380;text-transform:uppercase;padding-bottom:6px}
+.cal-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e6eadf;margin-right:6px;vertical-align:-1px}.cal-legend i.free{background:var(--lime)}.cal-legend i.full{background:#3a4432}
+.calwrap{display:grid;grid-template-columns:340px 1fr;gap:22px;margin-top:30px;align-items:start}
+@media(max-width:900px){.calwrap{grid-template-columns:1fr}}
+.cal{position:sticky;top:20px;background:#050705;border:1px solid #1e2a19;border-radius:14px;padding:16px}
+.cal-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.cal-hd b{font:900 16px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.cal-hd button{background:none;border:1px solid #2a3325;color:#b9c4ad;border-radius:6px;width:30px;height:30px;font-size:16px}.cal-hd button:hover{border-color:#97b663;color:var(--lime)}
+.cal-dow{display:grid;grid-template-columns:repeat(7,1fr);font:9px/1.5 var(--mono);letter-spacing:.1em;color:#6f7d66;text-align:center;margin-bottom:4px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-grid button{aspect-ratio:1;border:1px solid transparent;border-radius:8px;background:transparent;color:#9aab91;font:12px var(--sans);position:relative;display:grid;place-items:center}
+.cal-grid button.pad{visibility:hidden}.cal-grid button.past{color:#3a4432}
+.cal-grid button.has{color:var(--ink);border-color:#2a3325;background:#0b0e0c}
+.cal-grid button.has::after{content:"";position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:#e6eadf}
+.cal-grid button.has.free::after{background:var(--lime);box-shadow:0 0 8px #c8f25099}.cal-grid button.has.full::after{background:#3a4432}
+.cal-grid button.has:hover,.cal-grid button.sel{border-color:#97b663;background:var(--lime-soft)}
+.cal-grid button.today{font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.cal-note{margin-top:12px;font:10px/1.5 var(--mono);letter-spacing:.06em;color:#6f7d66}
+.sess{display:grid;gap:12px}
+.sx{display:grid;grid-template-columns:86px 1fr;gap:18px;background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:18px;cursor:pointer;transition:border-color .2s,background .2s}
+.sx:hover,.sx.sel{border-color:#5a6f38;background:#0b100a}
+.sx.full{opacity:.6}
+.sx .d{text-align:center;border-right:1px solid var(--edge);padding-right:14px}.sx .d small{display:block;font:10px/1.4 var(--mono);letter-spacing:.14em;color:#94a380}.sx .d b{display:block;font:900 34px/1 var(--display);margin:2px 0}.sx .d em{display:block;font:10px/1.4 var(--mono);color:#94a380;letter-spacing:.06em}
+.sx h3{font:900 22px/1.05 var(--display);text-transform:uppercase;letter-spacing:-.01em}
+.sx .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;font:11px/1.4 var(--mono);color:#94a380}
+.pill{padding:3px 8px;border:1px solid #2a3325;border-radius:99px;font:10px/1.4 var(--mono);letter-spacing:.06em;color:#b9c4ad}.pill.free{border-color:#5a6f38;color:var(--lime);background:var(--lime-soft)}.pill.lvl{color:#94a380}
+.sx p{font-size:13.5px;line-height:1.5;color:#b9c4ad;margin-top:8px}
+.sx .meta{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;align-items:center;font:11px/1.4 var(--sans);color:#9aab91}
+.guide{display:flex;align-items:center;gap:8px}.av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#c8f250,#5a6f38);color:#0b1005;display:grid;place-items:center;font:700 10px var(--sans);flex:none}
+.going{display:flex;align-items:center;gap:6px}.going .dots{display:flex}.going .dots i{width:18px;height:18px;border-radius:50%;background:#1e2a19;border:2px solid var(--card);margin-left:-6px}.going .dots i:first-child{margin-left:0}.going .dots i.on{background:#5a6f38}
+.sx .cta{margin-left:auto;font:600 11px var(--mono);color:var(--lime)}
+.sheet[hidden]{display:none}.sheet{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px}
+.sheet-bg{position:absolute;inset:0;background:#000a;backdrop-filter:blur(6px)}
+.sheet-card{position:relative;width:min(760px,100%);max-height:92vh;overflow:auto;background:#0a0d0b;border:1px solid #2a3325;border-radius:18px;padding:26px;box-shadow:0 40px 120px #000}
+.sheet-x{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:#0b0e0c;border:1px solid #2a3325;color:#b9c4ad;font-size:18px}
+.sheet h3{font:900 30px/1 var(--display);text-transform:uppercase;margin:6px 0 8px}
+.sheet .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px}
+@media(max-width:640px){.sheet .grid2{grid-template-columns:1fr}.sx{grid-template-columns:70px 1fr}}
+.sheet h4{font:10px/1.5 var(--mono);letter-spacing:.14em;color:#94a380;text-transform:uppercase;margin-bottom:8px}
+.sheet ul{padding-left:0;list-style:none;display:grid;gap:6px;font-size:13.5px;color:#b9c4ad}.sheet li{display:flex;gap:8px}.sheet li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--lime);margin-top:7px}
+.sheet .g{display:flex;gap:12px;align-items:flex-start;background:#0b0e0c;border:1px solid #1e2a19;border-radius:10px;padding:12px}.sheet .g .av{width:40px;height:40px;font-size:14px}.sheet .g b{display:block;font-size:14px}.sheet .g span{font-size:12px;color:#9aab91;line-height:1.45}
+.sheet form{margin-top:18px;padding:18px}
+.sheet .req{margin-top:12px;font:11px/1.6 var(--mono);color:#94a380}.sheet .req b{color:var(--lime);font-weight:500}
+
 /* play: live question, locator, gap bar, verbs */
 h1 .q{position:relative}
 h1 .cur{display:inline-block;width:.12em;height:.85em;background:var(--lime);vertical-align:-.08em;margin-left:.08em;animation:bl 1s steps(2) infinite}
@@ -205,7 +249,7 @@ footer nav{display:flex;gap:20px}
 <body>
 <header><div class="wrap nav">
  <a class="logo" href="/switchboard/"><svg viewBox="0 0 26 26" aria-hidden="true"><g fill="#c8f250"><circle cx="3" cy="3" r="2"/><circle cx="8" cy="3" r="2"/><circle cx="13" cy="3" r="2"/><circle cx="18" cy="3" r="2"/><circle cx="23" cy="3" r="2"/><circle cx="3" cy="8" r="2"/><circle cx="8" cy="8" r="2"/><circle cx="13" cy="8" r="2"/><circle cx="18" cy="8" r="2" fill="#3a4432"/><circle cx="23" cy="8" r="2"/><circle cx="3" cy="13" r="2"/><circle cx="8" cy="13" r="2"/><circle cx="13" cy="13" r="2"/><circle cx="18" cy="13" r="2"/><circle cx="23" cy="13" r="2"/><circle cx="3" cy="18" r="2"/><circle cx="8" cy="18" r="2"/><circle cx="13" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="23" cy="18" r="2"/><circle cx="3" cy="23" r="2"/><circle cx="8" cy="23" r="2"/><circle cx="13" cy="23" r="2"/><circle cx="18" cy="23" r="2"/><circle cx="23" cy="23" r="2"/></g></svg>Switchboard</a>
- <nav><a href="#here">Already here</a><a href="#who">Who it’s for</a><a href="#how">How we coach</a><a href="#levels">Levels</a><a href="#formats">Formats</a><a href="#faq">FAQ</a><a class="btn" href="#book" style="padding:10px 14px">Book coaching</a></nav>
+ <nav><a href="#sessions">Sessions</a><a href="#who">Who it’s for</a><a href="#how">How we coach</a><a href="#levels">Levels</a><a href="#faq">FAQ</a><a class="btn" href="#sessions" style="padding:10px 14px">See the calendar</a></nav>
 </div></header>
 
 <main>
@@ -214,7 +258,7 @@ footer nav{display:flex;gap:20px}
   <div class="kicker"><i></i>In-person AI coaching · startups, operators, creatives · Mumbai</div>
   <h1>AGI is here. <em class="q">Are you there yet?<i class="cur"></i></em></h1>
   <p class="lead">Superintelligence is already here on the model side. What stands between it and you is a prompt. We coach startups, operators and creatives across that gap, in person, on your own laptop, on your own work. One day per level. You leave there, with it running.</p>
-  <div class="cta-row"><a class="btn" href="#book">Book coaching ↗</a><a class="btn ghost" href="#levels">Where are you?</a><small>THE MODEL IS THERE. THE INTERFACE TO IT IS STILL A TEXT FIELD. · MUMBAI · SMALL GROUPS OR 1:1</small></div>
+  <div class="cta-row"><a class="btn" href="#sessions">See upcoming sessions ↗</a><a class="btn ghost" href="#levels">Where are you?</a><small>THE MODEL IS THERE. THE INTERFACE TO IT IS STILL A TEXT FIELD. · MUMBAI · SMALL GROUPS OR 1:1</small></div>
  </div>
  <div class="reveal" style="transition-delay:.15s">
   <div class="stages" id="stages">
@@ -250,6 +294,16 @@ footer nav{display:flex;gap:20px}
   </div>
  </div>
 </div></section>
+
+<section id="sessions"><div class="wrap">
+ <div class="reveal" style="display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end"><div><div class="kicker"><i></i>Upcoming sessions · Mumbai</div><h2>Pick a day. <em>Take a seat.</em></h2><p class="lead">One room, one guide, one audience per session. Some are free and only ask that you turn up ready. Tap a date on the calendar, or a card.</p></div><div class="cal-legend"><span><i class="free"></i>free</span><span><i></i>paid</span><span><i class="full"></i>full</span></div></div>
+ <div class="calwrap reveal">
+  <div class="cal" id="cal"><div class="cal-hd"><button type="button" id="cal-prev" aria-label="Previous month">‹</button><b id="cal-title"></b><button type="button" id="cal-next" aria-label="Next month">›</button></div><div class="cal-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div><div class="cal-grid" id="cal-grid"></div><div class="cal-note">All sessions 10:00 – 17:30 IST unless marked. Venue shared on confirmation.</div></div>
+  <div class="sess" id="sess"></div>
+ </div>
+</div></section>
+
+<div class="sheet" id="sheet" hidden><div class="sheet-bg" data-close></div><div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="sheet-title"><button type="button" class="sheet-x" data-close aria-label="Close">×</button><div id="sheet-body"></div></div></div>
 
 <section id="here"><div class="wrap">
  <div class="reveal"><div class="kicker"><i></i>Already here</div><h2 class="verbs"><span>It writes the code.</span> <span>Drafts the contract.</span> <span>Reads the scan.</span> <span>Argues the case.</span> <em>On the benchmark, it is already superhuman.</em></h2></div>
@@ -373,6 +427,7 @@ footer nav{display:flex;gap:20px}
 
 <script>
 (function(){
+ const FORM={action:'https://docs.google.com/forms/d/e/1FAIpQLSfZIxGXFMbuqbICFD9xKmt5RXOtaQ_ivs8F9wZ-QW9yPhxUBg/formResponse',name:'entry.1412016144',email:'entry.1545493625',company:'entry.280725317'};
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  /* reveal */
  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.2});
@@ -389,6 +444,71 @@ footer nav{display:flex;gap:20px}
  function restartBar(){const b=stagesEl.querySelector('.stage-bar i');b.style.animation='none';void b.offsetWidth;b.style.animation='';}
  setStage(1);if(!reduced)stagesEl.classList.add('run');cycle();
  stages.forEach(s=>s.addEventListener('click',()=>{setStage(+s.dataset.s);restartBar();cycle();}));
+
+ /* sessions: data lives here — edit dates, prices, seats, going */
+ const GUIDES={sameep:{name:'Sameep Rehlan',initials:'SR',role:'Founder, The Last Prompt. Builds Switchboard and runs his own company on it. Your guide for every session unless noted.'}};
+ const SESSIONS=[
+  {id:'creatives-sep',title:'AGI for creatives',date:'2026-09-19',start:'15:00',end:'19:00',level:1,price:0,seats:12,going:0,guide:'sameep',venue:'Mumbai · Bandra · venue shared on confirmation',
+   who:'Designers, editors, writers, photographers. Freelance or in a studio. You use ChatGPT or Claude sometimes and it still feels like typing to a stranger.',
+   learn:['Brief a model the way you brief a good assistant: the five lines, written once','Give it the file, not a description of the file','Logo directions in Crest, cuts in Cut, dictation in Flow on a local model','Your taste file: the one document that makes every output sound like you'],
+   requires:['A laptop','Switchboard installed before you arrive (we send the link)','One real piece of work in progress']},
+  {id:'d2c-founders-sep',title:'AGI for D2C founders',date:'2026-09-26',start:'10:00',end:'17:30',level:2,price:null,seats:10,going:0,guide:'sameep',venue:'Mumbai · venue shared on confirmation',
+   who:'Founders of consumer brands, pre-launch to ₹10 Cr. You are the marketing team, the ops team and the person the inbox lands on.',
+   learn:['Set up Claude Code or Codex with Switchboard once, on your Mac','The brand brief in Brandbrain, the first ads in AdForge, the site reviewed in Redline, all on the same context','Meta Ads connected: what the model can read and what it may never touch','A routine that drafts tomorrow’s moves overnight and waits for your yes'],
+   requires:['A Mac, macOS 13+, Apple Silicon','Your Claude Code or Codex sign-in','Your brand: logo, product shots, the notes you already have']},
+  {id:'agency-oct',title:'AGI for agency teams',date:'2026-10-03',start:'10:00',end:'17:30',level:2,price:null,seats:12,going:0,guide:'sameep',venue:'Mumbai · venue shared on confirmation',
+   who:'Account, strategy and creative leads at agencies. Two to four people from the same agency work best.',
+   learn:['One client, one context vault, every app reads from it','From brief to campaign concepts to site review in an afternoon, on your own subscriptions','Consent per client: what leaves the machine, what never does','How to stop re-explaining the client to the model every Monday'],
+   requires:['A Mac per person, macOS 13+, Apple Silicon','Claude Code or Codex sign-ins','One live client you can bring, with their permission']},
+  {id:'d2c-teams-oct',title:'AGI for D2C teams',date:'2026-10-10',start:'10:00',end:'17:30',level:2,price:null,seats:12,going:0,guide:'sameep',venue:'Mumbai · venue shared on confirmation',
+   who:'Marketing, ops and growth people inside a consumer brand. Come as a team of three or more.',
+   learn:['The brand vault: one folder the whole team’s AI reads from','Weekly jobs as wrapps: the report, the listing, the reply, the ad refresh','AdPulse on your real spend, Redline on your real site','Who approves what: gates for anything outward'],
+   requires:['A Mac per person, macOS 13+, Apple Silicon','Claude Code or Codex sign-ins','Access to your ad account and site, read-only is fine']},
+  {id:'mba-oct',title:'AGI for MBA students',date:'2026-10-17',start:'11:00',end:'16:00',level:1,price:0,seats:20,going:0,guide:'sameep',venue:'Mumbai · campus or venue shared on confirmation',
+   who:'Current MBA students and recent grads. You will run teams that use this, so learn to run it yourself first.',
+   learn:['Why prompting is a workaround, and what replaces it','A real business case, worked end to end on AI: research, positioning, deck, numbers','What an operator does when the model does the work','How to tell a real AI setup from a demo in an interview'],
+   requires:['A laptop','A valid student ID','A case you actually care about']},
+  {id:'creatives-oct',title:'AGI for creatives · level 2',date:'2026-10-24',start:'10:00',end:'17:30',level:2,price:null,seats:10,going:0,guide:'sameep',venue:'Mumbai · Bandra · venue shared on confirmation',
+   who:'Creatives who did the free session, or who already prompt well every day and want the setup done once.',
+   learn:['Your Mac, your AI, your files, connected once','Crest, Cut and Flow running on your own subscription with your taste file loaded','A context vault for each client you work with','One small tool you build for the job you do every week'],
+   requires:['A Mac, macOS 13+, Apple Silicon','Claude Code or Codex sign-in','Your portfolio and one live brief']},
+ ];
+ const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+ const today=new Date();today.setHours(0,0,0,0);
+ const sessEl=document.getElementById('sess'),calGrid=document.getElementById('cal-grid'),calTitle=document.getElementById('cal-title');
+ let view=new Date(2026,8,1);let selDate=null;
+ const fmtDate=d=>{const x=new Date(d+'T00:00:00');return {dow:x.toLocaleDateString('en-GB',{weekday:'short'}).toUpperCase(),day:x.getDate(),mon:x.toLocaleDateString('en-GB',{month:'short'}).toUpperCase(),long:x.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})};};
+ const priceLabel=x=>x.price===0?'FREE':x.price?'₹'+x.price.toLocaleString('en-IN'):'PAID · PRICE ON BOOKING';
+ const isFull=x=>x.going>=x.seats;
+ function dots(x){const n=Math.min(6,x.seats);let h='';for(let i=0;i<n;i++)h+=`<i class="${i<x.going?'on':''}"></i>`;return `<span class="dots">${h}</span>`;}
+ function renderSessions(){const list=SESSIONS.filter(x=>!selDate||x.date===selDate).sort((a,b)=>a.date.localeCompare(b.date));
+  sessEl.innerHTML=(selDate?`<div style="font:10px/1.5 var(--mono);letter-spacing:.12em;color:#94a380">SHOWING ${fmtDate(selDate).long.toUpperCase()} · <a href="#sessions" id="clear-date" style="color:#c8f250">SHOW ALL</a></div>`:'')+list.map(x=>{const d=fmtDate(x.date),g=GUIDES[x.guide],full=isFull(x);
+   return `<article class="sx${full?' full':''}${selDate===x.date?' sel':''}" data-id="${x.id}" tabindex="0"><div class="d"><small>${d.dow}</small><b>${d.day}</b><em>${d.mon} · ${x.start}–${x.end}</em></div><div><h3>${x.title}</h3><div class="row"><span class="pill${x.price===0?' free':''}">${priceLabel(x)}</span><span class="pill lvl">LEVEL ${x.level} · ${['','PROMPTED','PRIMED','PROMPTLESS'][x.level]}</span><span>${x.venue}</span></div><p>${x.who}</p><div class="meta"><span class="guide"><span class="av">${g.initials}</span>${g.name} · guide</span><span class="going">${dots(x)}${full?'full':x.going?x.going+' going · '+(x.seats-x.going)+' seats left':x.seats+' seats · be the first'}</span><span class="cta">${full?'JOIN WAITLIST →':'SEE DETAILS & BOOK →'}</span></div></div></article>`;}).join('')||'<p style="color:#94a380;font-size:14px">Nothing on that day. Pick another date.</p>';
+  const c=document.getElementById('clear-date');if(c)c.addEventListener('click',e=>{e.preventDefault();selDate=null;renderCal();renderSessions();});
+  sessEl.querySelectorAll('.sx').forEach(a=>{a.addEventListener('click',()=>openSheet(a.dataset.id));a.addEventListener('keydown',e=>{if(e.key==='Enter')openSheet(a.dataset.id);});});}
+ function renderCal(){const y=view.getFullYear(),m=view.getMonth();calTitle.textContent=MONTHS[m]+' '+y;const first=new Date(y,m,1);let pad=(first.getDay()+6)%7;const days=new Date(y,m+1,0).getDate();let h='';for(let i=0;i<pad;i++)h+='<button class="pad" tabindex="-1"></button>';
+  for(let d=1;d<=days;d++){const iso=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const ss=SESSIONS.filter(x=>x.date===iso);const dt=new Date(y,m,d);const cls=['has'.repeat(ss.length?1:0),ss.some(x=>x.price===0)?'free':'',ss.length&&ss.every(isFull)?'full':'',dt<today?'past':'',dt.getTime()===today.getTime()?'today':'',selDate===iso?'sel':''].filter(Boolean).join(' ');
+   h+=`<button class="${cls}" data-iso="${iso}" ${ss.length?'':'disabled'} aria-label="${iso}${ss.length?' · '+ss.map(x=>x.title).join(', '):''}">${d}</button>`;}
+  calGrid.innerHTML=h;calGrid.querySelectorAll('button.has').forEach(b=>b.addEventListener('click',()=>{selDate=selDate===b.dataset.iso?null:b.dataset.iso;renderCal();renderSessions();}));}
+ document.getElementById('cal-prev').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);renderCal();});
+ document.getElementById('cal-next').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);renderCal();});
+ renderCal();renderSessions();
+ /* sheet */
+ const sheet=document.getElementById('sheet'),sheetBody=document.getElementById('sheet-body');
+ function openSheet(id){const x=SESSIONS.find(z=>z.id===id);if(!x)return;const d=fmtDate(x.date),g=GUIDES[x.guide],full=isFull(x);
+  sheetBody.innerHTML=`<div class="kicker"><i></i>${d.long} · ${x.start}–${x.end} IST</div><h3 id="sheet-title">${x.title}</h3><div class="row" style="display:flex;flex-wrap:wrap;gap:8px"><span class="pill${x.price===0?' free':''}">${priceLabel(x)}</span><span class="pill lvl">LEVEL ${x.level}</span><span class="pill">${x.venue}</span><span class="pill">${full?'FULL':x.seats-x.going+' OF '+x.seats+' SEATS LEFT'}</span></div>
+   <div class="grid2"><div><h4>Who it’s for</h4><p style="font-size:14px;line-height:1.55;color:#b9c4ad">${x.who}</p><h4 style="margin-top:16px">Your guide</h4><div class="g"><span class="av">${g.initials}</span><div><b>${g.name}</b><span>${g.role}</span></div></div><h4 style="margin-top:16px">Who’s joining</h4><div class="going" style="font:12px var(--sans);color:#9aab91">${dots(x)}<span style="margin-left:8px">${x.going?x.going+' booked so far':'No one yet. Be the first name on the list.'}</span></div></div>
+   <div><h4>What you’ll learn</h4><ul>${x.learn.map(l=>'<li>'+l+'</li>').join('')}</ul><h4 style="margin-top:16px">${x.price===0?'Free, but it requires':'Bring'}</h4><ul>${x.requires.map(l=>'<li>'+l+'</li>').join('')}</ul></div></div>
+   <form class="sheet-form" data-session="${x.id}" novalidate><label>Name<input name="name" required autocomplete="name" placeholder="Your name"></label><label>Email<input name="email" type="email" required autocomplete="email" placeholder="you@company.com"></label><label>What you do, and what you’d bring<input name="company" required placeholder="e.g. designer at a studio · a rebrand in progress"></label><button class="btn" type="submit">${full?'Join the waitlist ↗':x.price===0?'Take a free seat ↗':'Book a seat ↗'}</button><div class="req">${x.price===0?'<b>Free.</b> A seat is yours once you confirm the requirements above by email. No-shows lose the seat.':'<b>Paid.</b> We reply within a day with the price and a payment link. Nothing is charged until you confirm.'}</div></form>`;
+  sheet.hidden=false;document.body.style.overflow='hidden';sheetBody.querySelector('input').focus();
+  sheetBody.querySelector('form').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,fd=new FormData(f);const name=(fd.get('name')||'').trim(),email=(fd.get('email')||'').trim(),co=(fd.get('company')||'').trim();if(!name||!email||!co){f.reportValidity();return;}
+   const body=new URLSearchParams();body.set(FORM.name,name);body.set(FORM.email,email);body.set(FORM.company,`[session · ${x.id} · ${x.date} · ${full?'waitlist':'book'}] ${co}`);
+   try{await fetch(FORM.action,{method:'POST',mode:'no-cors',body});f.innerHTML=`<div class="sent" style="display:block"><b>${full?'On the list.':'Seat requested.'}</b>We write back within a day${x.price===0?' to confirm your seat':' with the price and a payment link'}. If you don’t hear from us, mail <a href="mailto:sameep@stayoften.com" style="color:#c8f250">sameep@stayoften.com</a>.</div>`;}
+   catch(err){location.href='mailto:sameep@stayoften.com?subject='+encodeURIComponent(x.title+' · '+x.date)+'&body='+encodeURIComponent(`${name}\n${email}\n${co}`);}});}
+ function closeSheet(){sheet.hidden=true;document.body.style.overflow='';}
+ sheet.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click',closeSheet));
+ addEventListener('keydown',e=>{if(e.key==='Escape'&&!sheet.hidden)closeSheet();});
+ if(location.hash.startsWith('#s=')){openSheet(location.hash.slice(3));}
 
  /* locator */
  const lq=[...document.querySelectorAll('.locate-q button')],lout=document.getElementById('locate-out'),youbar=document.getElementById('youbar'),youlbl=document.getElementById('youlbl'),lcta=document.getElementById('locate-cta');
@@ -453,8 +573,7 @@ footer nav{display:flex;gap:20px}
  document.querySelectorAll('[data-format]').forEach(a=>a.addEventListener('click',()=>{const v=a.dataset.format==='onsite'?'1:1 / my startup':'Mumbai open day';[...seg.children].forEach(x=>{x.setAttribute('aria-pressed',x.dataset.v===v);});fmt=v;}));
 
  /* form → silent Google Form post, mailto fallback */
- const FORM={action:'https://docs.google.com/forms/d/e/1FAIpQLSfZIxGXFMbuqbICFD9xKmt5RXOtaQ_ivs8F9wZ-QW9yPhxUBg/formResponse',name:'entry.1412016144',email:'entry.1545493625',company:'entry.280725317'};
- const form=document.getElementById('bookform');
+  const form=document.getElementById('bookform');
  form.addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(form);const name=f.get('name').trim(),email=f.get('email').trim(),company=f.get('company').trim(),project=f.get('project').trim();
   if(!name||!email||!company){form.reportValidity();return;}
   const body=new URLSearchParams();body.set(FORM.name,name);body.set(FORM.email,email);body.set(FORM.company,`[workshop · ${lvlv} · ${fmt}] ${company}${project?' · '+project:''}`);
