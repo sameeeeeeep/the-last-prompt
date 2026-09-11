@@ -1,0 +1,186 @@
+{
+  "affiliation_basis": "Organisations and campuses identified by the site owner as places their learners came from.",
+  "assets": [
+    {
+      "id": "deloitte",
+      "name": "Deloitte",
+      "file": "deloitte.png",
+      "source_page": "https://www.deloitte.com/no/no/legal/bilder-logo-media.html",
+      "image_url": "https://www.deloitte.com/content/dam/assets-zone2/no/no/img/primary/full/generic/2025/DEL_PRI_RGB.png",
+      "provenance": "official website",
+      "sha256": "a90857ccdaebd77fd852b527af253e457ccd18cc5a176cf7ef360f731d3c89f6",
+      "notes": [
+        "Official primary logo contains generous transparent clear space: visible bounds [216,219,1398,440] inside 1614×656 pixels; preserve proportions."
+      ]
+    },
+    {
+      "id": "pwc",
+      "name": "PwC",
+      "file": "pwc.svg",
+      "source_page": "https://www.pwc.com/gx/en.html",
+      "image_url": "https://www.pwc.com/etc.clientlibs/pwc/clientlibs/rebrand-clientlibs/components-colors/resources/images/slim-header-v2/PwC-logo.svg",
+      "provenance": "official website",
+      "sha256": "036a9bbe7ce93b7792da23713bc1aa7110236584666310561efd3cd43b102fc6",
+      "notes": [
+        "Current 2025 brand refresh with orange momentum mark; original 70×53 viewBox includes top transparent space."
+      ]
+    },
+    {
+      "id": "ey",
+      "name": "EY",
+      "file": "ey.svg",
+      "source_page": "https://www.ey.com/en_us",
+      "image_url": null,
+      "provenance": "official website",
+      "sha256": "3bcb00bc572b77bc613216a58a397f9df2123d05a80bf6ade4fef6aac14581d4",
+      "notes": [
+        "No standalone image URL: original inline SVG extracted from official homepage footer; only xmlns added for standalone SVG validity.",
+        "Includes current “Shape the future with confidence” tagline; no clean mark-only variant found during bounded search."
+      ]
+    },
+    {
+      "id": "kpmg",
+      "name": "KPMG",
+      "file": "kpmg.svg",
+      "source_page": "https://kpmg.com/in/en.html",
+      "image_url": "https://kpmg.com/content/experience-fragments/kpmgpublic/in/en/site/header/master/_jcr_content/root/header_v2/logo.coreimg.svg/1784033438102/logo.svg",
+      "provenance": "official website",
+      "sha256": "64794aa13322ccac57163460577f1d2278533573986cfa16d4146fba15574d55",
+      "notes": []
+    },
+    {
+      "id": "icici-bank",
+      "name": "ICICI Bank",
+      "file": "icici-bank.svg",
+      "source_page": "https://www.icicibank.com/",
+      "image_url": "https://www.icici.bank.in/content/dam/icicibank-revamp/logo-hamb.svg",
+      "provenance": "official website",
+      "sha256": "9df0f54f3835f35e555fa7612a142f0304762d9fd4201a8384536a674cfbd228",
+      "notes": [
+        "Orange/red rounded rectangle is part of the official mark; retained."
+      ]
+    },
+    {
+      "id": "hdfc-bank",
+      "name": "HDFC Bank",
+      "file": "hdfc-bank.svg",
+      "source_page": "https://www.hdfcbank.com/",
+      "image_url": "https://s7ap1.scene7.com/is/content/hdfcbankPWS/hdfc-bank-logo?fmt=webp",
+      "provenance": "official website",
+      "sha256": "4e1e6207c2e9e3faec035831c17105e4e26667bb41976c39841e3b3b27ede2ba",
+      "notes": [
+        "Native blue rectangle, red icon and white outlines are part of the official mark; retained.",
+        "URL contains fmt=webp but server returns image/svg+xml; verified as SVG."
+      ]
+    },
+    {
+      "id": "iit-bombay",
+      "name": "IIT Bombay",
+      "file": "iit-bombay.png",
+      "source_page": "https://gymkhana.iitb.ac.in/",
+      "image_url": "https://gymkhana.iitb.ac.in/councils/iitb_logo.png",
+      "provenance": "official institution subdomain",
+      "sha256": "3df35863226b80626b4ee4369da933690e1a10809467081f328cbaabea90a79e",
+      "notes": [
+        "Seal only; no additional English wordmark."
+      ]
+    },
+    {
+      "id": "bits-goa",
+      "name": "BITS Goa",
+      "file": "bits-goa.png",
+      "source_page": "https://admissions.bits-pilani.ac.in/header.html",
+      "image_url": "https://admissions.bits-pilani.ac.in/images/BITS_university_logo.png",
+      "provenance": "official institution admissions site",
+      "sha256": "57b0c9b5f3bd48e7dbb0a716bc9c73ba0f21a9edbd5b4492366cc815db7a54b1",
+      "notes": [
+        "Shared BITS Pilani institutional logo, as requested; includes all campus names and Institute of Eminence line."
+      ]
+    },
+    {
+      "id": "isb-hyderabad",
+      "name": "ISB Hyderabad",
+      "file": "isb-hyderabad.svg",
+      "source_page": "https://www.isb.edu/",
+      "image_url": "https://indian-school-of-business.aueast01.umbraco.io/media/sdddpvbt/logo_blue.svg",
+      "provenance": "official website CMS asset, linked from the isb.edu footer",
+      "sha256": "bf936d7ba94053487356cd688bf6b4bab2f4b2b76b2f083c273f03df7fa12fc0",
+      "notes": [
+        "Shared ISB institutional logo; no Hyderabad text."
+      ]
+    },
+    {
+      "id": "nmims-mumbai",
+      "name": "NMIMS Mumbai",
+      "file": "nmims-mumbai.png",
+      "source_page": "https://www.nmims.edu/",
+      "image_url": "https://www.nmims.edu/images/nmims-university-logo.png",
+      "provenance": "official institution website",
+      "sha256": "86625e34e8230f4376665caf0e3653aa9ae3f789986ae001b3961498fe54dec0",
+      "notes": [
+        "Shared university logo; original is 281 by 118 pixels, suitable for a small logo strip."
+      ]
+    },
+    {
+      "id": "atlas",
+      "name": "ATLAS SkillTech University",
+      "file": "atlas.svg",
+      "source_page": "https://atlasuniversity.edu.in/brand/",
+      "image_url": "https://atlasskilltech.app/brand/logo/ATLAS%20SKILLTECH%20UNIVERSITY/ATLAS%20Transparent/ATLAS%20Skilltech%20University%20Tranparent.svg",
+      "provenance": "official brand kit download linked from atlasuniversity.edu.in",
+      "sha256": "16843f783732a926578fd3256e55e54cfd023def2e29505a559a8bfbd2755d35",
+      "notes": []
+    },
+    {
+      "id": "sinhgad-academy",
+      "name": "Sinhgad Academy of Engineering",
+      "file": "sinhgad-academy.png",
+      "source_page": "https://cms.sinhgad.edu/sinhgad_engineering_institutes/saoe/about_us.aspx",
+      "image_url": "https://cms.sinhgad.edu/SIM_Web_Assets/images/sinhgad-logo-colour-1.png",
+      "provenance": "official academy website",
+      "sha256": "56fbc50c37a2c6dbf52d0123c0b243dd244a3def57567b155ec902bcd08ea5e3",
+      "notes": [
+        "Shared Sinhgad Institutes crest used in academy header; not a campus-specific wordmark. Original is 180 by 121 pixels, suitable for a small logo strip."
+      ]
+    },
+    {
+      "id": "pune-university",
+      "name": "Savitribai Phule Pune University",
+      "file": "pune-university.png",
+      "source_page": "https://bsw.unipune.ac.in/Logos.html",
+      "image_url": "https://upload.wikimedia.org/wikipedia/en/f/f6/Savitribai_Phule_Pune_University_Logo.png",
+      "provenance": "secondary: Wikimedia-hosted university logo",
+      "sha256": "001d0e28ff59070f9a9a90bd42b0943513e155cb3f77efcdf1ab8c94b8bcbd81",
+      "notes": [
+        "Official downloadable university logo is a monochrome JPEG with opaque white background. Selected transparent colour version is from Wikimedia, original 316 by 316 pixels. No original asset was redrawn or background-removed."
+      ]
+    },
+    {
+      "id": "nailinit",
+      "name": "nailinit",
+      "file": "nailinit.png",
+      "source_page": "https://nailin.it/",
+      "image_url": "https://nailin.it/cdn/shop/files/nailinit_logo_-_black_transparent.png?v=1771865325",
+      "provenance": "official website",
+      "sha256": "5b12d1f58e9724362d1ac6d946ce8166ed9516f77711851e6c6195f818abe24d",
+      "notes": [
+        "Only logo identity was researched; learner affiliation is supplied by the user."
+      ]
+    },
+    {
+      "id": "dot-media-mumbai",
+      "name": "Dot Media",
+      "file": "dot-media-mumbai.png",
+      "source_page": "https://www.dotmediabase.com/",
+      "image_url": "https://cdn.prod.website-files.com/6757e991862ae5cad185d7c7/6759da5e525a82f81278bbe9_Dot%20Media%20Logo-24.png",
+      "provenance": "official website",
+      "sha256": "2c6a498838737ea21c3b0d40e15dda84331add1bd56da8631f0c4b88a4f9369e",
+      "notes": [
+        "The user provided only the agency name. Mumbai is an evidence-backed inference, not an explicit user city confirmation.",
+        "Namesakes found: Dot Media Hyderabad (https://dotmedia.co.in/) and The Dot Media Bengaluru (https://www.thedotmedia.com/).",
+        "Official dark PNG/SVG was not found in the examined homepage. Official linked PDFs use a CloudFront host that failed DNS resolution.",
+        "Only logo identity was researched; learner affiliation is supplied by the user."
+      ]
+    }
+  ]
+}
