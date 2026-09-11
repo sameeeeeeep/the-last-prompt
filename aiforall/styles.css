@@ -314,3 +314,8 @@
 @media(max-width:480px){.anatomy-curriculum{padding-top:70px}.anatomy-curriculum .rail-heading{gap:18px;margin-bottom:18px}.anatomy-level{flex-basis:103px;padding:15px 13px 18px;gap:12px}.anatomy-level:after{left:13px}.anatomy-level>b{font-size:15px}.anatomy-layout{gap:5px}.anatomy-panel h3{font-size:30px}.anatomy-addition{font-size:16px;margin-top:13px}.anatomy-skills{gap:7px;margin:18px 0 23px}.anatomy-skills>li{font-size:14px;padding:6px 8px}.anatomy-build>p{font-size:17px}.anatomy-when{margin-bottom:20px}}
 @media(prefers-reduced-motion:reduce){.layer-motion,.layer-surface,.layer-circuit,.layer-leader,.layer-pin,.layer-name,.layer-number,.anatomy-level{transition:none}.anatomy-levels{scroll-behavior:auto}}
 @media print{.anatomy-levels{display:none!important}.anatomy-layout,.anatomy-panels{display:block}.anatomy-graphic{position:static;max-width:500px;margin:auto}.anatomy-panel[hidden]{display:block;visibility:visible}.anatomy-panel{break-inside:avoid;margin-bottom:35px}.anatomy-panels{border:0;padding:0}}
+
+/* Let the bilingual name take only the space it needs. */
+.hero .hero-names,.hero .hero-names[data-layout=stacked]{height:auto;min-height:0;gap:7px}
+@media(min-width:801px){.hero-grid{min-height:580px}.hero-copy{align-self:start}}
+@media(max-width:480px){.hero .hero-names,.hero .hero-names[data-layout=stacked]{gap:6px}}

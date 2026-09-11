@@ -1,6 +1,6 @@
 /** Connect the exploded system diagram to the seven curriculum modules. */
 export function initAIAnatomy(root) {
-  if (!root) return { destroy() {} };
+  if (!root) return { setPaused() {}, destroy() {} };
 
   const section = root.closest('section');
   const tabs = [...root.querySelectorAll('[data-ai-step]')];
@@ -13,7 +13,30 @@ export function initAIAnatomy(root) {
   const announcement = root.querySelector('#anatomy-announcement');
   const diagramTitle = root.querySelector('#anatomy-diagram-title');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let selected = 0;
+  let selected = 0, timer = 0, heldUntil = 0;
+  let visible = false, hovered = false, focused = false, paused = false, pageActive = true, alive = true;
+
+  function canAdvance() {
+    return alive && visible && !hovered && !focused && !paused && pageActive
+      && !reduced.matches && !document.hidden && !root.querySelector('details[open]');
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    timer = 0;
+    if (!canAdvance()) return;
+    timer = setTimeout(() => {
+      if (!canAdvance()) return;
+      selectLevel((selected + 1) % tabs.length, { announce: false });
+      schedule();
+    }, Math.max(1200, heldUntil - Date.now()));
+  }
+
+  function chooseLevel(index, options) {
+    heldUntil = Date.now() + 12000;
+    selectLevel(index, options);
+    schedule();
+  }
 
   function revealTab(tab) {
     const target = tab.getBoundingClientRect();
@@ -59,7 +82,7 @@ export function initAIAnatomy(root) {
   function onClick(event) {
     const target = event.target.closest('[data-ai-step], [data-ai-part]');
     if (!target || !root.contains(target)) return;
-    selectLevel(Number(target.dataset.aiStep ?? target.dataset.aiPart));
+    chooseLevel(Number(target.dataset.aiStep ?? target.dataset.aiPart));
   }
 
   function onKeydown(event) {
@@ -67,19 +90,53 @@ export function initAIAnatomy(root) {
     const destinations = { ArrowLeft: selected - 1, ArrowRight: selected + 1, Home: 0, End: tabs.length - 1 };
     if (!(event.key in destinations)) return;
     event.preventDefault();
-    selectLevel(destinations[event.key], { focus: true });
+    chooseLevel(destinations[event.key], { focus: true });
   }
 
-  const goPrevious = () => selectLevel(selected - 1);
-  const goNext = () => selectLevel(selected + 1);
+  const goPrevious = () => chooseLevel(selected - 1);
+  const goNext = () => chooseLevel(selected + 1);
+  const enter = event => { if (event.pointerType !== 'touch') { hovered = true; schedule(); } };
+  const leave = () => { hovered = false; schedule(); };
+  const focusIn = () => { focused = true; schedule(); };
+  const focusOut = event => { focused = section.contains(event.relatedTarget); schedule(); };
+  const detailToggle = event => { if (event.target.matches('details')) schedule(); };
+  const hide = () => { pageActive = false; schedule(); };
+  const show = () => { pageActive = true; schedule(); };
+  const observer = new IntersectionObserver(entries => {
+    visible = entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= .25);
+    schedule();
+  }, { threshold: [0, .25] });
+  observer.observe(root);
   root.addEventListener('click', onClick);
   track.addEventListener('keydown', onKeydown);
   previous.addEventListener('click', goPrevious);
   next.addEventListener('click', goNext);
+  section.addEventListener('pointerenter', enter);
+  section.addEventListener('pointerleave', leave);
+  section.addEventListener('focusin', focusIn);
+  section.addEventListener('focusout', focusOut);
+  root.addEventListener('toggle', detailToggle, true);
+  document.addEventListener('visibilitychange', schedule);
+  reduced.addEventListener('change', schedule);
+  window.addEventListener('pagehide', hide);
+  window.addEventListener('pageshow', show);
   selectLevel(0, { announce: false, reveal: false });
 
   return {
+    setPaused(value) { paused = Boolean(value); schedule(); },
     destroy() {
+      alive = false;
+      clearTimeout(timer);
+      observer.disconnect();
+      section.removeEventListener('pointerenter', enter);
+      section.removeEventListener('pointerleave', leave);
+      section.removeEventListener('focusin', focusIn);
+      section.removeEventListener('focusout', focusOut);
+      root.removeEventListener('toggle', detailToggle, true);
+      document.removeEventListener('visibilitychange', schedule);
+      reduced.removeEventListener('change', schedule);
+      window.removeEventListener('pagehide', hide);
+      window.removeEventListener('pageshow', show);
       root.removeEventListener('click', onClick);
       track.removeEventListener('keydown', onKeydown);
       previous.removeEventListener('click', goPrevious);

@@ -45,7 +45,7 @@ export function initNameSequence(root, { onChange=()=>{}, observedRoots=[], cont
         animations.push(letter.animate([
           {transform:'perspective(500px) rotateX(90deg) translateY(6px)',opacity:0},
           {transform:'perspective(500px) rotateX(0deg) translateY(0)',opacity:1}
-        ],{duration:650,delay:Math.min(i*25,500),easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'}));
+        ],{duration:420,delay:Math.min(i*14,260),easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'}));
       });
     }
     onChange(item,{index,manual});
@@ -59,7 +59,7 @@ export function initNameSequence(root, { onChange=()=>{}, observedRoots=[], cont
       else if(animation.playState==='paused')animation.play();
     }
     if(tour){tour.hidden=motion.matches;tour.disabled=paused;tour.textContent=held?'Play tour ▷':'Pause tour Ⅱ';tour.setAttribute('aria-pressed',String(held));}
-    if(active)timer=setTimeout(()=>{show(index+1,true);schedule();},stateNames[index].text.length>30?8500:6500);
+    if(active)timer=setTimeout(()=>{show(index+1,true);schedule();},1200);
   }
   function choose(value){const target=stateNames.findIndex(item=>item.id===value);if(target<0)return;held=true;show(target,true,true);schedule();}
   const selectChange=()=>choose(select.value),back=()=>choose(stateNames[(index-1+stateNames.length)%stateNames.length].id),forward=()=>choose(stateNames[(index+1)%stateNames.length].id);

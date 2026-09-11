@@ -12,6 +12,7 @@ const names=initNameSequence(document.querySelector('#hero-names'),{
   observedRoots:[document.querySelector('#training-reach')],
   onChange(item){globe.setRegion(item.id==='ALL'?'IN':item.id);}
 });
+const anatomy=initAIAnatomy(document.querySelector('#ai-anatomy'));
 const motionButtons=[...document.querySelectorAll('#motion-toggle,[data-motion-toggle]')];
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
 let paused=false;
@@ -24,12 +25,11 @@ function syncMotion(){
   document.documentElement.dataset.motionPaused=String(paused||reduced.matches);
 }
 for(const button of motionButtons)button.addEventListener('click',()=>{
-  paused=!paused;globe.setPaused(paused);names.setPaused(paused);syncMotion();
+  paused=!paused;globe.setPaused(paused);names.setPaused(paused);anatomy.setPaused(paused);syncMotion();
 });
 reduced.addEventListener('change',syncMotion);syncMotion();
 window.addEventListener('pagehide',()=>globe.setPaused(true));
 window.addEventListener('pageshow',()=>globe.setPaused(paused));
-initAIAnatomy(document.querySelector('#ai-anatomy'));
 initCourseCards(document.querySelector('#audience-track'),{previous:document.querySelector('#audience-prev'),next:document.querySelector('#audience-next'),range:document.querySelector('#audience-range')});
 
 for (const link of document.querySelectorAll('[data-programme]')) link.addEventListener('click', () => {

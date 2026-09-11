@@ -102,8 +102,10 @@ export function initGlobe(canvas) {
       const elapsed=Math.min(delta,60);colourTime+=elapsed*.00022;
       if(!drag&&!userRotated){
         drift+=elapsed*.0001;
-        const target=targetLongitude+Math.sin(drift)*.018;
-        longitude+=(target-longitude)*.065;latitude+=(targetLatitude-latitude)*.065;
+        const target=targetLongitude+(selected==='IN'?Math.sin(drift)*.006:0);
+        // Settle on the selected state before the next 1.2-second name change.
+        const ease=1-Math.exp(-elapsed/140);
+        longitude+=(target-longitude)*ease;latitude+=(targetLatitude-latitude)*ease;
       }
       previous=now;render();
     }
@@ -125,7 +127,7 @@ export function initGlobe(canvas) {
     setRegion(id){
       if(!alive)return;
       selected=regionGeography[id]?id:'IN';
-      const [lon,lat]=regionGeography.IN.focus;targetLongitude=lon*rad;targetLatitude=lat*rad;userRotated=false;
+      const [lon,lat]=regionGeography[selected].focus;targetLongitude=lon*rad;targetLatitude=lat*rad;userRotated=false;
       canvas.dataset.region=selected;
       if(paused||motion.matches||!visible){longitude=targetLongitude;latitude=targetLatitude;}
       render();
