@@ -1,0 +1,2025 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prophexy — reading, redesigned</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900&family=Fragment+Mono&display=swap">
+<style>
+  :root{
+    --void:#000; --ink:#f5f5fc; --dust:#dcdce4; --faint:#9c9ca8;
+    --rule:#242430; --amber:#ffab4d;
+    --col:640px;
+    --s2:16px; --s3:28px; --s4:44px; --s5:72px; --s6:104px;
+    --navh:52px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{background:var(--void);scroll-behavior:smooth}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{background:var(--void);color:var(--ink);font-family:'Archivo',system-ui,sans-serif;
+    font-variation-settings:'wdth' 100;-webkit-font-smoothing:antialiased}
+  .page{max-width:var(--col);margin:0 auto;padding:0 22px 140px}
+
+  .mono{font-family:'Fragment Mono',monospace;font-size:11.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--faint)}
+  .mono b{color:var(--dust);font-weight:400}
+  .display{font-weight:460;font-variation-settings:'wdth' 100;letter-spacing:-.02em;line-height:1.08}
+  .body{font-size:17.5px;line-height:1.74;color:#ededf4;font-weight:400}
+  .body b{color:var(--ink);font-weight:500}
+
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;
+    border:1px solid var(--amber);vertical-align:middle;flex:none}
+  .dot.lit{background:var(--amber);box-shadow:0 0 8px rgba(255,157,46,.55)}
+  @keyframes dotbreathe{0%,100%{opacity:.55}50%{opacity:1}}
+  .dot.lit{animation:dotbreathe 3.2s ease-in-out infinite}
+  @media(prefers-reduced-motion:reduce){.dot.lit{animation:none}}
+
+  .mast{display:flex;align-items:center;gap:12px;padding:24px 0 18px}
+  .mast svg{width:20px;height:20px;flex:none}
+  .mast .who{margin-left:auto;text-align:right}
+
+  .snav{position:sticky;top:0;z-index:40;background:rgba(0,0,0,.88);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .snavin{max-width:var(--col);margin:0 auto;display:flex;gap:4px;overflow-x:auto;
+    padding:0 16px;height:var(--navh);align-items:stretch;scrollbar-width:none}
+  .snavin::-webkit-scrollbar{display:none}
+  .stab{flex:none;display:flex;align-items:center;padding:0 12px;
+    background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;
+    font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--faint);text-decoration:none;white-space:nowrap}
+  .stab.on{color:var(--ink);border-bottom-color:var(--amber)}
+
+  .hero{padding-top:56px}
+  .kicker{display:flex;align-items:center;gap:10px;margin-bottom:var(--s3)}
+  h1{font-size:clamp(34px,8.6vw,52px);margin-bottom:var(--s3);max-width:16ch}
+  .hero .body{max-width:52ch}
+  .rl{display:block;overflow:hidden}
+  .rl span{display:block;transform:translateY(110%);animation:rise .8s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{transform:none}}
+  @media(prefers-reduced-motion:reduce){.rl span{animation:none;transform:none}}
+
+  .evidence{display:flex;flex-wrap:wrap;gap:14px 26px;margin-top:var(--s4);
+    padding:20px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .ev{display:flex;align-items:center;gap:9px}
+
+  /* ask */
+  .askrow{display:flex;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:var(--s3)}
+  .askrow input{flex:1;background:#06060a;border:none;color:var(--ink);font-family:'Archivo',sans-serif;
+    font-size:16px;padding:15px 16px;min-width:0}
+  .askrow input:focus{outline:none}
+  .askrow input::placeholder{color:var(--faint)}
+  .askrow button{background:var(--void);border:none;color:var(--amber);font-family:'Fragment Mono',monospace;
+    font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;padding:0 20px;cursor:pointer}
+  .askrow button:hover{background:#0a0a10}
+
+  section{padding-top:var(--s6);scroll-margin-top:calc(var(--navh) + 14px)}
+  .seclb{display:flex;align-items:center;gap:10px;margin-bottom:var(--s3)}
+  .seclb .mono{color:#b6b6c2;font-size:12px}
+  .secsub{margin:-16px 0 var(--s3);font-size:15px;color:var(--dust);max-width:52ch;line-height:1.62}
+  h2{font-size:clamp(24px,5.4vw,33px);max-width:20ch}
+  .sub3{margin-top:var(--s5)}
+
+  .movewhen{margin-top:var(--s3);display:flex;align-items:baseline;gap:12px}
+  .movewhen .t{font-family:'Fragment Mono',monospace;font-size:15px;color:var(--amber);letter-spacing:.04em}
+  .movenote{margin-top:14px;font-size:14px;color:var(--dust);max-width:46ch;line-height:1.6}
+
+  .brow{display:flex;align-items:baseline;gap:14px;padding:19px 0;border-bottom:1px solid var(--rule);
+    text-decoration:none;color:inherit}
+  .brow:first-child{border-top:1px solid var(--rule)}
+  .brow .sig{flex:1;min-width:0;font-size:17.5px;font-weight:440;color:var(--ink)}
+  .brow .sig b{font-weight:500}
+  .brow .meta{text-align:right;color:var(--dust);letter-spacing:.08em}
+  @media(max-width:560px){.brow{flex-direction:column;gap:7px}.brow .meta{text-align:left}}
+  .combine{display:flex;align-items:center;gap:10px;padding:18px 0 0;color:var(--faint);
+    font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.18em;
+    text-transform:uppercase;text-decoration:none}
+  .combine:hover{color:var(--amber)}
+
+  /* wheel */
+  .wheelrow{display:flex;gap:30px;align-items:center;margin-top:var(--s3);flex-wrap:wrap}
+  .wheel{width:min(300px,78vw);flex:none}
+  .wheel text{font-size:8.5px;fill:var(--faint);font-family:'Fragment Mono',monospace;letter-spacing:.12em}
+  .wheellegend{display:grid;gap:10px;flex:1;min-width:170px}
+
+  .moonrow{display:flex;align-items:center;gap:26px;margin-top:var(--s5)}
+  .moon{width:118px;height:118px;flex:none;border-radius:50%;position:relative;overflow:hidden;
+    background:radial-gradient(circle at 47% 46%, #e9e9f0 0%, #dcdce4 52%, #c6c6d1 76%, #a3a3b1 92%, #86868f 100%);
+    box-shadow:0 0 16px 2px rgba(240,240,250,.12)}
+  .moonshade{position:absolute;inset:-4px;border-radius:50%;background:#030306;filter:blur(7px)}
+  .moon::before{content:"";position:absolute;inset:0;border-radius:50%;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='118' height='118'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.055 0.06' numOctaves='4' seed='11'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='118' height='118' filter='url(%23g)'/%3E%3C/svg%3E");
+    mix-blend-mode:multiply;opacity:.5}
+  .moon::after{content:"";position:absolute;inset:0;border-radius:50%;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='118' height='118'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' seed='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='118' height='118' filter='url(%23h)'/%3E%3C/svg%3E");
+    mix-blend-mode:soft-light;opacity:.55}
+  .moonfacts{display:grid;gap:9px}
+
+  /* numbers chain */
+  .chain{display:flex;align-items:stretch;gap:1px;background:var(--rule);border:1px solid var(--rule);
+    margin-top:var(--s3);overflow-x:auto}
+  .ch{background:var(--void);padding:18px 16px;display:grid;gap:7px;flex:1;min-width:96px;justify-items:start}
+  .ch .cv{font-size:24px;font-weight:440;font-variation-settings:'wdth' 100;line-height:1}
+  .ch.last .cv{color:var(--amber)}
+  .chainnote{margin-top:14px;font-size:13.5px;color:var(--dust);max-width:52ch;line-height:1.6}
+
+  .ways{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);
+    border:1px solid var(--rule);margin-top:var(--s3)}
+  .way{background:var(--void);padding:20px 18px;display:grid;gap:8px}
+  .way .wv{font-size:19px;font-weight:440;font-variation-settings:'wdth' 100}
+  .way .wnote{font-size:12.5px;color:var(--faint);line-height:1.5}
+  .waysnote{margin-top:16px;font-size:13.5px;color:var(--dust);max-width:52ch;line-height:1.6}
+
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:var(--s3)}
+  .chip{background:none;border:1px solid var(--rule);color:var(--dust);font-family:'Fragment Mono',monospace;
+    font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:12px 18px;cursor:pointer}
+  .chip:hover{border-color:var(--faint);color:var(--ink)}
+  .chip.on{border-color:var(--amber);color:var(--amber)}
+  .moodout{margin-top:22px;max-width:52ch;display:none}
+  .moodout.show{display:block}
+
+  .field{margin-top:var(--s3)}
+  textarea{width:100%;background:#06060a;border:1px solid var(--rule);color:var(--ink);
+    font-family:'Archivo',sans-serif;font-size:16px;line-height:1.6;padding:16px;min-height:110px;resize:vertical}
+  textarea:focus{outline:none;border-color:var(--faint)}
+  textarea::placeholder{color:var(--faint)}
+  .fieldrow{display:flex;align-items:center;gap:16px;margin-top:14px;flex-wrap:wrap}
+  .savednote{color:var(--faint);font-family:'Fragment Mono',monospace;font-size:10.5px;
+    letter-spacing:.14em;text-transform:uppercase}
+
+  /* capture + vision */
+  .capgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);
+    border:1px solid var(--rule);margin-top:var(--s3)}
+  @media(max-width:480px){.capgrid{grid-template-columns:1fr}}
+  .capslot{background:var(--void);padding:20px 18px;display:grid;gap:12px;justify-items:start}
+  .capslot img,.capslot video{width:100%;aspect-ratio:1;object-fit:cover;filter:grayscale(1) contrast(1.05);display:block;background:#000}
+  .capbtns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .linesmap{margin-top:4px;font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
+  .linesmap:hover{color:var(--amber)}
+  .palmobs{display:grid;grid-template-columns:max-content 1fr;gap:8px 18px;margin:14px 0 18px;font-size:14px;line-height:1.55;color:var(--dust)}
+  .palmobs .mono{color:var(--faint);padding-top:3px}
+  .palmobs .q{color:var(--amber)}
+  @media(max-width:480px){.palmobs{grid-template-columns:1fr;gap:4px}.palmobs .mono{margin-top:8px}}
+  .visiongrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:var(--s3)}
+  .visiongrid img{width:100%;aspect-ratio:1;object-fit:cover;border:1px solid var(--rule)}
+  .filelb{display:inline-block;border:1px solid var(--rule);color:var(--dust);
+    font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+    padding:11px 18px;cursor:pointer}
+  .filelb:hover{border-color:var(--amber);color:var(--amber)}
+
+  /* cards — the full interactive tarot (ported); its own token aliases */
+  .tarot{--g1:#9c9ca8;--g2:#54545f;--g3:#33333d;--line:#242430;--sig:var(--amber);--gold:#ffc27a}
+  .qtypes{display:flex;gap:1px;background:var(--g3);border:1px solid var(--g3);flex-wrap:wrap;max-width:720px;margin-top:var(--s3)}
+  .qtypes button{flex:1 1 auto;background:#000;border:none;color:var(--g1);font-family:'Fragment Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;padding:11px 13px;cursor:pointer;transition:.2s;white-space:nowrap}
+  .qtypes button:hover{color:var(--ink)}
+  .qtypes button.on{background:var(--ink);color:#000;font-weight:700}
+  .qhint{font-size:12px;color:var(--g1);margin:12px 0 16px;letter-spacing:.02em;line-height:1.5}
+  .qrow{display:flex;gap:1px;background:var(--g3);border:1px solid var(--g3);max-width:720px}
+  .qrow input{flex:1;background:#000;border:none;color:var(--ink);font-family:'Archivo',sans-serif;font-size:16px;padding:15px 17px;min-width:0}
+  .qrow input:focus{outline:none;background:#07070c}
+  .qrow input::placeholder{color:var(--g2)}
+  .qrow button{background:var(--sig);color:#000;border:none;font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.24em;text-transform:uppercase;padding:0 26px;cursor:pointer;font-weight:700;transition:.2s;white-space:nowrap}
+  .qrow button:hover{filter:brightness(1.1)}
+  .qrow button:disabled{background:var(--g3);color:var(--g2);cursor:default}
+  .plates{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2.6vw,26px);margin-top:clamp(30px,5vw,52px)}
+  @media(max-width:640px){.plates{grid-template-columns:1fr;max-width:320px;margin-left:auto;margin-right:auto}}
+  .plate{position:relative;background:#000;padding:9px;opacity:0;transform:translateY(26px) scale(.985);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1)}
+  .plate.on{opacity:1;transform:none;box-shadow:0 0 0 1px rgba(255,171,77,.14),0 26px 70px rgba(0,0,0,.66),0 0 46px rgba(255,171,77,.08)}
+  .plate.on .numeral{color:rgba(255,171,77,.22)}
+  /* gold-foil gloss that sweeps the card as it lands, then a slow living sheen */
+  .plate figure .foil{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;
+    background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.14) 44%,rgba(255,211,140,.30) 50%,rgba(255,255,255,.12) 56%,transparent 68%);
+    transform:translateX(-130%)}
+  .plate.landing figure .foil{opacity:1;animation:foilSweep 1.2s cubic-bezier(.3,.7,.2,1) .15s 1}
+  @keyframes foilSweep{to{transform:translateX(130%)}}
+  .plate.on figure .sheen{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;opacity:.5;
+    background:linear-gradient(150deg,rgba(255,255,255,.10),transparent 34%,transparent 66%,rgba(255,211,140,.10));
+    animation:sheenDrift 6s ease-in-out infinite}
+  @keyframes sheenDrift{0%,100%{transform:translateY(-4%)}50%{transform:translateY(4%)}}
+  .plate .frameA{position:absolute;inset:0;border:1px solid var(--g3);pointer-events:none}
+  .plate .frameB{position:absolute;inset:6px;border:1px solid var(--line);pointer-events:none}
+  .plate .brk{position:absolute;width:14px;height:14px;border:1px solid var(--sig);pointer-events:none}
+  .plate .brk.tl{top:-1px;left:-1px;border-right:none;border-bottom:none}
+  .plate .brk.tr{top:-1px;right:-1px;border-left:none;border-bottom:none}
+  .plate .brk.bl{bottom:-1px;left:-1px;border-right:none;border-top:none}
+  .plate .brk.br{bottom:-1px;right:-1px;border-left:none;border-top:none}
+  .plate .inner{position:relative;z-index:1;padding:6px}
+  .plate .ph{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 6px 11px;border-bottom:1px solid var(--line)}
+  .plate .ph .pn{font-family:'Fragment Mono',monospace;font-size:8.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--sig)}
+  .plate .ph .px{font-family:'Fragment Mono',monospace;font-size:8.5px;letter-spacing:.18em;color:var(--g2);text-transform:uppercase}
+  .plate figure{margin:11px 0 0;position:relative;overflow:hidden;background:#050508;aspect-ratio:2/3;border:1px solid var(--line)}
+  .plate img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(1) contrast(1.06);transition:filter 1.7s ease,opacity 1.1s ease}
+  .plate img.inv{transform:rotate(180deg)}
+  .plate.dev img{filter:grayscale(1) contrast(.18) brightness(2.4) blur(7px);opacity:.16}
+  .plate figure .tickrail{position:absolute;left:0;top:0;bottom:0;width:9px;pointer-events:none;background:repeating-linear-gradient(180deg,var(--g3) 0 1px,transparent 1px 9px);opacity:.5}
+  .plate figure .tickrail.r{left:auto;right:0}
+  .plate figure .scan{position:absolute;left:0;right:0;height:34%;pointer-events:none;opacity:0;background:linear-gradient(180deg,transparent,rgba(255,171,77,.16),transparent)}
+  .plate.sweeping figure .scan{opacity:1;animation:scandown 1.5s ease-out 1}
+  @keyframes scandown{from{transform:translateY(-120%)}to{transform:translateY(320%)}}
+  .plate .numeral{position:absolute;right:14px;bottom:52px;font-family:'Fragment Mono',monospace;font-size:clamp(28px,4.4vw,44px);line-height:1;color:var(--g3);letter-spacing:-.05em;pointer-events:none;z-index:0;opacity:.85}
+  .plate .cap{padding:13px 6px 6px}
+  .plate .cap .nm{font-size:clamp(20px,2.5vw,26px);letter-spacing:-.015em;line-height:1.1}
+  .plate .cap .mn{color:var(--g1);font-size:13px;line-height:1.55;margin-top:9px}
+  .guilloche{height:16px;margin:13px 0 0;opacity:.5}
+  .guilloche svg{display:block;width:100%;height:100%}
+  .plate .stamp{display:flex;align-items:center;gap:8px;padding:10px 6px 2px;border-top:1px solid var(--line);margin-top:11px;font-family:'Fragment Mono',monospace;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--g2)}
+  .plate .stamp svg{width:13px;height:13px;flex:none;color:var(--gold);opacity:.85}
+  .plate .stamp .ref{margin-left:auto;color:var(--g3)}
+  .plate .stamp b{color:var(--g1);font-weight:400}
+  .plate .invtag{color:var(--sig)}
+  .qecho{margin-top:clamp(22px,3vw,32px);color:var(--g1);font-size:13.5px;line-height:1.6;max-width:62ch}
+  .qecho b{color:var(--ink);font-weight:400}
+  .deckwrap{margin-top:clamp(28px,4.5vw,46px);position:relative}
+  .deckglow{position:absolute;top:0;bottom:0;width:46%;pointer-events:none;left:-50%;z-index:8;background:linear-gradient(90deg,transparent,rgba(255,171,77,.22),rgba(255,255,255,.16),rgba(255,171,77,.22),transparent)}
+  .deckglow.sweep{animation:deckSweep 1s ease-out 1}
+  @keyframes deckSweep{0%{left:-45%;opacity:.9}100%{left:112%;opacity:0}}
+  .deckhint{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--g1);margin-bottom:18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .deckhint b{color:var(--sig);font-weight:400}
+  .deckrow{display:flex;justify-content:center;align-items:flex-end;padding:66px 0 104px;min-height:300px;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+  .deckrow::-webkit-scrollbar{display:none}
+  .dcard{flex:0 0 auto;width:82px;height:126px;margin-right:-46px;background:#08080e;border:1px solid var(--g3);position:relative;cursor:pointer;transition:transform .3s cubic-bezier(.3,1.1,.4,1),opacity .4s,border-color .2s;transform-origin:bottom center}
+  .dcard:last-child{margin-right:0}
+  .dcard svg{position:absolute;inset:7px;width:calc(100% - 14px);height:calc(100% - 14px);opacity:.5}
+  .dcard:hover{transform:translateY(-22px)!important;border-color:var(--sig);z-index:5}
+  .dcard.taken{opacity:.12;pointer-events:none;transform:translateY(10px) scale(.9)!important}
+  .dcard.shuffling{transition:transform .22s ease}
+  .deckrow.locked .dcard{pointer-events:none}
+  .deckrow.locked .dcard:not(.taken){opacity:.3}
+  .verdict{margin-top:clamp(26px,4vw,42px);border-top:1px solid var(--line);padding-top:clamp(22px,3vw,32px);display:none}
+  .verdict.on{display:block}
+  .verdict .vl{font-family:'Fragment Mono',monospace;font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--g2)}
+  .verdict .vv{font-size:clamp(30px,6vw,60px);line-height:1.02;letter-spacing:-.035em;margin-top:12px;text-transform:lowercase}
+  .verdict .vv em{font-style:normal;color:var(--sig)}
+  .verdict .vr{margin-top:16px;color:var(--g1);font-size:15px;line-height:1.6;max-width:60ch}
+  .verdict .vr b{color:var(--ink);font-weight:400}
+  .verdict .vl .srcbadge{margin-left:12px;vertical-align:middle}
+  .verdict .vr .vevidence{margin-top:15px;padding-top:12px;border-top:1px solid var(--line);font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--g2);line-height:1.5}
+  .srcbadge{display:inline-block;font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;padding:4px 11px;border:1px solid var(--g3);color:var(--g2)}
+  .srcbadge.ai{border-color:var(--sig);color:var(--sig)}
+  .scoremeta{display:block;margin-top:10px;font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--g2)}
+  #stageVeil{position:fixed;inset:0;z-index:39;pointer-events:none;opacity:0;transition:opacity .9s ease;background:radial-gradient(ellipse 90% 70% at 50% 46%,transparent 34%,rgba(0,0,0,.62) 100%)}
+  body.casting #stageVeil{opacity:1}
+  body.casting .tarot{position:relative;z-index:41}
+  .deckwrap::before{content:"";position:absolute;left:50%;top:50%;width:130%;height:170%;transform:translate(-50%,-50%);pointer-events:none;z-index:0;opacity:0;transition:opacity 1.1s ease;background:radial-gradient(ellipse 46% 44% at 50% 50%,rgba(255,171,77,.20),rgba(255,171,77,.07) 42%,transparent 70%)}
+  body.casting .deckwrap::before{opacity:1;animation:poolBreath 3.4s ease-in-out infinite}
+  @keyframes poolBreath{0%,100%{opacity:.68;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
+  body.casting .deckrow{position:relative;z-index:1}
+  .flycard{position:fixed;z-index:120;pointer-events:none;perspective:1100px;will-change:transform;transition:transform .74s cubic-bezier(.34,.85,.28,1)}
+  .flycard .fcin{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .74s cubic-bezier(.34,.85,.28,1);filter:drop-shadow(0 34px 60px rgba(0,0,0,.72)) drop-shadow(0 0 30px rgba(255,171,77,.35))}
+  .flycard.flip .fcin{transform:rotateY(180deg)}
+  .flycard .fcback,.flycard .fcface{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#08080e;border:1px solid var(--g3);overflow:hidden}
+  .flycard .fcback svg{position:absolute;inset:7px;width:calc(100% - 14px);height:calc(100% - 14px);opacity:.6}
+  .flycard .fcface{transform:rotateY(180deg);border-color:var(--sig);box-shadow:0 0 0 1px rgba(255,171,77,.6),0 0 44px rgba(255,171,77,.4),inset 0 0 30px rgba(255,211,140,.14)}
+  .flycard .fcface img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(1) contrast(1.06)}
+  .flycard .fcface img.inv{transform:rotate(180deg)}
+  .flycard.gone{opacity:0;transition:opacity .3s ease,transform .74s cubic-bezier(.34,.85,.28,1)}
+  .plate.landing .frameA{animation:plateFlare 1.2s ease-out 1}
+  @keyframes plateFlare{0%{box-shadow:0 0 0 2px rgba(255,171,77,1),0 0 60px rgba(255,171,77,.75),0 0 120px rgba(255,171,77,.35)}100%{box-shadow:0 0 0 1px transparent,0 0 0 transparent}}
+  .plate .brk{transition:box-shadow .6s ease}
+  .plate.landing .brk{box-shadow:0 0 12px rgba(255,171,77,.9)}
+  .verdict.on .vv{animation:vvLand .72s cubic-bezier(.2,.85,.25,1) 1}
+  @keyframes vvLand{0%{opacity:0;transform:translateY(16px) scale(1.18);text-shadow:0 0 46px rgba(255,171,77,.85),0 0 90px rgba(255,171,77,.4)}55%{opacity:1;text-shadow:0 0 22px rgba(255,171,77,.5)}100%{transform:none;text-shadow:0 0 1px rgba(255,171,77,.15)}}
+  @media(prefers-reduced-motion:reduce){.deckglow.sweep,.plate.sweeping figure .scan,.verdict.on .vv,.plate.landing .frameA,.plate.landing figure .foil,.plate.on figure .sheen,body.casting .deckwrap::before{animation:none}.flycard,.flycard .fcin,#stageVeil,.deckwrap::before{transition:none}}
+
+  /* breath */
+  .breathe{display:flex;align-items:center;gap:28px;margin-top:var(--s3);flex-wrap:wrap}
+  .bring{width:110px;height:110px;flex:none;border-radius:50%;border:1px solid var(--faint);
+    display:flex;align-items:center;justify-content:center;transition:transform 4s ease-in-out}
+  .bring i{width:9px;height:9px;border-radius:50%;background:var(--amber);box-shadow:0 0 10px rgba(255,157,46,.6)}
+  .bstate{display:grid;gap:10px}
+
+  /* rail — browsable peers you pick from: horizontal scroll, snap */
+  .rail{display:flex;gap:12px;overflow-x:auto;margin-top:18px;padding-bottom:10px;
+    scroll-snap-type:x proximity;scrollbar-width:none}
+  .rail::-webkit-scrollbar{display:none}
+  .rail>*{flex:0 0 auto;scroll-snap-align:start}
+  .railcard{width:216px;border:1px solid var(--rule);padding:20px 18px;display:grid;gap:9px;
+    align-content:start;background:var(--void)}
+  .railcard .rn{font-size:18px;font-weight:460;font-variation-settings:'wdth' 100;line-height:1.28}
+  .railcard .rd{font-size:13.5px;color:var(--dust);line-height:1.55}
+  .railcard .lks{display:flex;gap:12px;margin-top:6px}
+  .railcard .lks a{color:var(--faint);font-family:'Fragment Mono',monospace;font-size:9.5px;
+    letter-spacing:.14em;text-transform:uppercase;text-decoration:none}
+  .railcard .lks a:hover{color:var(--amber)}
+  .railhint{margin-top:4px;font-size:10px;font-family:'Fragment Mono',monospace;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+  /* areas — a collection, compact grid */
+  .areas{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);
+    border:1px solid var(--rule);margin-top:var(--s4)}
+  @media(max-width:520px){.areas{grid-template-columns:repeat(2,1fr)}}
+  .area{background:var(--void);padding:16px 14px;display:grid;gap:6px}
+  .area .an{font-size:16px;font-weight:500}
+  .area .ad{font-size:11.5px;font-family:'Fragment Mono',monospace;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--faint)}
+  .area.hit .ad{color:var(--amber)}
+
+  /* week */
+  .week{display:flex;gap:1px;background:var(--rule);border:1px solid var(--rule);
+    margin-top:var(--s3);overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none}
+  .week::-webkit-scrollbar{display:none}
+  .wd{background:var(--void);padding:14px 14px;display:grid;gap:6px;justify-items:start;
+    flex:1 0 92px;scroll-snap-align:start}
+  .wd .wnum{font-size:26px;font-weight:440;font-variation-settings:'wdth' 100;line-height:1}
+  .wd.best .wnum{color:var(--amber)}
+  .wd.dim{opacity:.5}
+  .weeknote{margin-top:16px;font-size:13.5px;color:var(--dust);line-height:1.6;max-width:52ch}
+
+  .cbtn{background:none;border:1px solid var(--rule);color:var(--dust);font-family:'Fragment Mono',monospace;
+    font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;padding:11px 18px;cursor:pointer}
+  .cbtn:hover{border-color:var(--amber);color:var(--amber)}
+  .calib{margin-top:var(--s6);border-top:1px solid var(--rule);padding-top:26px;
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .calib .mono{flex:1;min-width:150px}
+
+  .remedy{margin-top:var(--s3);border:1px solid var(--rule);padding:26px 24px}
+  .remedy h3{font-weight:440;font-variation-settings:'wdth' 100;font-size:23px;line-height:1.22;
+    letter-spacing:-.01em;margin:10px 0 12px}
+  .remedy .body{font-size:15px;max-width:46ch}
+
+  .deeper{margin-top:var(--s5);display:flex;align-items:center;justify-content:space-between;
+    border:1px solid var(--rule);padding:22px 24px;text-decoration:none;color:inherit}
+  .deeper:hover{border-color:var(--faint)}
+  .deeper .d2{font-size:13px;color:var(--faint);margin-top:5px}
+  .deeper .arr{color:var(--faint);font-size:18px}
+
+  /* identify overlay */
+  .ident{position:fixed;inset:0;background:var(--void);z-index:80;overflow:auto}
+  .identin{max-width:520px;margin:0 auto;padding:72px 22px 120px}
+  .identform{display:grid;gap:10px;margin-top:26px}
+  .identform label{margin-top:14px}
+  .identform input{background:#06060a;border:1px solid var(--rule);color:var(--ink);
+    font-family:'Archivo',sans-serif;font-size:16px;padding:14px 15px;width:100%;color-scheme:dark}
+  .identform input:focus{outline:none;border-color:var(--faint)}
+  .identform input::placeholder{color:var(--faint)}
+  .identrow2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .identrow2 span{display:grid;gap:10px}
+  .cbtn.go{margin-top:22px;border-color:var(--amber);color:var(--amber);padding:15px 20px}
+  .cbtn.go:hover{background:rgba(255,157,46,.1)}
+  .pcard{width:100%;background:none;border:none;border-bottom:1px solid var(--rule);color:var(--ink);
+    font-family:inherit;text-align:left;display:flex;align-items:baseline;gap:14px;
+    padding:19px 0;cursor:pointer}
+  .pcard:first-of-type{border-top:1px solid var(--rule)}
+  .pcard .sig{flex:1;font-size:18px}
+  .pcard:hover .sig{color:var(--amber)}
+  @media(max-width:560px){.pcard{flex-direction:column;gap:6px}}
+  /* ask thread */
+  .aq{margin-top:16px;max-width:52ch;font-size:15px;line-height:1.65}
+  .aq.you{color:var(--ink)}
+  .aq.you::before{content:"You — ";color:var(--faint);font-family:'Fragment Mono',monospace;
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+  .aq.me{color:var(--dust);white-space:pre-wrap}
+  :focus-visible{outline:1px solid var(--amber);outline-offset:3px}
+  /* ===== new approach: analysis overlay + on-demand gated sections ===== */
+  .aoverlay{position:fixed;inset:0;background:#000;z-index:120;display:none;flex-direction:column;align-items:center;justify-content:center;gap:26px;transition:opacity .7s}
+  .aoverlay.gone{opacity:0}
+  .aeye{width:118px;height:118px}
+  .aeye .alid{stroke-dasharray:380;stroke-dashoffset:380;animation:adraw 1.05s ease forwards}
+  .aeye .airis{opacity:0;animation:afin .5s ease .7s forwards}
+  .aeye .apupil{opacity:0;transform-box:fill-box;transform-origin:center;animation:afin .4s ease .9s forwards, apul 1.6s ease-in-out 1s infinite}
+  @keyframes adraw{to{stroke-dashoffset:0}} @keyframes afin{to{opacity:1}} @keyframes apul{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
+  .atxt2{font-family:'Fragment Mono','Courier New',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);opacity:0;animation:afin .6s ease 1.1s forwards}
+  .gate{margin-top:var(--s3)}
+  .gatebtn{background:none;border:1px solid var(--amber);color:var(--amber);padding:14px 22px;font-family:'Fragment Mono','Courier New',monospace;letter-spacing:.12em;text-transform:uppercase;font-size:12px;cursor:pointer}
+  .gatebtn:hover{background:var(--amber);color:#000}
+  .gatebody{display:none}
+  .gatebody.shown{display:block;animation:gfade .6s ease}
+  @keyframes gfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .gatestage{margin-top:20px;display:flex;flex-direction:column;gap:16px}
+  .scan{display:flex;gap:9px}
+  .scan span{width:10px;height:10px;border-radius:50%;background:#33333d;animation:scanp 1s ease-in-out infinite}
+  .scan span:nth-child(2){animation-delay:.12s}.scan span:nth-child(3){animation-delay:.24s}.scan span:nth-child(4){animation-delay:.36s}.scan span:nth-child(5){animation-delay:.48s}.scan span:nth-child(6){animation-delay:.6s}
+  @keyframes scanp{0%,100%{background:#33333d;transform:scale(1)}50%{background:var(--amber);transform:scale(1.6)}}
+  .atxt{font-family:'Fragment Mono','Courier New',monospace;color:var(--faint);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+  /* ===== entry ceremony — the 10-step acquisition sequence ===== */
+  .acer{width:min(452px,86vw);display:flex;flex-direction:column;align-items:center;gap:22px}
+  .aseqhead{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:16px}
+  .askip{background:none;border:none;color:var(--faint);font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;padding:4px 2px}
+  .askip:hover{color:var(--ink)}
+  .aseqbar{width:100%;height:1px;background:var(--rule);overflow:hidden;flex:none}
+  .aseqbar i{display:block;height:100%;width:0;background:var(--amber);transition:width .45s cubic-bezier(.3,.7,.2,1);box-shadow:0 0 8px rgba(255,171,77,.6)}
+  .aseqlist{width:100%;display:flex;flex-direction:column}
+  .sq{display:flex;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid var(--rule);opacity:.26;transform:translateY(3px);transition:opacity .45s ease,transform .45s ease}
+  .sq.on{opacity:1;transform:none}
+  .sq .n{font-family:'Fragment Mono',monospace;font-size:10px;color:var(--faint);letter-spacing:.08em;flex:none;width:18px}
+  .sq .k{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dust);flex:none;width:88px}
+  .sq .v{font-size:13px;color:var(--ink);margin-left:auto;text-align:right;line-height:1.35}
+  .sq .v.pending{color:var(--faint)}
+  @media(prefers-reduced-motion:reduce){.sq{transition:none}.aseqbar i{transition:none}}
+  /* the eye loader — the motif, continued through streaming */
+  .eyeload{display:inline-flex;align-items:center;gap:11px;color:var(--faint);font-size:13px;letter-spacing:.02em}
+  .eyesvg{width:38px;height:38px;overflow:visible;flex:none}
+  .eyesvg .iris,.eyesvg .pupil,.eyesvg .scan{transform-box:fill-box;transform-origin:center}
+  .eyesvg .iris{animation:eyescan 2.6s ease-in-out infinite}
+  .eyesvg .pupil{animation:eyepulse 1.5s ease-in-out infinite}
+  .eyesvg .scan{animation:eyespin 1.7s linear infinite}
+  .eyelabel{opacity:.85}
+  @keyframes eyepulse{0%,100%{transform:scale(.62)}50%{transform:scale(1.35)}}
+  @keyframes eyescan{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+  @keyframes eyespin{to{transform:rotate(360deg)}}
+  @media(prefers-reduced-motion:reduce){.eyesvg .iris,.eyesvg .pupil,.eyesvg .scan{animation:none}}
+  /* ===== reading-source picker ===== */
+  .srcbar{margin-top:14px}
+  .srctoggle{background:none;border:none;cursor:pointer;color:var(--faint);text-align:left;padding:0;
+    font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+  .srctoggle b{color:var(--amber);font-weight:400}
+  .srctoggle:hover{color:var(--dust)}
+  .srctoggle .caret{display:inline-block;transition:transform .2s}
+  .srctoggle.open .caret{transform:rotate(180deg)}
+  .srcpanel{margin-top:14px;border:1px solid var(--rule)}
+  .srcopt{display:flex;flex-direction:column;gap:3px;align-items:flex-start;background:none;border:none;
+    border-bottom:1px solid var(--rule);cursor:pointer;padding:14px 16px;text-align:left;width:100%}
+  .srcopt:last-child{border-bottom:none}
+  .srcopt:hover{background:rgba(255,171,77,.06)}
+  .srcopt.cur{background:rgba(255,171,77,.09)}
+  .so-t{font-size:15px;color:var(--ink)}
+  .srcopt.cur .so-t{color:var(--amber)}
+  .so-t .tick{color:var(--amber);margin-left:7px;font-size:12px}
+  .so-d{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .srcopt:disabled{opacity:.4;cursor:default}
+  .srcopt:disabled:hover{background:none}
+  .so-prog{padding:12px 16px;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:8px}
+  .so-prog .track{height:2px;background:var(--rule);overflow:hidden}
+  .so-prog .track i{display:block;height:100%;background:var(--amber);width:0;transition:width .3s}
+  /* source status + picker on the identify form */
+  .identsrc{margin-top:22px}
+  .identsrc-lb{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+  .identsrc-lb .mono{font-size:11px}
+  #idSrcStatus{color:var(--amber)}
+  .idsrcopts{display:flex;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .idsrcopt{flex:1 1 0;min-width:0;background:#000;border:none;cursor:pointer;padding:12px 10px;text-align:left;display:flex;flex-direction:column;gap:3px}
+  .idsrcopt b{color:var(--ink);font-weight:500;font-size:14px;line-height:1.15}
+  .idsrcopt span{font-family:'Fragment Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .idsrcopt:hover{background:rgba(255,171,77,.06)}
+  .idsrcopt.cur{background:rgba(255,171,77,.1)}
+  .idsrcopt.cur b{color:var(--amber)}
+  .idsrcopt:disabled{opacity:.32;cursor:default}
+  .idsrcopt:disabled:hover{background:#000}
+  /* compatibility */
+  .cmplb{margin-bottom:12px}
+  .cmpwho{display:flex;flex-wrap:wrap;gap:10px}
+  .cmp-p{background:none;border:1px solid var(--rule);color:var(--dust);cursor:pointer;padding:11px 15px;text-align:left;display:flex;flex-direction:column;gap:2px;min-width:120px}
+  .cmp-p .nm{font-size:15px;color:var(--ink)}
+  .cmp-p .mt{font-family:'Fragment Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .cmp-p:hover{border-color:var(--amber)}
+  .cmp-p.on{border-color:var(--amber);background:rgba(255,171,77,.08)}
+  .cmp-p.on .nm{color:var(--amber)}
+  .cmpnew{margin-top:12px;display:flex;flex-direction:column;gap:10px;max-width:420px}
+  .cmpnew input{background:#0b0b10;border:1px solid var(--rule);color:var(--ink);font-family:'Archivo',sans-serif;font-size:15px;padding:12px 14px}
+  .cmpnewrow{display:flex;gap:10px}
+  .cmpnewrow input{flex:1;min-width:0}
+  .cmprel{display:flex;gap:1px;background:var(--rule);border:1px solid var(--rule);flex-wrap:wrap}
+  .cmprel button{flex:1 1 auto;background:#000;border:none;color:var(--faint);font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:11px 12px;cursor:pointer;white-space:nowrap}
+  .cmprel button:hover{color:var(--ink)}
+  .cmprel button.on{background:var(--ink);color:#000;font-weight:700}
+  .cmpverdict{margin-top:var(--s4);border-top:1px solid var(--rule);padding-top:var(--s3)}
+  .cmpverdict .vl{display:flex;align-items:baseline;gap:12px}
+  .cmpscore{color:var(--amber)}
+  #cmpVV{font-size:clamp(24px,5vw,38px);margin:12px 0 14px;text-transform:lowercase}
+  #cmpVR{max-width:60ch}
+  .cmpsig{display:flex;gap:12px;align-items:baseline;padding:11px 0;border-top:1px solid var(--rule)}
+  .cmpsig:first-child{margin-top:18px}
+  .cmpsig .k{font-family:'Fragment Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);flex:none;width:96px}
+  .cmpsig .t{font-size:14px;color:var(--dust);line-height:1.5}
+  .cmpsig .sc{margin-left:auto;font-family:'Fragment Mono',monospace;font-size:11px;flex:none}
+  .cmpsig .sc.pos{color:var(--amber)}.cmpsig .sc.neg{color:#8a8a97}
+</style>
+</head>
+<body>
+<div class="aoverlay" id="analysisOverlay">
+  <div class="acer">
+    <svg class="aeye" viewBox="0 0 160 160" fill="none">
+      <path class="alid" d="M18 80 Q80 26 142 80 Q80 134 18 80 Z" stroke="#f5f5fc" stroke-width="2"/>
+      <circle class="airis" cx="80" cy="80" r="26" stroke="#ffab4d" stroke-width="1.5"/>
+      <circle class="apupil" cx="80" cy="80" r="7" fill="#ffab4d"/>
+    </svg>
+    <div class="aseqhead"><span class="atxt2" id="aseqState">Reading the sky</span><button class="askip" id="aseqSkip" type="button">Skip &rarr;</button></div>
+    <div class="aseqbar"><i id="aseqBar"></i></div>
+    <div class="aseqlist" id="aseqList"></div>
+  </div>
+</div>
+
+<header class="mast" style="max-width:var(--col);margin:0 auto;padding-left:22px;padding-right:22px">
+  <svg viewBox="0 0 40 40" fill="none" stroke="#f0f0fa" stroke-width="1.4">
+    <circle cx="20" cy="20" r="18.5" stroke-width="1"/>
+    <path d="M2.6 20 Q20 5.4 37.4 20 Q20 34.6 2.6 20Z"/>
+    <circle cx="20" cy="20" r="5.4"/><circle cx="20" cy="20" r="1.7" fill="#f0f0fa" stroke="none"/>
+  </svg>
+  <span class="mono"><b>Prophexy</b></span>
+  <span class="who mono" id="who">Tonight</span>
+</header>
+
+<nav class="snav" aria-label="Sections"><div class="snavin" id="snav">
+  <a class="stab on" href="#s-tonight">Tonight</a>
+  <a class="stab" href="#s-move">Move</a>
+  <a class="stab" href="#s-why">Why</a>
+  <a class="stab" href="#s-sky">Sky</a>
+  <a class="stab" href="#s-numbers">Numbers</a>
+  <a class="stab" href="#s-you">You</a>
+  <a class="stab" href="#s-ways">Systems</a>
+  <a class="stab" href="#s-vedic">Vedic</a>
+  <a class="stab" href="#s-chinese">Chinese</a>
+  <a class="stab" href="#s-compat">Together</a>
+  <a class="stab" href="#s-checkin">Check in</a>
+  <a class="stab" href="#s-cards">Cards</a>
+  <a class="stab" href="#s-cure">Cure</a>
+  <a class="stab" href="#s-timing">Timing</a>
+  <a class="stab" href="#s-week">Ahead</a>
+</div></nav>
+
+<div class="ident" id="ident" hidden>
+  <div class="identin">
+    <div class="kicker"><span class="dot lit"></span><span class="mono"><b>Prophexy</b> · who am I reading?</span></div>
+    <h1 class="display" style="font-size:clamp(30px,8vw,44px);max-width:16ch;margin:26px 0">The sky is the same for everyone tonight. You are not.</h1>
+    <div id="peopleCards"></div>
+    <div class="identform">
+      <label class="mono">Full name at birth</label><input id="fName" autocomplete="name" placeholder="First Last">
+      <div class="identrow2">
+        <span><label class="mono">Born</label><input id="fDob" type="date" value="1992-10-01"></span>
+        <span><label class="mono">Time · if known</label><input id="fTob" type="time"></span>
+      </div>
+      <label class="mono">Where you were born</label><input id="fPlace" placeholder="Any city or town">
+      <div class="identsrc" id="identSrc">
+        <div class="identsrc-lb"><span class="mono">Read with</span><span class="mono" id="idSrcStatus">checking&hellip;</span></div>
+        <div class="idsrcopts">
+          <button class="idsrcopt" id="idSrcSB" type="button"><b>Your Claude</b><span>Switchboard</span></button>
+          <button class="idsrcopt" id="idSrcDev" type="button"><b>On device</b><span>Private &middot; ~1GB</span></button>
+          <button class="idsrcopt cur" id="idSrcNone" type="button"><b>Computed</b><span>No AI &middot; instant</span></button>
+        </div>
+      </div>
+      <button class="cbtn go" id="fGo">Begin the reading</button>
+      <p class="movenote" id="fNote">Name and date make your numbers. Time and place sharpen the chart. Nothing about you leaves this device.</p>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <section class="hero" id="s-tonight">
+    <div class="kicker"><span class="dot lit"></span><span class="mono" id="kick"><b>Tonight&rsquo;s reading</b></span><button class="cbtn" id="aiConnectBtn" hidden style="margin-left:auto">Use my Claude</button></div>
+    <h1 class="display"><span class="rl"><span id="hl">The sky is being read.</span></span></h1>
+    <div class="srcbar">
+      <button class="srctoggle" id="srcToggle" type="button">Source: <b id="srcNow">computed</b> &nbsp;<span class="caret">&#9662;</span></button>
+      <div class="srcpanel" id="srcPanel" hidden>
+        <button class="srcopt" id="srcSB" type="button"><span class="so-t">Your Claude<span class="tick" hidden>&#10003;</span></span><span class="so-d">Switchboard &middot; richest, most personal</span></button>
+        <button class="srcopt" id="srcDev" type="button"><span class="so-t">On this device<span class="tick" hidden>&#10003;</span></span><span class="so-d">Private local model &middot; ~1GB, one-time</span></button>
+        <button class="srcopt" id="srcNone" type="button"><span class="so-t">On the chart<span class="tick" hidden>&#10003;</span></span><span class="so-d">Computed &middot; no AI, instant</span></button>
+        <div class="so-prog" id="srcProg" hidden><div class="track"><i id="srcProgFill"></i></div><span class="mono" id="srcProgTxt">Loading the on-device model&hellip;</span></div>
+      </div>
+    </div>
+    <p class="body" id="lede">One honest paragraph about your day lands here.</p>
+    <div class="evidence" id="evidence"></div>
+    <div class="askrow"><input id="askQ" placeholder="Ask me anything about today&hellip;"><button id="askGo">Ask</button></div>
+    <p class="movenote" id="askNote">A decision, a person, a fear — I answer against your whole chart.</p>
+    <div id="askThread"></div>
+  </section>
+
+  <section id="s-move">
+    <div class="seclb"><span class="mono">The move</span></div>
+    <p class="secsub">One thing to actually do about it. Small on purpose.</p>
+    <h2 class="display" id="move">&mdash;</h2>
+    <div class="movewhen"><span class="mono">Best stretch</span><span class="t" id="movewhen">tonight</span></div>
+    <p class="movenote">Not a rule — just the stretch that suits this kind of move. Too big? Make it smaller until it isn&rsquo;t.</p>
+  </section>
+
+  <section id="s-why">
+    <div class="seclb"><span class="mono">Why the reading says this</span></div>
+    <p class="secsub">The live signals it was built from. Each one is real, and each one opens.</p>
+    <div id="behindRows"></div>
+    <a class="combine" href="#s-why">See how they combine &rarr;</a>
+  </section>
+
+  <section id="s-sky">
+    <div class="seclb"><span class="mono">The sky tonight</span></div>
+    <p class="secsub">Where the lights are right now, over your head.</p>
+    <div class="wheelrow">
+      <svg class="wheel" id="wheel" viewBox="0 0 320 320" fill="none"></svg>
+      <div class="wheellegend" id="wheellegend"></div>
+    </div>
+    <div class="moonrow">
+      <div class="moon" role="img" aria-label="The moon tonight"><i class="moonshade" id="moonshade"></i></div>
+      <div class="moonfacts" id="moonfacts"></div>
+    </div>
+  </section>
+
+  <section id="s-numbers">
+    <div class="seclb"><span class="mono">How tonight reduces</span></div>
+    <p class="secsub">Nothing here is chosen — it&rsquo;s arithmetic, and it changes tomorrow.</p>
+    <div class="chain" id="chain"></div>
+    <p class="chainnote">Your birth day and month, folded against today&rsquo;s date, reduced until one digit remains.</p>
+    <div id="numRows" style="margin-top:var(--s4)"></div>
+  </section>
+
+  <section id="s-you">
+    <div class="seclb"><span class="mono">The part that never moves</span></div>
+    <p class="secsub">Everything above changes daily. This is the fixed ground under it.</p>
+    <h2 class="display" id="purpose">&mdash;</h2>
+    <div id="youRows" style="margin-top:var(--s3)"></div>
+  </section>
+
+  <section id="s-ways">
+    <div class="seclb"><span class="mono">The same person, four ways</span></div>
+    <div class="ways" id="ways"></div>
+    <p class="waysnote">Four traditions, four calendars, one birth. They don&rsquo;t translate each other — where they rhyme is where it&rsquo;s worth trusting. The two that most disagree with the Western story get their own reading below.</p>
+  </section>
+
+  <section id="s-vedic">
+    <div class="seclb"><span class="mono">The Vedic you</span></div>
+    <p class="secsub">Read from the fixed stars — about 24&deg; behind the Western zodiac.</p>
+    <p class="body" id="vedicRead">&mdash;</p>
+    <div id="vedicRows" style="margin-top:var(--s3)"></div>
+  </section>
+
+  <section id="s-chinese">
+    <div class="seclb"><span class="mono">Your Chinese year</span></div>
+    <p class="secsub">One birth year, read as animal, element, and force.</p>
+    <p class="body" id="chineseRead">&mdash;</p>
+    <div class="ways" id="chineseCells" style="margin-top:var(--s3)"></div>
+  </section>
+
+  <section id="s-compat">
+    <div class="seclb"><span class="mono">The two of you</span></div>
+    <p class="secsub">Read how you and someone else fit &mdash; choose who, and for what.</p>
+    <div class="cmplb mono">Who am I reading you with?</div>
+    <div class="cmpwho" id="cmpWho"></div>
+    <div class="cmpnew" id="cmpNew" hidden>
+      <input id="cmpName" placeholder="Their name" autocomplete="off">
+      <div class="cmpnewrow"><input id="cmpDob" type="date" value="1990-06-15"><button class="cbtn" id="cmpAdd" type="button">Use them</button></div>
+    </div>
+    <div class="cmplb mono" style="margin-top:var(--s3)">Compatibility for what?</div>
+    <div class="cmprel" id="cmpRel">
+      <button type="button" data-r="relationship" class="on">Relationship</button>
+      <button type="button" data-r="friends">Friends</button>
+      <button type="button" data-r="coworkers">Coworkers</button>
+      <button type="button" data-r="family">Family</button>
+      <button type="button" data-r="business">Business</button>
+    </div>
+    <div class="fieldrow" style="margin-top:var(--s3)"><button class="cbtn go" id="cmpGo" disabled>Read the two of you</button><span class="savednote" id="cmpNote">Pick a person above.</span></div>
+    <div class="cmpverdict" id="cmpVerdict" hidden>
+      <div class="vl mono">The fit<span class="cmpscore" id="cmpScore"></span></div>
+      <h3 class="display" id="cmpVV">&mdash;</h3>
+      <p class="body" id="cmpVR">&mdash;</p>
+      <div id="cmpSignals"></div>
+    </div>
+  </section>
+
+  <section id="s-checkin">
+    <div class="seclb"><span class="mono">How are you, really?</span></div>
+    <p class="secsub">No wrong answer — this is how I learn what actually moves you.</p>
+    <div class="chips" id="moodChips"></div>
+    <div class="moodout" id="moodOut"><p class="body" id="moodTxt"></p></div>
+
+    <div class="field sub3">
+      <div class="seclb"><span class="mono">A dream, if you have one</span></div>
+      <textarea id="dreamIn" placeholder="I was somewhere I half-recognised&hellip;"></textarea>
+      <div class="fieldrow"><button class="cbtn" id="dreamSave">Keep this dream</button><span class="savednote" id="dreamNote"></span></div>
+    </div>
+
+    <div class="field sub3">
+      <div class="seclb"><span class="mono">Tonight&rsquo;s page</span></div>
+      <p class="secsub" id="jprompt">&mdash;</p>
+      <textarea id="jIn" placeholder="Write the gut answer before the reasons arrive."></textarea>
+      <div class="fieldrow"><button class="cbtn" id="jSave">Save it</button><span class="savednote" id="jNote"></span></div>
+    </div>
+
+    <div class="sub3">
+      <div class="seclb"><span class="mono">Let me see you</span></div>
+      <p class="secsub">The chart says who you were born as. Your palm and face say who you&rsquo;ve become. Photos stay on this device unless you tap Read &mdash; then the image is sent to your own Claude to read.</p>
+      <div class="capgrid">
+        <div class="capslot"><span class="mono">Your palm</span><img id="palmImg" alt="" hidden><video id="palmCam" autoplay playsinline muted hidden></video><div class="capbtns"><button class="cbtn" id="palmCamBtn" type="button">Use camera</button><label class="filelb">Add a photo<input type="file" id="palmIn" accept="image/*" capture="environment" hidden></label></div><button class="linesmap" id="palmLines" type="button" hidden>Show the lines I found</button></div>
+        <div class="capslot"><span class="mono">Your face</span><img id="faceImg" alt="" hidden><video id="faceCam" autoplay playsinline muted hidden></video><div class="capbtns"><button class="cbtn" id="faceCamBtn" type="button">Use camera</button><label class="filelb">Add a photo<input type="file" id="faceIn" accept="image/*" capture="user" hidden></label></div></div>
+      </div>
+      <div class="fieldrow" style="margin-top:16px"><button class="cbtn" id="readBody">Read my palm &amp; face</button><span class="savednote" id="bodyNote">Add a palm or face photo first.</span></div>
+      <div id="palmReadBlk" hidden style="margin-top:20px"><div class="seclb"><span class="mono">What your palm says</span></div><div class="palmobs" id="palmObs" hidden></div><p class="body" id="palmRead">&mdash;</p></div>
+      <div id="faceReadBlk" hidden style="margin-top:20px"><div class="seclb"><span class="mono">What your face says</span></div><p class="body" id="faceRead">&mdash;</p></div>
+    </div>
+
+    <div class="sub3">
+      <div class="seclb"><span class="mono">What you&rsquo;re calling in</span></div>
+      <p class="secsub">A board of the life you&rsquo;re moving toward. Look at it often.</p>
+      <div class="visiongrid" id="visionGrid"></div>
+      <div class="fieldrow"><label class="filelb">Add an image<input type="file" id="visIn" accept="image/*" hidden></label><span class="savednote" id="visNote"></span></div>
+    </div>
+
+    <div class="sub3">
+      <div class="seclb"><span class="mono">What I&rsquo;ve learned about you</span></div>
+      <p class="secsub" id="learned">Tell me what I get right and wrong — every correction sharpens the next reading.</p>
+    </div>
+  </section>
+
+  <section id="s-cards">
+    <div class="seclb"><span class="mono">Ask the cards</span></div>
+    <p class="secsub">Pick a spread, hold a real question, shuffle, then choose three.</p>
+    <div class="tarot">
+      <div id="stageVeil"></div>
+      <div class="qtypes" id="qtypes">
+        <button type="button" data-s="yesno" class="on">Yes or no</button>
+        <button type="button" data-s="choice">This or that</button>
+        <button type="button" data-s="timing">When</button>
+        <button type="button" data-s="block">What&rsquo;s blocking me</button>
+        <button type="button" data-s="blind">What am I missing</button>
+      </div>
+      <div class="qhint" id="qhint"></div>
+      <div class="qrow">
+        <input id="q" placeholder="One real question&hellip;" autocomplete="off">
+        <button id="draw" type="button">Shuffle</button>
+      </div>
+      <div class="deckwrap">
+        <div class="deckhint" id="deckHint">Shuffle the deck, then choose three cards</div>
+        <div class="deckrow" id="deckRow"></div>
+        <div class="deckglow" id="deckGlow"></div>
+      </div>
+      <div class="plates" id="plates"></div>
+      <div class="verdict" id="verdict">
+        <div class="vl">The answer<span class="srcbadge" id="vBadge">Computed</span></div>
+        <div class="vv" id="vv"></div>
+        <div class="vr" id="vr"></div>
+      </div>
+      <p class="qecho" id="qecho"></p>
+    </div>
+  </section>
+
+  <section id="s-cure">
+    <div class="seclb"><span class="dot lit"></span><span class="mono">Tonight, one thing</span></div>
+    <div class="remedy">
+      <span class="mono" id="rembecause">&mdash;</span>
+      <h3 id="remhead">&mdash;</h3>
+      <p class="body" id="remnote">&mdash;</p>
+    </div>
+
+    <div class="sub3">
+      <div class="seclb"><span class="mono">The breath, here</span></div>
+      <div class="breathe">
+        <div class="bring" id="bring"><i></i></div>
+        <div class="bstate">
+          <span class="mono" id="blabel">In 4 &middot; hold 4 &middot; out 4 &middot; hold 4</span>
+          <button class="cbtn" id="bstart">Begin &middot; six rounds</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub3">
+      <div class="seclb"><span class="mono">Sound for tonight</span></div>
+      <p class="secsub">Chant to steady the mind, frequency to shift the body. Taps open your player.</p>
+      <div id="songs"></div>
+    </div>
+  </section>
+
+  <section id="s-timing">
+    <div class="seclb"><span class="mono">The day&rsquo;s timing</span></div>
+    <p class="secsub">When the day helps, and when to let it pass.</p>
+    <div id="timingRows"></div>
+  </section>
+
+  <section id="s-week">
+    <div class="seclb"><span class="mono">The week ahead</span></div>
+    <p class="secsub">The next seven days, weighed against your numbers.</p>
+    <div class="week" id="week"></div>
+    <p class="weeknote" id="weeknote"></p>
+    <div class="areas" id="areaGrid"></div>
+  </section>
+
+  <div class="calib">
+    <span class="mono">Did this read you right?</span>
+    <button class="cbtn" id="cyes">It did</button>
+    <button class="cbtn" id="cno">Not quite</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  function $(id){return document.getElementById(id)}
+  function esc(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  var person=null, pid='';
+  try{ var ppl=JSON.parse(localStorage.getItem('prophexy.people'))||[]; pid=localStorage.getItem('prophexy.activeId')||'';
+    person=ppl.find(function(p){return p.id===pid;})||ppl[ppl.length-1]||null; if(person)pid=person.id; }catch(e){}
+  var name=person?String(person.name||'').split(/\s+/)[0]:'', place=person?person.place:'',
+      dob=(person&&person.dob)||'1992-10-01', fullname=(person&&person.name)||'';
+  var now=new Date(), MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  $('who').innerHTML=(name?('For '+esc(name)+'<br>'):'')+now.getDate()+' '+MON[now.getMonth()]+(place?' · '+esc(place):'');
+
+  function red(n){while(n>9&&n!==11&&n!==22){n=String(n).split('').reduce(function(a,c){return a+ +c;},0);}return n;}
+  function pdayFor(d){var q=dob.split('-');return red(red(+q[1])+red(+q[2])+red(d.getFullYear())+red(d.getMonth()+1)+red(d.getDate()));}
+  var dp=dob.split('-'), pd=pdayFor(now);
+  var lifePath=red(String(dp[0]+dp[1]+dp[2]).split('').reduce(function(a,c){return a+ +c;},0));
+  /* numerology timing cycles — anchors so predictions can name a real window */
+  var pyear=red(red(+dp[1])+red(+dp[2])+red(now.getFullYear()));
+  var pmonth=red(pyear+red(now.getMonth()+1));
+  var PYTHEME={1:'new starts and momentum',2:'partnership, patience, waiting',3:'expression, social life, creativity',4:'building and steady work',5:'change, freedom, the unexpected, moves',6:'love, home, marriage, commitment, responsibility',7:'reflection and inner work — a slower year',8:'money, power, career leaps',9:'endings and clearing the way',11:'intuition and a spiritual step-up',22:'building something lasting'};
+  function nextPY(target){ for(var i=0;i<9;i++){ var y=now.getFullYear()+i; if(red(red(+dp[1])+red(+dp[2])+red(y))===target) return y; } return null; }
+  var PY={A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8};
+  var nameNum=fullname?red(fullname.toUpperCase().replace(/[^A-Z]/g,'').split('').reduce(function(a,c){return a+(PY[c]||0);},0)):0;
+  var NW={1:'a beginning',2:'patience',3:'expression',4:'foundation',5:'change',6:'care',7:'the inner life',8:'power',9:'completion',11:'insight',22:'building big'};
+
+  var jd=now.getTime()/86400000+2440587.5, fr=((jd-2451550.1)/29.530588853)%1; if(fr<0)fr+=1;
+  var age=fr*29.530588853, illum=Math.round((1-Math.cos(fr*2*Math.PI))/2*100);
+  var phase=age<1.85?'New moon':age<5.54?'Waxing crescent':age<9.23?'First quarter':age<12.91?'Waxing gibbous':age<16.61?'Full moon':age<20.30?'Waning gibbous':age<23.99?'Last quarter':age<27.68?'Waning crescent':'New moon';
+  var d0=jd-2451545.0, mlon=((218.316+13.176396*d0)%360+360)%360;
+  var slon=((280.46+0.9856474*d0)%360+360)%360;
+  var SIGNS=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  var msign=SIGNS[Math.floor(mlon/30)], tsign=SIGNS[Math.floor(slon/30)], waning=fr>0.5;
+  window.addEventListener('DOMContentLoaded',function(){var sh=$('moonshade');
+    if(sh){var off=(illum/100)*126*1.06; sh.style.transform='translateX('+(waning?off:-off).toFixed(0)+'px)';}});
+
+  var DR=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'], ruler=DR[now.getDay()];
+  var RTONE={Sun:'visibility · vitality',Moon:'feeling · tides',Mars:'drive · heat',Mercury:'words · exchange',Jupiter:'growth · luck',Venus:'love · ease',Saturn:'limit · discipline'};
+
+  function sunSignByDate(m,d){var T=[[1,20,'Capricorn'],[2,19,'Aquarius'],[3,21,'Pisces'],[4,20,'Aries'],[5,21,'Taurus'],[6,21,'Gemini'],[7,23,'Cancer'],[8,23,'Leo'],[9,23,'Virgo'],[10,23,'Libra'],[11,22,'Scorpio'],[12,22,'Sagittarius'],[12,32,'Capricorn']];
+    for(var i=0;i<T.length;i++){ if(m<T[i][0]||(m===T[i][0]&&d<T[i][1])) return T[i][2]; } return 'Capricorn'; }
+  var wsun=sunSignByDate(+dp[1],+dp[2]);
+  var vsun=SIGNS[(SIGNS.indexOf(wsun)+11)%12];
+
+  var by=+dp[0], ANI=['Rat','Ox','Tiger','Rabbit','Dragon','Snake','Horse','Goat','Monkey','Rooster','Dog','Pig'];
+  var ELE=['Metal','Metal','Water','Water','Wood','Wood','Fire','Fire','Earth','Earth'];
+  var ANOTE={Rat:'quick, resourceful, first through the gap',Ox:'steady, unstoppable once moving',Tiger:'bold, protective, all-in',Rabbit:'gentle, diplomatic, exact',Dragon:'magnetic, made for the big stage',Snake:'deep, private, precise',Horse:'free, fast, allergic to cages',Goat:'kind, artistic, feels everything',Monkey:'clever, inventive, a natural problem-solver',Rooster:'sharp-eyed, honest, punctual',Dog:'loyal, fair, keeps the watch',Pig:'generous, honest, easy to trust'};
+  var ENOTE={Wood:'growth — you reach and branch',Fire:'heat — you light rooms',Earth:'ground — you hold things',Metal:'edge — you cut cleanly',Water:'depth — you flow around what blocks you'};
+  var animal=ANI[(by-4)%12], elem=ELE[by%10], yy=(by%2===0)?'Yang':'Yin';
+
+  function tk(d){d=d||new Date();var p=function(n){return n<10?'0'+n:''+n};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
+  var daily=null; try{ var dj=JSON.parse(localStorage.getItem('prophexy.daily::'+pid)); if(dj&&dj.day===tk())daily=dj; }catch(e){}
+  function capWords(str,n){var w=String(str||'').trim().split(/\s+/);return w.length<=n?w.join(' '):w.slice(0,n).join(' ')+'…';}
+  var HL={1:'The day has its engine running.',2:'A slow day — and it should be.',3:'The day wants to talk.',4:'Heads down; things get done.',5:'The day won’t sit still.',6:'The day pulls you home.',7:'Go quiet, and listen in.',8:'You can push today, and win.',9:'A door is ready to close.',11:'Your gut runs the show today.',22:'A day that thinks in years.'};
+  var MEANING={1:'Today has push in it. Something you keep circling comes closer to the surface, and you feel the pull to move on it. Point that restless energy at one thing and it goes.',2:'Today moves slowly, and it is not yours to rush. What you want is still forming in the background. This is a waiting day — it goes better the moment you stop forcing it.',3:'Today is bright and talkative. Words come easily and you want to share what is on your mind. Reach out — a conversation opens something up.',4:'Today is steady and grounded — a working day, not a dramatic one. The practical pile that has been building finally gets manageable. Solid and useful; you get real things done.',5:'Today runs loose. The routine has give in it, plans shift, and something unplanned gets room to move. Stay flexible and the change works for you.',6:'Today turns toward home and the people in it. Their moods reach you, and the small things close to you carry the weight. It is about who you are doing it for, not the to-do list.',7:'Today turns inward. The outside world matters less and your own thoughts more. Low-key and quiet — you feel exactly how you are actually doing.',8:'Today gives you firmer ground. You carry more weight, speak up sooner, and get taken seriously. A strong, sure day — spend the confidence.',9:'Today closes a chapter. Something that has run its course is ready to end, and it reads like an exhale. Let the ending be an ending.',11:'Today your gut runs louder than your logic. You know things before you can explain them — a first impression, a hunch that turns out right. Trust the read.',22:'Today thinks big. The long game — the someday plans — feels closer and more real. It moves in years, not hours; set the larger thing in motion now.'};
+  if(daily&&daily.line){ $('hl').textContent=capWords(daily.line,13);
+    $('kick').innerHTML='<b>Tonight&rsquo;s reading</b> · '+(daily.src==='local'?'on your device':'your Claude');
+    if(daily.base){ var paras=daily.base.split(/\n{2,}/).filter(Boolean);
+      var lead=(paras[1]||paras[0]||'').replace(/^[^\n]{0,44}\n/,'').trim();
+      if(lead)$('lede').textContent=lead.slice(0,360); }
+  } else {
+    $('hl').textContent=HL[pd]||'The day is being read.';
+    $('kick').innerHTML='<b>Tonight&rsquo;s reading</b> · computed';
+    $('lede').textContent=MEANING[pd]||MEANING[5];
+  }
+
+  /* ===== the eye loader — reusable, shown while a reading streams ===== */
+  function eyeLoader(label){
+    return '<span class="eyeload"><svg viewBox="0 0 40 40" class="eyesvg" aria-hidden="true">'+
+      '<ellipse cx="20" cy="20" rx="18" ry="11" fill="none" stroke="#3a3a46" stroke-width="1.2"/>'+
+      '<circle class="iris" cx="20" cy="20" r="7" fill="none" stroke="#f5f5fc" stroke-width="1.2"/>'+
+      '<circle class="pupil" cx="20" cy="20" r="2.4" fill="#ffab4d"/>'+
+      '<circle class="scan" cx="20" cy="20" r="11" fill="none" stroke="#ffab4d" stroke-width="1.4" stroke-dasharray="14 55" stroke-linecap="round"/>'+
+      '</svg><span class="eyelabel">'+esc(label||'reading you…')+'</span></span>';
+  }
+  window.__eyeLoader=eyeLoader;
+
+  /* ===== entry ceremony: the 10-step acquisition sequence ===== */
+  (function(){
+    var AC; function ceTone(f){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended')AC.resume();
+        var o=AC.createOscillator(),g=AC.createGain(); o.type='sine'; o.frequency.value=f; g.gain.value=0.04;
+        o.connect(g); g.connect(AC.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.0001,AC.currentTime+0.4); o.stop(AC.currentTime+0.42);
+      }catch(e){} }
+    var coords=(person&&person.lat!=null)?(Math.abs(person.lat).toFixed(1)+'°'+(person.lat>=0?'N':'S')):'';
+    var STEPS=[
+      ['Subject',      fullname||'You'],
+      ['Station',      (place||'—')+(coords?(' · '+coords):'')],
+      ['Date',         now.getDate()+' '+MON[now.getMonth()]+' '+now.getFullYear()],
+      ['Lunar phase',  phase+' · '+illum+'% lit'],
+      ['Moon',         'in '+msign],
+      ['Sun',          'in '+tsign],
+      ['Day ruler',    ruler+' · '+(RTONE[ruler]||'')],
+      ['Personal day', pd+' · '+(NW[pd]||'')],
+      ['Life path',    lifePath+' · '+(NW[lifePath]||'')],
+      ['Name value',   nameNum?(nameNum+' · '+(NW[nameNum]||'')):'—']
+    ];
+    window.__playCeremony=function(sound,onDone){
+      var ov=$('analysisOverlay'); if(!ov){ onDone&&onDone(); return; }
+      var reduce=false; try{ reduce=matchMedia('(prefers-reduced-motion:reduce)').matches; }catch(e){}
+      var list=$('aseqList'), bar=$('aseqBar'), state=$('aseqState'), skip=$('aseqSkip');
+      list.innerHTML=STEPS.map(function(s,i){ return '<div class="sq" id="sq'+i+'"><span class="n">'+(i<9?'0':'')+(i+1)+
+        '</span><span class="k">'+esc(s[0])+'</span><span class="v pending">…</span></div>'; }).join('');
+      bar.style.width='0'; state.textContent='Reading the sky';
+      ov.classList.remove('gone'); ov.style.display='flex';
+      ov.querySelectorAll('.alid,.airis,.apupil').forEach(function(e){ e.style.animation='none'; void e.offsetWidth; e.style.animation=''; });
+      var i=0, timer=null, ended=false, step=reduce?150:480;
+      function reveal(j){ var r=$('sq'+j); if(!r)return; r.classList.add('on'); var v=r.querySelector('.v'); v.classList.remove('pending'); v.textContent=STEPS[j][1]; }
+      function finish(){ if(ended)return; ended=true; clearTimeout(timer); if(skip)skip.style.visibility='hidden';
+        state.textContent='Resolved · 10 sources'; bar.style.width='100%'; if(sound&&!reduce)ceTone(880);
+        setTimeout(function(){ ov.classList.add('gone'); setTimeout(function(){ ov.style.display='none'; },720); onDone&&onDone(); }, reduce?260:640); }
+      function next(){ if(i>=STEPS.length){ finish(); return; }
+        reveal(i); bar.style.width=Math.round((i+1)/STEPS.length*100)+'%'; state.textContent='Acquired · '+STEPS[i][0];
+        if(sound&&!reduce)ceTone(300+i*42); i++; timer=setTimeout(next,step); }
+      if(skip){ skip.style.visibility='visible'; skip.onclick=function(){ for(var j=0;j<STEPS.length;j++)reveal(j); i=STEPS.length; clearTimeout(timer); finish(); }; }
+      timer=setTimeout(next, reduce?60:360);
+    };
+  })();
+
+  function ev(lit,html){return '<span class="ev"><span class="dot'+(lit?' lit':'')+'"></span><span class="mono">'+html+'</span></span>';}
+  $('evidence').innerHTML=ev(true,'<b>'+phase+'</b> · '+illum+'%')+ev(false,ruler+'’s day')+ev(false,'a '+pd+'-day')+(name?ev(false,'read for '+esc(name)):'');
+  function brow(subj,meta,href){return '<a class="brow" href="'+(href||'./#why')+'"><span class="sig">'+subj+'</span><span class="meta mono">'+meta+'</span></a>';}
+  $('behindRows').innerHTML=
+    brow('<b>'+phase+'</b> in '+msign, illum+'% lit · '+(waning?'reveal':'build'))+
+    brow('<b>'+ruler+'</b> rules today', RTONE[ruler])+
+    brow('A <b>'+pd+'-day</b> on your numbers', NW[pd]+' · resets tomorrow')+
+    (daily&&daily.src?brow('<b>Your reading</b>, written today','on '+(daily.src==='local'?'your device':'your Claude'),'./#reading-ai'):'');
+  $('moonfacts').innerHTML='<span class="mono"><b>'+phase+'</b> · '+illum+'% lit</span>'+
+    '<span class="mono">In '+msign+' · day '+age.toFixed(1)+'</span>'+
+    '<span class="mono">'+(waning?'Waning · a night for letting go':'Waxing · a night for building')+'</span>';
+
+  /* ask is wired to the live bridge below */
+
+  var MOVES={1:'Take the first concrete step on the thing you named.',2:'Wait one more day — and say so plainly.',3:'Send the message you drafted in your head.',4:'Finish one structural task, fully.',5:'Act on the feeling you keep talking yourself out of.',6:'Repair one small thing with one person.',7:'Sit alone with it for ten minutes, no phone.',8:'Ask for what it is actually worth.',9:'Close the loop you have been dragging.',11:'Write the flash down before it fades.',22:'Draw the plan for the big thing, one page.'};
+  $('move').textContent=(daily&&daily.act)?daily.act:(MOVES[pd]||MOVES[5]);
+  var W={Sun:'7 – 8 AM',Moon:'9 – 11 PM',Mars:'6 – 7 AM',Mercury:'10 – 11 AM',Jupiter:'5 – 6 PM',Venus:'8 – 9 PM',Saturn:'10 – 11 PM'};
+  $('movewhen').textContent=W[ruler]||'tonight';
+
+  /* wheel: sign ring + sun/moon markers */
+  (function(){
+    var G=['ARI','TAU','GEM','CAN','LEO','VIR','LIB','SCO','SAG','CAP','AQU','PIS'];
+    var s2='', cx=160, cy=160;
+    s2+='<circle cx="160" cy="160" r="150" stroke="#1a1a21"/><circle cx="160" cy="160" r="118" stroke="#1a1a21"/>';
+    for(var i=0;i<12;i++){ var a=(i*30)*Math.PI/180;
+      s2+='<line x1="'+(cx+118*Math.cos(a)).toFixed(1)+'" y1="'+(cy-118*Math.sin(a)).toFixed(1)+'" x2="'+(cx+150*Math.cos(a)).toFixed(1)+'" y2="'+(cy-150*Math.sin(a)).toFixed(1)+'" stroke="#1a1a21"/>';
+      var ga=((i*30+15))*Math.PI/180;
+      s2+='<text x="'+(cx+134*Math.cos(ga)).toFixed(1)+'" y="'+(cy-134*Math.sin(ga)+4).toFixed(1)+'" text-anchor="middle">'+G[i]+'</text>';
+    }
+    function mark(lon,col,r2){ var a=lon*Math.PI/180;
+      return '<circle cx="'+(cx+r2*Math.cos(a)).toFixed(1)+'" cy="'+(cy-r2*Math.sin(a)).toFixed(1)+'" r="5" fill="'+col+'"/>'; }
+    s2+=mark(slon,'#ff9d2e',96)+mark(mlon,'#dfe0ee',76);
+    s2+='<circle cx="160" cy="160" r="3" fill="#33333d"/>';
+    $('wheel').innerHTML=s2;
+    $('wheellegend').innerHTML=
+      '<span class="mono"><b style="color:#ff9d2e">●</b> Sun · '+tsign+'</span>'+
+      '<span class="mono"><b style="color:#dfe0ee">●</b> Moon · '+msign+'</span>'+
+      '<span class="mono">'+ruler+' rules the day</span>'+
+      '<span class="mono" style="color:var(--faint)">To the minute, as seen from Earth</span>';
+  })();
+
+  /* numbers chain + rows */
+  var bsum=red(red(+dp[1])+red(+dp[2])), tsum=red(red(now.getFullYear())+red(now.getMonth()+1)+red(now.getDate()));
+  $('chain').innerHTML=
+    '<div class="ch"><span class="mono">Born</span><span class="cv">'+(+dp[2])+'.'+(+dp[1])+'</span><span class="mono">reduces to '+bsum+'</span></div>'+
+    '<div class="ch"><span class="mono">Today</span><span class="cv">'+now.getDate()+'.'+(now.getMonth()+1)+'</span><span class="mono">reduces to '+tsum+'</span></div>'+
+    '<div class="ch last"><span class="mono">Together</span><span class="cv">'+pd+'</span><span class="mono">'+(NW[pd]||'')+'</span></div>';
+  $('numRows').innerHTML=
+    brow('Today&rsquo;s number for you · <b>'+pd+'</b>', NW[pd]+' · changes daily','./#reading')+
+    brow('Your birth number · <b>'+lifePath+'</b>', NW[lifePath]+' · the lens under every day','./#reading')+
+    (nameNum?brow('Your name number · <b>'+nameNum+'</b>', NW[nameNum]+' · from your letters','./#reading'):'');
+
+  /* you */
+  var PUR={1:'You are here to go first.',2:'You are here to hold things together.',3:'You are here to say it out loud.',4:'You are here to build what lasts.',5:'You are here to keep things moving.',6:'You are here to take care of it.',7:'You are here to understand it.',8:'You are here to run it.',9:'You are here to finish things whole.',11:'You are here to see what others miss.',22:'You are here to build the big thing.'};
+  $('purpose').textContent=PUR[lifePath]||PUR[5];
+  var maturity=red(lifePath+ (nameNum||lifePath));
+  $('youRows').innerHTML=
+    brow('Life path <b>'+lifePath+'</b> · '+NW[lifePath],'fixed at birth','./#purpose')+
+    brow('Sun in <b>'+wsun+'</b>','your season · western','./#purpose')+
+    brow('Who you become · a <b>'+maturity+'</b>', NW[maturity]+' · takes over mid-30s','./#purpose');
+
+  /* systems */
+  function way(sys,val,note){return '<div class="way"><span class="mono">'+sys+'</span><span class="wv">'+val+'</span>'+(note?'<span class="wnote">'+note+'</span>':'')+'</div>';}
+  $('ways').innerHTML=way('Western','Sun in '+wsun)+way('Vedic','Sun in '+vsun)+
+    way('Chinese',yy+' '+elem+' '+animal)+way('Numbers','Life path '+lifePath);
+  $('vedicRows').innerHTML=
+    brow('Sun · <b>'+wsun+'</b> &rarr; <b>'+vsun+'</b>','western &rarr; vedic','./#vedic')+
+    brow('Moon &amp; rising','need your exact birth time — in the full app','./#vedic');
+  $('chineseCells').innerHTML=
+    way('Your animal',animal,ANOTE[animal]||'')+
+    way('Your element',yy+' '+elem,ENOTE[elem]||'')+
+    way('The year','born '+by,'the animal is the face the world sees')+
+    way('Day master','in the full app','the deepest layer needs your exact birth day');
+
+  /* dedicated readings — Vedic & Chinese, as prose, not just cells */
+  var SIGNTRAIT={
+    Aries:'a starter, quick to move and ask later',
+    Taurus:'steady and sensory, building things that last',
+    Gemini:'quick and curious, living between ideas',
+    Cancer:'protective and tidal, feeling in waves',
+    Leo:'warm and visible, made to be seen',
+    Virgo:'precise and useful, fixing what others miss',
+    Libra:'a balancer, reading the room and evening it out',
+    Scorpio:'deep and all-or-nothing, going to the bottom of things',
+    Sagittarius:'restless and honest, needing room and truth',
+    Capricorn:'patient and climbing, playing the long game',
+    Aquarius:'independent and future-facing, thinking sideways',
+    Pisces:'porous and dreaming, absorbing what’s around you'
+  };
+  var VEDIC_COMPUTED=
+    'Your Vedic Sun sits in '+vsun+'. At the core, that makes you '+(SIGNTRAIT[vsun]||'')+' — and in the Vedic view that core runs deeper than the personality the world first meets. It shapes how you take on whatever the day brings: in the '+vsun+' way, patiently and on your own terms. '+
+    (wsun===vsun
+      ? 'Western astrology lands on the same sign here — rare, and it means this part of you reads the same however you look at it.'
+      : '(Western astrology, which measures a little differently, would call you '+wsun+'; Vedic works from the fixed stars, about 24° back, and gives you '+vsun+'.)');
+  var CHINESE_COMPUTED=
+    'You were born in the year of the '+yy+' '+elem+' '+animal+'. The '+animal+' is '+(ANOTE[animal]||'')+' — the face the world meets first. Its element is '+elem+': '+(ENOTE[elem]||'')+'. And it runs '+yy+', '+(yy==='Yang'?'turned outward — initiating, spending energy to make things happen':'turned inward — receptive, gathering energy before it moves')+'. Together they describe how you actually operate, underneath the Western story.';
+  if($('vedicRead')) $('vedicRead').textContent=VEDIC_COMPUTED;
+  if($('chineseRead')) $('chineseRead').textContent=CHINESE_COMPUTED;
+
+  /* upgrade to a real AI reading when a source is connected; computed prose is the instant fallback */
+  function sysReadPrompt(kind){
+    if(kind==='vedic') return 'Write my Vedic (sidereal) astrology reading in 2–3 plain sentences. My Vedic Sun is '+vsun+' (for reference my Western Sun is '+wsun+', but do NOT make the reading about the difference). Second person, warm, specific, and DEFINITIVE — state plainly who I am and how I move through things; commit, do not hedge (no "maybe / might / you may / tends to"). A reading not advice, no headline and no label — lead with what my Vedic '+vsun+' Sun says about me. Mention the Western sign only as a brief aside at the very end, if at all.';
+    return 'Write my Chinese astrology reading in 2–3 plain sentences. I am a '+yy+' '+elem+' '+animal+' (born '+by+'). Second person, warm, specific, and DEFINITIVE — say plainly how I actually operate and commit to it; no hedging (no "maybe / might / you may / tends to"). A reading not advice, no headline and no label.';
+  }
+  function streamInto(el,prompt,cacheKey,fallback){
+    if(!el)return;
+    if(!aiReady()){ if(fallback)el.textContent=fallback; return; }
+    try{ var c=JSON.parse(localStorage.getItem(cacheKey)); if(c&&c.day===tk()&&c.text){ el.textContent=c.text; return; } }catch(e){}
+    if(el.dataset.busy)return; el.dataset.busy='1';
+    var prev=fallback||el.textContent; el.innerHTML=eyeLoader('reading…');
+    (async function(){ var acc='';
+      try{ for await (var d of aiStream({system:sysPrompt(),messages:[{role:'user',content:prompt}],maxTokens:240})){ if(d&&d.text){ acc+=d.text; el.textContent=acc; } }
+        acc=acc.trim(); if(acc){ el.textContent=acc; try{localStorage.setItem(cacheKey,JSON.stringify({day:tk(),text:acc}));}catch(e){} } else el.textContent=prev;
+      }catch(e){ el.textContent=prev; }
+      finally{ delete el.dataset.busy; }
+    })();
+  }
+  /* lazy: only spend tokens on a section's AI reading when you actually scroll to it (and never re-run a cached day) */
+  function lazyEnrich(secId,el,prompt,cacheKey,fallback){
+    if(!el)return;
+    try{ var c=JSON.parse(localStorage.getItem(cacheKey)); if(c&&c.day===tk()&&c.text){ el.textContent=c.text; return; } }catch(e){}
+    if(!aiReady())return; /* computed fallback already shown */
+    var sec=$(secId); if(!sec||el.dataset.obs)return; el.dataset.obs='1';
+    if(!('IntersectionObserver' in window)){ streamInto(el,prompt,cacheKey,fallback); return; }
+    var io=new IntersectionObserver(function(ents){ ents.forEach(function(en){ if(en.isIntersecting){ io.disconnect(); streamInto(el,prompt,cacheKey,fallback); } }); },{rootMargin:'0px 0px -15% 0px'});
+    io.observe(sec);
+  }
+  window.__enrichSystems=function(){
+    lazyEnrich('s-vedic',$('vedicRead'),sysReadPrompt('vedic'),'prophexy.vedic::'+pid,VEDIC_COMPUTED);
+    lazyEnrich('s-chinese',$('chineseRead'),sysReadPrompt('chinese'),'prophexy.chinese::'+pid,CHINESE_COMPUTED);
+  };
+  if(aiReady()) window.__enrichSystems();
+
+  /* check-in */
+  var MOODS=[['anxious','Name the one thing feeding it. Just the name takes half its charge.'],
+    ['low','Go smaller, not faster. One kind thing for yourself before anything else.'],
+    ['restless','That energy is real — aim it at the move above before it aims itself.'],
+    ['angry','It usually guards something softer. What would you say if it were safe to?'],
+    ['flat','Flat is a signal, not a failure. Touch something physical — walk, water, air.'],
+    ['overwhelmed','You don’t need the whole list. You need the first item, done.'],
+    ['good','Bank it. Do the move above while the wind is with you.']];
+  var chipsEl=$('moodChips');
+  MOODS.forEach(function(m){ var b=document.createElement('button'); b.className='chip'; b.textContent=m[0];
+    b.addEventListener('click',function(){
+      chipsEl.querySelectorAll('.chip').forEach(function(o){o.classList.remove('on')}); b.classList.add('on');
+      $('moodTxt').textContent=m[1]; $('moodOut').classList.add('show');
+      try{var k='prophexy.mood::'+(pid||'_');var a=JSON.parse(localStorage.getItem(k))||[];if(!Array.isArray(a))a=[];a.push({d:tk(),m:m[0],src:'proto'});localStorage.setItem(k,JSON.stringify(a));}catch(e){}
+    }); chipsEl.appendChild(b); });
+
+  $('dreamSave').addEventListener('click',function(){
+    var t=($('dreamIn').value||'').trim(); if(!t)return;
+    try{var k='prophexy.dreams::'+(pid||'_');var a=JSON.parse(localStorage.getItem(k))||[];if(!Array.isArray(a))a=[];
+      a.push({t:t,f:'',r:false,d:now.getDate()+' '+MON[now.getMonth()]});localStorage.setItem(k,JSON.stringify(a));
+      $('dreamNote').textContent='Kept · '+a.length+' with me'; $('dreamIn').value='';}catch(e){}
+  });
+  try{var da=JSON.parse(localStorage.getItem('prophexy.dreams::'+(pid||'_')))||[];
+    if(Array.isArray(da)&&da.length)$('dreamNote').textContent=da.length+' dream'+(da.length>1?'s':'')+' with me';}catch(e){}
+
+  var JP={1:'What would you start if no one was watching?',2:'What are you waiting for — honestly?',3:'What have you not said out loud yet?',4:'What’s the one brick you could lay today?',5:'What are you gripping that wants to change?',6:'Who needs five real minutes from you?',7:'What does the quiet part of you know?',8:'What are you undercharging for?',9:'What is actually finished, if you let it be?',11:'What did you know before you talked yourself out of it?',22:'What would the ten-year version look like?'};
+  $('jprompt').textContent=JP[pd]||JP[5];
+  $('jSave').addEventListener('click',function(){
+    var t=($('jIn').value||'').trim(); if(!t)return;
+    try{var k='prophexy.journal::'+(pid||'_');var a=JSON.parse(localStorage.getItem(k))||[];if(!Array.isArray(a))a=[];
+      a.push({d:tk(),q:$('jprompt').textContent,t:t});localStorage.setItem(k,JSON.stringify(a));
+      $('jNote').textContent='Saved · '+a.length+' page'+(a.length>1?'s':''); $('jIn').value='';}catch(e){}
+  });
+
+  /* palm / face: preview + store, then a real reading (your Claude reads the actual photo; computed framing otherwise) */
+  var BODY={palm:null,face:null};
+  try{ var bj=JSON.parse(localStorage.getItem('prophexy.body::'+pid)); if(bj){ BODY.palm=bj.palm||null; BODY.face=bj.face||null; } }catch(e){}
+  function bodySave(){ try{ localStorage.setItem('prophexy.body::'+pid,JSON.stringify(BODY)); }catch(e){} }
+  function refreshBodyBtn(){ var b=$('readBody'),n=$('bodyNote'); if(!b)return; var has=!!(BODY.palm||BODY.face); b.disabled=!has;
+    if(n)n.textContent=!has?'Add a palm or face photo first.':(aiReady()&&AIMODE!=='local'?'Sends the photo to your Claude to read your actual lines.':(aiReady()?'On-device can’t see images — you’ll get a chart-based read.':'Computed read now; connect your Claude to read the actual photo.')); }
+  window.__refreshBodyBtn=refreshBodyBtn;
+  /* downscale + recompress before storing/sending — a phone photo at full res is megabytes and costs a fortune in tokens */
+  function compressImg(file,maxDim,quality){ return new Promise(function(res){
+    var r=new FileReader(); r.onerror=function(){res('');};
+    r.onload=function(){ var img=new Image();
+      img.onload=function(){ var w=img.width,h=img.height,scale=Math.min(1,maxDim/Math.max(w,h||1));
+        var cw=Math.max(1,Math.round(w*scale)),ch=Math.max(1,Math.round(h*scale));
+        try{ var c=document.createElement('canvas'); c.width=cw; c.height=ch; c.getContext('2d').drawImage(img,0,0,cw,ch);
+          res(c.toDataURL('image/jpeg',quality||0.72)); }catch(e){ res(r.result); } };
+      img.onerror=function(){ res(r.result); }; img.src=r.result; };
+    r.readAsDataURL(file); }); }
+  function slot(inId,imgId,which){ var el=$(inId); if(!el)return;
+    if(BODY[which]){ var im0=$(imgId); if(im0){ im0.src=BODY[which]; im0.hidden=false; } }
+    el.addEventListener('change',function(){ var f=this.files&&this.files[0]; if(!f)return;
+      compressImg(f,(which==='palm'?1024:768),0.72).then(function(durl){ if(!durl)return; BODY[which]=durl; var img=$(imgId); if(img){ img.src=durl; img.hidden=false; } bodySave(); refreshBodyBtn(); }); }); }
+  slot('palmIn','palmImg','palm'); slot('faceIn','faceImg','face'); refreshBodyBtn();
+  /* camera: live preview in the slot, one tap to capture; falls back to the photo picker (which opens the camera on phones) */
+  function camSlot(which){ var btn=$(which+'CamBtn'),v=$(which+'Cam'),img=$(which+'Img'),inp=$(which+'In'); if(!btn||!v)return;
+    var stream=null;
+    function stop(){ if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; } v.srcObject=null; v.hidden=true; btn.textContent='Use camera'; btn.dataset.live=''; }
+    function shoot(){ var w=v.videoWidth,h=v.videoHeight; if(!w||!h)return;
+      var sc=Math.min(1,(which==='palm'?1024:768)/Math.max(w,h)),c=document.createElement('canvas'); c.width=Math.round(w*sc); c.height=Math.round(h*sc);
+      c.getContext('2d').drawImage(v,0,0,c.width,c.height); var durl=c.toDataURL('image/jpeg',0.72); stop();
+      BODY[which]=durl; if(img){ img.src=durl; img.hidden=false; } bodySave(); refreshBodyBtn(); }
+    btn.addEventListener('click',function(){
+      if(btn.dataset.live){ shoot(); return; }
+      if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ if(inp)inp.click(); return; }
+      btn.textContent='Opening camera\u2026';
+      navigator.mediaDevices.getUserMedia({video:{facingMode:which==='palm'?'environment':'user',width:{ideal:1280},height:{ideal:1280}},audio:false})
+        .then(function(st){ stream=st; v.srcObject=st; v.hidden=false; if(img)img.hidden=true; btn.textContent='Capture'; btn.dataset.live='1'; })
+        .catch(function(){ btn.textContent='Use camera'; if(inp)inp.click(); });
+    });
+    document.addEventListener('visibilitychange',function(){ if(document.hidden&&stream){ stop(); if(img&&BODY[which])img.hidden=false; } });
+  }
+  camSlot('palm'); camSlot('face');
+
+  /* palm lines map: pull the creases out of the photo so both you and the model can actually see them.
+     Grayscale -> local contrast (subtract a wide blur) -> keep only what is darker than its surroundings
+     (creases are dark valleys) -> normalise. Runs on-device in a few ms; sent alongside the photo. */
+  var PALMMAP=null;
+  function boxBlur(src,w,h,r){ var tmp=new Float32Array(w*h),out=new Float32Array(w*h),n=2*r+1,x,y,i,acc;
+    for(y=0;y<h;y++){ acc=0; for(x=-r;x<=r;x++)acc+=src[y*w+Math.min(w-1,Math.max(0,x))];
+      for(x=0;x<w;x++){ tmp[y*w+x]=acc/n; acc+=src[y*w+Math.min(w-1,x+r+1)]-src[y*w+Math.max(0,x-r)]; } }
+    for(x=0;x<w;x++){ acc=0; for(y=-r;y<=r;y++)acc+=tmp[Math.min(h-1,Math.max(0,y))*w+x];
+      for(y=0;y<h;y++){ out[y*w+x]=acc/n; acc+=tmp[Math.min(h-1,y+r+1)*w+x]-tmp[Math.max(0,y-r)*w+x]; } }
+    return out; }
+  function palmLinesMap(durl){ return new Promise(function(res){ var img=new Image(); img.onerror=function(){res(null);};
+    img.onload=function(){ setTimeout(function(){ try{
+      var w=img.width,h=img.height,c=document.createElement('canvas'); c.width=w; c.height=h; var cx=c.getContext('2d'); cx.drawImage(img,0,0);
+      var d=cx.getImageData(0,0,w,h),px=d.data,n=w*h,g=new Float32Array(n),lum=new Float32Array(n),i,S=Math.max(w,h);
+      /* green channel: creases are redder and darker than the skin around them, so green carries the most crease contrast */
+      for(i=0;i<n;i++){ g[i]=px[i*4+1]; lum[i]=0.299*px[i*4]+0.587*px[i*4+1]+0.114*px[i*4+2]; }
+      /* band-pass at crease width: darker than an ~8px neighbourhood, after killing 1px pore texture */
+      var fine=boxBlur(g,w,h,1), wide=boxBlur(g,w,h,Math.max(4,Math.round(S/96)));
+      /* hand mask: skin is the bright part; erode so the hand's outline against the background doesn't read as a line */
+      var lb=boxBlur(lum,w,h,4),mx=0; for(i=0;i<n;i++)if(lb[i]>mx)mx=lb[i];
+      var m=new Float32Array(n); for(i=0;i<n;i++)m[i]=lb[i]>mx*0.3?1:0;
+      var me=boxBlur(m,w,h,Math.round(S/60)); for(i=0;i<n;i++)m[i]=me[i]>0.98?1:0;
+      var resp=new Float32Array(n); for(i=0;i<n;i++){ var v=wide[i]-fine[i]; resp[i]=v>0?v*m[i]:0; }
+      /* oriented smoothing: average along 8 directions and keep the best — creases are long, pores and noise are not */
+      var L=6,o2=new Float32Array(n),dirs=[[1,0],[0,1],[1,1],[1,-1],[2,1],[1,2],[2,-1],[1,-2]],x,y,k,dd,sx,sy,cnt,sum,best,nx,ny,ln;
+      for(y=0;y<h;y++)for(x=0;x<w;x++){ i=y*w+x; if(!m[i])continue; best=0;
+        for(dd=0;dd<8;dd++){ nx=dirs[dd][0]; ny=dirs[dd][1]; ln=Math.sqrt(nx*nx+ny*ny); sum=0; cnt=0;
+          for(k=-L;k<=L;k++){ sx=Math.round(x+k*nx/ln); sy=Math.round(y+k*ny/ln); if(sx<0||sy<0||sx>=w||sy>=h)continue; sum+=resp[sy*w+sx]; cnt++; }
+          if(cnt&&sum/cnt>best)best=sum/cnt; }
+        o2[i]=best; }
+      /* stretch: everything below the 80th percentile of the hand is skin, the top 1.5% is full black */
+      var vals=[]; for(i=0;i<n;i+=3)if(m[i])vals.push(o2[i]); vals.sort(function(p,q){return p-q;});
+      var lo=vals[Math.floor(vals.length*0.8)]||0, top=vals[Math.floor(vals.length*0.985)]||1; if(top<=lo)top=lo+1;
+      for(i=0;i<n;i++){ var t=(o2[i]-lo)/(top-lo); t=t<0?0:t>1?1:t; t=Math.pow(t,0.9); var o=m[i]?Math.round(245-t*235):200; px[i*4]=px[i*4+1]=px[i*4+2]=o; px[i*4+3]=255; }
+      cx.putImageData(d,0,0); res(c.toDataURL('image/jpeg',0.72)); }catch(e){ res(null); } },0); };
+    img.src=durl; }); }
+  function refreshPalmMap(){ var b=$('palmLines'),img=$('palmImg'); if(!b)return; PALMMAP=null; b.hidden=true; b.dataset.on='';
+    if(!BODY.palm)return; palmLinesMap(BODY.palm).then(function(m){ if(!m||m.length>400000)return; PALMMAP=m; b.hidden=false; b.textContent='Show the lines I found'; }); }
+  if($('palmLines'))$('palmLines').addEventListener('click',function(){ var img=$('palmImg'); if(!PALMMAP||!img)return;
+    var on=!this.dataset.on; this.dataset.on=on?'1':''; img.src=on?PALMMAP:BODY.palm; this.textContent=on?'Show the photo':'Show the lines I found'; });
+  refreshPalmMap();
+  var _bodySave=bodySave; bodySave=function(){ _bodySave(); refreshPalmMap(); };
+
+  /* structured palm read: the model must observe each line before it interprets — no interpretation without evidence */
+  var PALM_PROMPT='Two images: first my palm photo, second the same palm with the creases enhanced (dark lines on light). Read them together like a palmist who actually looks. '+
+    'First OBSERVE, then READ. Use exactly this format, one item per line, labels in capitals:\n'+
+    'QUALITY: readable | partial | unreadable — then one short reason (light, blur, angle, crop).\n'+
+    'HAND: shape (square/long/wide palm, finger length, thumb angle) — what you can see.\n'+
+    'HEART: the top major line under the fingers — length (ends under index/middle/ring), curve (straight/curved), depth, breaks, branches, chained or clear. If not visible, say "not visible".\n'+
+    'HEAD: the middle line — start (joined to or apart from life line), slope (straight across/sloping to wrist), length, depth, breaks, forks.\n'+
+    'LIFE: the curve around the thumb — sweep (wide/close), length, depth, breaks, islands, sister lines.\n'+
+    'FATE: the vertical line up the centre — present or absent, start point, depth, breaks; if absent say so.\n'+
+    'OTHER: anything else visible (sun/mercury lines, bracelets, crosses, stars, grilles, marriage lines) or "nothing clear".\n'+
+    'READING: 4–6 sentences, warm, second person, specific to what you observed above and to my chart — how I love, how I think, my vitality, my path. Say "your heart line does X, so…" not generic palmistry. No disclaimers.\n'+
+    'If QUALITY is unreadable, still fill the labels with what little you see and make READING two sentences telling me exactly how to retake the photo.';
+  var PALM_LABELS=['QUALITY','HAND','HEART','HEAD','LIFE','FATE','OTHER','READING'];
+  function parsePalm(text){ var out={},cur=null,lines=String(text||'').split(/\r?\n/),i,m;
+    for(i=0;i<lines.length;i++){ var L=lines[i]; m=L.match(/^\s*\**\s*([A-Z]{3,9})\s*\**\s*[:—-]\s*(.*)$/);
+      if(m&&PALM_LABELS.indexOf(m[1])>=0){ cur=m[1]; out[cur]=(m[2]||'').trim(); }
+      else if(cur&&L.trim()){ out[cur]+=(out[cur]?' ':'')+L.trim(); } }
+    return out; }
+  function renderPalm(text){ var obs=$('palmObs'),el=$('palmRead'); var o=parsePalm(text);
+    if(!o.READING&&!o.HEART&&!o.HEAD&&!o.LIFE){ if(obs)obs.hidden=true; el.textContent=text; return; }
+    var rows=[['QUALITY','Photo'],['HAND','Hand'],['HEART','Heart line'],['HEAD','Head line'],['LIFE','Life line'],['FATE','Fate line'],['OTHER','Also']];
+    if(obs){ obs.innerHTML=rows.filter(function(r){return o[r[0]];}).map(function(r){ var bad=r[0]==='QUALITY'&&/unreadable|partial/i.test(o[r[0]]);
+      return '<span class="mono">'+r[1]+'</span><span'+(bad?' class="q"':'')+'>'+esc(o[r[0]])+'</span>'; }).join(''); obs.hidden=false; }
+    el.textContent=o.READING||'';
+  }
+  ['palm'].forEach(function(w){ if(!BODY[w])return; try{ var c=JSON.parse(localStorage.getItem('prophexy.bodyread::'+pid+'::'+w)); if(c&&c.day===tk()&&c.text)renderPalm(c.text); }catch(e){} });
+  ['palm','face'].forEach(function(w){ if(!BODY[w])return; try{ var c=JSON.parse(localStorage.getItem('prophexy.bodyread::'+pid+'::'+w)); if(c&&c.day===tk()&&c.text){ var el=$(w+'Read'),blk=$(w+'ReadBlk'); if(el&&blk){ el.textContent=c.text; blk.hidden=false; } } }catch(e){} });
+
+  var HAND={Fire:'a Fire hand — warm, driven, quick to act on instinct',Water:'a Water hand — sensitive, intuitive, feeling its way',Earth:'an Earth hand — practical, solid, happiest building something real',Metal:'an Air hand — sharp-minded, communicative, restless in the head',Wood:'a growing hand — reaching, patient, steady as it climbs'};
+  var FACE={Fire:'warmth and expression',Water:'softness and depth',Earth:'steadiness and weight',Metal:'definition and edge',Wood:'openness and height'};
+  function palmComputed(){ return 'Classical palmistry sorts hands into elemental types; by your chart yours reads as '+(HAND[elem]||'a balanced hand')+'. The three lines to know are the heart (how you love), the head (how you think), and the life (your vitality and pace). Connect your Claude and tap Read, and I’ll read the actual lines in your photo.'; }
+  function faceComputed(){ return 'Face reading works in three zones — the forehead (early life and thought), the midface (the middle years and drive), the jaw and chin (later life and will). Your '+elem+' element leans your features toward '+(FACE[elem]||'balance')+'. Connect your Claude and tap Read, and I’ll read your actual features.'; }
+  function readBodyOne(which,el,blk){ if(!BODY[which]||!el||!blk)return; blk.hidden=false;
+    var computed=(which==='palm'?palmComputed():faceComputed());
+    if(!aiReady()||AIMODE==='local'){ el.textContent=computed; return; }
+    el.innerHTML=eyeLoader('reading your '+which+'…');
+    var prompt=(which==='palm'
+      ? PALM_PROMPT
+      : 'This is a photo of my face. Read it for me the way a face reader (physiognomy) would, in 3–4 plain sentences. Read the three zones — forehead, midface, jaw and chin — and any notable features, and tell me what they suggest about my temperament and how I move through life. Warm, specific, second person, no disclaimers.');
+    (async function(){ var acc='';
+      var att=[{role:which,data:BODY[which]}]; if(which==='palm'&&PALMMAP)att.push({role:'palm-lines',data:PALMMAP});
+      try{ for await (var d of aiStream({system:sysPrompt(),messages:[{role:'user',content:prompt}],attachments:att,maxTokens:(which==='palm'?640:320)})){ if(d&&d.text){ acc+=d.text; if(which==='palm')renderPalm(acc); else el.textContent=acc; } }
+        acc=acc.trim(); if(acc){ if(which==='palm')renderPalm(acc); else el.textContent=acc; try{ localStorage.setItem('prophexy.bodyread::'+pid+'::'+which,JSON.stringify({day:tk(),text:acc})); }catch(e){} } else el.textContent=computed;
+      }catch(e){ el.textContent=computed; } })(); }
+  if($('readBody'))$('readBody').addEventListener('click',function(){ readBodyOne('palm',$('palmRead'),$('palmReadBlk')); readBodyOne('face',$('faceRead'),$('faceReadBlk')); });
+
+  /* ================= compatibility — the two of you ================= */
+  (function(){
+    if(!$('s-compat'))return;
+    var people=[]; try{ people=JSON.parse(localStorage.getItem('prophexy.people'))||[]; }catch(e){}
+    var A={name:(name||'You'),sun:wsun,animal:animal,elem:elem,life:lifePath};
+    var B=null, REL='relationship';
+    function pdata(dob,nm){ var dp=String(dob||'1990-01-01').split('-'),by=+dp[0]||1990;
+      return {name:nm||'Them',sun:sunSignByDate(+dp[1],+dp[2]),animal:ANI[(((by-4)%12)+12)%12],elem:ELE[((by%10)+10)%10],
+        life:red(String(dp[0]+dp[1]+dp[2]).split('').reduce(function(a,c){return a+ +c;},0)),dob:dob}; }
+    function sunElem(s){ return {Aries:'Fire',Leo:'Fire',Sagittarius:'Fire',Taurus:'Earth',Virgo:'Earth',Capricorn:'Earth',Gemini:'Air',Libra:'Air',Aquarius:'Air',Cancer:'Water',Scorpio:'Water',Pisces:'Water'}[s]||'Air'; }
+    function elemPair(a,b){ if(a===b)return{s:2,t:'Both '+a+' signs — an easy, instinctive read of each other.'};
+      var fr={Fire:'Air',Air:'Fire',Earth:'Water',Water:'Earth'}; if(fr[a]===b)return{s:2,t:a+' and '+b+' feed each other — one lights, the other carries.'};
+      var cl={Fire:'Water',Water:'Fire',Earth:'Air',Air:'Earth'}; if(cl[a]===b)return{s:-1,t:a+' and '+b+' can douse or unsettle each other; it needs handling.'};
+      return{s:0,t:a+' and '+b+' run on different wavelengths — not wrong, just work.'}; }
+    var TR={Rat:0,Dragon:0,Monkey:0,Ox:1,Snake:1,Rooster:1,Tiger:2,Horse:2,Dog:2,Rabbit:3,Goat:3,Pig:3};
+    function chinPair(a,b){ var ai=ANI.indexOf(a),bi=ANI.indexOf(b);
+      if(a===b)return{s:1,t:'Two '+a+'s — familiar, though you may want the same spotlight.'};
+      if(TR[a]===TR[b])return{s:2,t:'The '+a+' and '+b+' share a trine — natural allies in Chinese astrology.'};
+      if(ai>=0&&bi>=0&&Math.abs(ai-bi)===6)return{s:-2,t:'The '+a+' and '+b+' are the classic clash (six apart) — sparks, for better and worse.'};
+      return{s:0,t:'The '+a+' and '+b+' neither lock in nor clash — it takes intention.'}; }
+    function numPair(a,b){ if(a===b)return{s:1,t:'Matching life paths ('+a+') — you get each other, sometimes too well.'};
+      var set=[a,b].sort(function(x,y){return x-y;}).join('-');
+      var good={'1-5':1,'2-6':1,'3-6':1,'3-9':1,'6-9':1,'2-4':1,'4-8':1,'1-9':1,'5-7':1};
+      var hard={'1-8':1,'4-5':1,'2-7':1,'1-4':1,'5-6':1};
+      if(good[set])return{s:1,t:'Life paths '+a+' and '+b+' support each other.'};
+      if(hard[set])return{s:-1,t:'Life paths '+a+' and '+b+' pull in different directions.'};
+      return{s:0,t:'Life paths '+a+' and '+b+' are neutral — neither helps nor hinders.'}; }
+    var LENS={
+      relationship:{w:{e:1.2,c:1,n:.8},noun:'a relationship',ask:'chemistry, tenderness, and whether it lasts'},
+      friends:{w:{e:1,c:1,n:.8},noun:'friends',ask:'ease, loyalty, and how much fun you two are'},
+      coworkers:{w:{e:.7,c:.8,n:1.3},noun:'coworkers',ask:'complementary strengths and friction under a deadline'},
+      family:{w:{e:.9,c:1.1,n:.9},noun:'family',ask:'patience, old patterns, and unconditional ground'},
+      business:{w:{e:.6,c:.9,n:1.4},noun:'business partners',ask:'trust, money instincts, and how you decide together'}
+    };
+    function compute(){
+      var e=elemPair(sunElem(A.sun),sunElem(B.sun)),c=chinPair(A.animal,B.animal),n=numPair(A.life,B.life),L=LENS[REL]||LENS.relationship;
+      var score=e.s*L.w.e+c.s*L.w.c+n.s*L.w.n, maxPos=2*L.w.e+2*L.w.c+1*L.w.n, maxNeg=1*L.w.e+2*L.w.c+1*L.w.n;
+      var pct=Math.max(6,Math.min(97,Math.round(((score+maxNeg)/(maxPos+maxNeg))*100)));
+      var head,tier;
+      if(pct>=78){head='a strong match — this one works';tier='strong';}
+      else if(pct>=60){head='a good match — worth it, eyes open';tier='good';}
+      else if(pct>=42){head='a mixed match — real, but you earn it';tier='mixed';}
+      else {head='a hard match — opposites, high heat';tier='hard';}
+      return{e:e,c:c,n:n,score:score,pct:pct,head:head,tier:tier,L:L};
+    }
+    function sig(k,t,s){ var cls=s>0?'pos':(s<0?'neg':''); return '<div class="cmpsig"><span class="k">'+k+'</span><span class="t">'+esc(t)+'</span><span class="sc '+cls+'">'+(s>0?'+':'')+s+'</span></div>'; }
+    function render(){ if(!B)return; var r=compute();
+      $('cmpVerdict').hidden=false; $('cmpScore').textContent=' · '+r.pct+'%';
+      $('cmpVV').textContent=A.name+' & '+B.name+' — '+r.head;
+      var lead=({strong:'As '+r.L.noun+', you two work — it clicks where it counts and holds up over time. This is one to keep.',good:'As '+r.L.noun+', this is worth it. It works, with one or two things to stay honest about — mind those and it lasts.',mixed:'As '+r.L.noun+', this is real but not automatic. It rewards the effort you put in and strains the moment you coast.',hard:'As '+r.L.noun+', this runs hot. The friction is the whole story — electric up close, costly if neither of you bends.'})[r.tier];
+      $('cmpVR').textContent=lead+' It comes down to '+r.L.ask+'. '+r.e.t+' '+r.c.t+' '+r.n.t;
+      $('cmpSignals').innerHTML=sig('Western',r.e.t,r.e.s)+sig('Chinese',r.c.t,r.c.s)+sig('Numbers',r.n.t,r.n.s);
+      enrich(r);
+    }
+    function enrich(r){ if(!aiReady())return; var el=$('cmpVR'),computed=el.textContent;
+      var prompt='Give a compatibility reading between two people, 4–5 plain sentences, warm and specific, addressed to me ('+A.name+') in second person. '+
+        'Us as '+r.L.noun+'. Me: Sun '+A.sun+', Chinese '+A.animal+', life path '+A.life+'. Them ('+B.name+'): Sun '+B.sun+', Chinese '+B.animal+', life path '+B.life+'. '+
+        'Signals: '+r.e.t+' '+r.c.t+' '+r.n.t+' Overall about '+r.pct+'% — "'+r.head+'". '+
+        'Weave the systems together (do not list them), focus on '+r.L.ask+', name the one real strength and the one real watch-out, and land on the same overall verdict. Be DEFINITIVE — commit to a clear verdict in the first sentence (does this work, will it last, is it worth it) and say it plainly; no hedging ("maybe / might / could / probably"). No disclaimers.';
+      el.innerHTML=eyeLoader('reading the two of you…');
+      (async function(){ var acc=''; try{ for await(var d of aiStream({system:sysPrompt(),messages:[{role:'user',content:prompt}],maxTokens:360})){ if(d&&d.text){acc+=d.text; el.textContent=acc;} } if(!acc.trim())el.textContent=computed; }catch(e){ el.textContent=computed; } })();
+    }
+    function renderWho(){ var others=people.filter(function(p){return p.id!==pid;});
+      var html=others.map(function(p){ return '<button class="cmp-p" type="button" data-id="'+p.id+'"><span class="nm">'+esc(p.name)+'</span><span class="mt">'+esc(p.dob||'')+(p.place?(' · '+esc(p.place)):'')+'</span></button>'; }).join('');
+      html+='<button class="cmp-p" type="button" data-id="__new"><span class="nm">Someone new</span><span class="mt">add a name + date</span></button>';
+      $('cmpWho').innerHTML=html;
+      [].slice.call($('cmpWho').querySelectorAll('.cmp-p')).forEach(function(btn){ btn.addEventListener('click',function(){
+        $('cmpWho').querySelectorAll('.cmp-p').forEach(function(o){o.classList.remove('on');}); btn.classList.add('on');
+        if(btn.dataset.id==='__new'){ $('cmpNew').hidden=false; B=null; $('cmpGo').disabled=true; $('cmpNote').textContent='Enter their name and date, then Use them.'; return; }
+        $('cmpNew').hidden=true; var p=others.filter(function(x){return x.id===btn.dataset.id;})[0]; if(!p)return;
+        B=pdata(p.dob,String(p.name||'').split(/\s+/)[0]); $('cmpGo').disabled=false; $('cmpNote').textContent=''; }); });
+    }
+    renderWho();
+    $('cmpAdd').addEventListener('click',function(){ var nm=($('cmpName').value||'').trim(),db=$('cmpDob').value||'1990-06-15';
+      if(!nm){ $('cmpNote').textContent='Give them a name first.'; return; } B=pdata(db,nm.split(/\s+/)[0]); $('cmpGo').disabled=false; $('cmpNote').textContent='Ready — read the two of you.'; });
+    [].slice.call($('cmpRel').querySelectorAll('button')).forEach(function(b){ b.addEventListener('click',function(){
+      $('cmpRel').querySelectorAll('button').forEach(function(o){o.classList.remove('on');}); b.classList.add('on'); REL=b.dataset.r;
+      if(B&&!$('cmpVerdict').hidden)render(); }); });
+    $('cmpGo').addEventListener('click',function(){ if(!B){ $('cmpNote').textContent='Pick a person above.'; return; } render(); });
+  })();
+
+  /* vision board */
+  var VK='prophexy.vision::'+(pid||'_');
+  function drawVision(){ try{var a=JSON.parse(localStorage.getItem(VK))||[]; if(!Array.isArray(a))a=[];
+    $('visionGrid').innerHTML=a.map(function(v){return '<img alt="" src="'+(v.img||v.src||'')+'">';}).join('');
+    $('visNote').textContent=a.length?(a.length+' on the board'):''; }catch(e){} }
+  drawVision();
+  $('visIn').addEventListener('change',function(){
+    var f=this.files&&this.files[0]; if(!f)return;
+    var rd=new FileReader(); rd.onload=function(){
+      var im=new Image(); im.onload=function(){
+        var c=document.createElement('canvas'); var w=Math.min(360,im.width); c.width=w; c.height=Math.round(im.height*w/im.width);
+        c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+        try{var a=JSON.parse(localStorage.getItem(VK))||[]; if(!Array.isArray(a))a=[];
+          a.push({img:c.toDataURL('image/jpeg',0.72)}); localStorage.setItem(VK,JSON.stringify(a)); drawVision();}catch(e){}
+      }; im.src=rd.result; }; rd.readAsDataURL(f);
+  });
+
+  /* learned */
+  try{var ca=JSON.parse(localStorage.getItem('prophexy.calib::'+(pid||'_')))||[];
+    if(Array.isArray(ca)&&ca.length){ var yes=ca.filter(function(x){return x.v===1||x.v===true;}).length;
+      $('learned').textContent='You have marked '+yes+' reading'+(yes===1?'':'s')+' right and '+(ca.length-yes)+' off so far. Every correction is carried into the next one.'; } }catch(e){}
+
+  /* cards: the full interactive deck lives in its own script; expose what it needs */
+  window.__PX={
+    name:fullname||'', first:name||'you', dob:dob, pid:pid,
+    pd:pd, npd:(NW[pd]||''), phase:phase, illum:illum, ruler:ruler, msign:msign,
+    tk:tk, eyeLoader:eyeLoader,
+    aiReady:function(){return aiReady();},
+    aiStream:function(o){return aiStream(o);},
+    sysPrompt:function(){return sysPrompt();},
+    mode:function(){return AIMODE;}
+  };
+
+  /* cure */
+  var REM={Sun:['Because the Sun asks to be seen','Three rounds of breath, then the Gayatri once.','Clarity first — the dawn prayer, for light.','Gayatri Mantra'],
+    Moon:['Because the Moon runs the feelings','Six rounds of box breathing, slow.','Settle the water before you read it.','Om Chandraya Namah'],
+    Mars:['Because Mars runs hot today','Exhale-heavy breathing — four in, eight out.','Burn it down to something usable.','Hanuman Chalisa'],
+    Mercury:['Because Mercury rules the words','Write three lines, then one chant.','Empty the head onto the page first.','Om Namah Shivaya'],
+    Jupiter:['Because Jupiter opens the door','Six rounds of breath, then one gratitude.','Name what is already growing.','Om Gurave Namah'],
+    Venus:['Because Venus softens the evening','Slow breath with music, lights low.','Let the evening be easy on purpose.','Deva Premal'],
+    Saturn:['Because Saturn asks for stillness','Six rounds of box breathing, then the Mahamrityunjaya once.','Settle the body before you name the feeling.','Mahamrityunjaya Mantra']};
+  var r=REM[ruler]||REM.Saturn;
+  $('rembecause').textContent=r[0]; $('remhead').textContent=r[1]; $('remnote').textContent=r[2];
+
+  /* breath — six rounds of 4-4-4-4, inline */
+  (function(){
+    var ring=$('bring'), lab=$('blabel'), btn=$('bstart'), timer=null;
+    var PH=[['Breathe in',1.18],['Hold',1.18],['Breathe out',0.82],['Hold',0.82]];
+    function stop(done){ if(timer){clearTimeout(timer);timer=null;}
+      ring.style.transform='scale(1)'; btn.textContent=done?'Again · six rounds':'Begin · six rounds';
+      lab.textContent=done?'Done — notice how you feel.':'In 4 · hold 4 · out 4 · hold 4'; }
+    btn.addEventListener('click',function(){
+      if(timer){stop(false);return;}
+      btn.textContent='Stop'; var round=0,pi=0;
+      (function step(){ var p=PH[pi];
+        lab.textContent=p[0]+' · round '+(round+1)+' of 6';
+        ring.style.transform='scale('+p[1]+')';
+        timer=setTimeout(function(){ pi++; if(pi>=PH.length){pi=0;round++;}
+          if(round>=6){stop(true);return;} step(); },4000);
+      })();
+    });
+  })();
+
+  /* songs */
+  var SONGS=[['Chant — traditional',[['Om Namah Shivaya','the five-syllable mantra — steadies the mind'],['Gayatri Mantra','the dawn prayer for clarity and light'],['Mahamrityunjaya Mantra','for healing, courage and protection']]],
+    ['Devotional — new age',[['Deva Premal','modern mantra, crystal clear'],['Krishna Das','call-and-response, lifts a low mood'],['Snatam Kaur','gentle, luminous, for late nights']]],
+    ['Frequencies',[['432 Hz','the calm tuning — for settling'],['528 Hz','the repair tone — for heaviness'],['639 Hz','the connection tone — for people things']]]];
+  $('songs').innerHTML=SONGS.map(function(g){
+    return '<div style="margin-top:26px"><span class="mono">'+g[0]+'</span>'+
+      '<div class="rail">'+g[1].map(function(s3){ var q=encodeURIComponent(s3[0]);
+        return '<div class="railcard"><span class="rn">'+s3[0]+'</span><span class="rd">'+s3[1]+'</span>'+
+          '<span class="lks"><a href="https://open.spotify.com/search/'+q+'">Spotify</a>'+
+          '<a href="https://music.apple.com/search?term='+q+'">Apple</a>'+
+          '<a href="https://www.youtube.com/results?search_query='+q+'">YouTube</a></span></div>'; }).join('')+
+      '</div></div>';
+  }).join('')+'<div class="railhint">Slide for more</div>';
+
+  /* timing */
+  var RAHU={0:'4:30 – 6:00 PM',1:'7:30 – 9:00 AM',2:'3:00 – 4:30 PM',3:'12:00 – 1:30 PM',4:'1:30 – 3:00 PM',5:'10:30 AM – 12:00 PM',6:'9:00 – 10:30 AM'};
+  $('timingRows').innerHTML=
+    brow('<b>Best stretch</b> · '+(W[ruler]||'tonight'), ruler+'’s hour · make the move here','./#prescribe')+
+    brow('<b>Let it pass</b> · '+RAHU[now.getDay()], 'the day’s dead zone · start nothing new','./#prescribe')+
+    brow('<b>Tonight</b> · after dark', waning?'release · close loops':'build · open loops','./#prescribe');
+
+  /* week + areas */
+  var WDN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], wk='', bestDay='', weakDay='';
+  var dayPds=[];
+  for(var i=1;i<=7;i++){ var d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i);
+    var p2=pdayFor(d); dayPds.push({d:d,pd:p2});
+    var best=(p2===1||p2===8||p2===lifePath), weak=(p2===2||p2===7);
+    if(best&&!bestDay)bestDay=WDN[d.getDay()];
+    if(weak&&!weakDay)weakDay=WDN[d.getDay()];
+    wk+='<div class="wd'+(best?' best':'')+(!best&&weak?' dim':'')+'">'+
+      '<span class="mono">'+WDN[d.getDay()]+'</span>'+
+      '<span class="wnum">'+d.getDate()+'</span>'+
+      '<span class="mono">'+p2+' · '+(NW[p2]||'')+'</span></div>'; }
+  $('week').innerHTML=wk;
+  $('weeknote').textContent=(bestDay?('Strongest '+bestDay):'An even week')+(weakDay?(' · quietest '+weakDay):'')+
+    (bestDay?(' — hold the big ask for '+bestDay+'.'):' — pace it, nothing needs forcing.');
+  var AREAS=[['Love',6],['Money',8],['Work',4],['Words',3],['Body',1],['Spirit',7]];
+  $('areaGrid').innerHTML=AREAS.map(function(a2){
+    var hit=dayPds.find(function(x){return x.pd===a2[1];});
+    return '<div class="area'+(hit?' hit':'')+'"><span class="an">'+a2[0]+'</span>'+
+      '<span class="ad">'+(hit?(WDN[hit.d.getDay()]+' · '+a2[1]+'-day'):'quiet week')+'</span></div>';
+  }).join('');
+
+  /* calibration */
+  function cal(v,btn){try{var k='prophexy.calib::'+(pid||'_');var a=JSON.parse(localStorage.getItem(k))||[];if(!Array.isArray(a))a=[];a.push({d:tk(),v:v,src:'proto'});localStorage.setItem(k,JSON.stringify(a));}catch(e){}
+    btn.textContent=v?'Noted — it did':'Noted — I’ll learn'; btn.style.color='var(--amber)'; btn.style.borderColor='var(--amber)';}
+  $('cyes').addEventListener('click',function(){cal(1,this)});
+  $('cno').addEventListener('click',function(){cal(0,this)});
+
+  /* sticky nav tracking */
+  var tabs=[].slice.call(document.querySelectorAll('.stab'));
+  var secs=tabs.map(function(t){return document.querySelector(t.getAttribute('href'));});
+  var nav=$('snav');
+  function setActive(i){ tabs.forEach(function(t,j){t.classList.toggle('on',j===i);});
+    var t=tabs[i]; if(t){ var target=t.offsetLeft - nav.clientWidth/2 + t.clientWidth/2;
+      nav.scrollTo({left:Math.max(0,target),behavior:'smooth'}); } }
+  var ticking=false;
+  function onScroll(){ if(ticking)return; ticking=true;
+    requestAnimationFrame(function(){ ticking=false;
+      var y=window.scrollY + 130, idx=0;
+      for(var i=0;i<secs.length;i++){ if(secs[i]&&secs[i].offsetTop<=y) idx=i; }
+      if(!tabs[idx].classList.contains('on')) setActive(idx);
+    });}
+
+  /* ================= your Claude — the Switchboard wire ================= */
+  var AIchat=[], AI={installed:false,connected:false,connect:null};
+  /* source of the reading: 'switchboard' (your Claude) · 'local' (on-device model) · 'computed' */
+  var AIMODE=''; try{ AIMODE=localStorage.getItem('prophexy.aimode')||''; }catch(e){}
+
+  /* ---- on-device model (WebLLM / WebGPU) ---- */
+  var LocalAI=(function(){
+    var engine=null, ready=false, loading=false, MODEL='Qwen2.5-1.5B-Instruct-q4f16_1-MLC';
+    function supported(){ try{ return !!navigator.gpu; }catch(e){ return false; } }
+    async function load(progressCb){
+      if(ready)return true; if(loading)return false; loading=true;
+      try{
+        var webllm=await import('https://esm.run/@mlc-ai/web-llm');
+        engine=await webllm.CreateMLCEngine(MODEL,{initProgressCallback:function(r){ progressCb&&progressCb(r); }});
+        ready=true; loading=false; return true;
+      }catch(e){ loading=false; throw e; }
+    }
+    async function *stream(o){
+      var msgs=(o.messages||[]).slice(); if(o.system) msgs.unshift({role:'system',content:o.system});
+      var res=await engine.chat.completions.create({messages:msgs,stream:true,temperature:0.6,top_p:0.9,max_tokens:o.maxTokens||700});
+      for await (var ch of res){ var t=ch&&ch.choices&&ch.choices[0]&&ch.choices[0].delta&&ch.choices[0].delta.content; if(t) yield {text:t}; }
+    }
+    return {supported:supported,load:load,stream:stream,isReady:function(){return ready;},isLoading:function(){return loading;}};
+  })();
+
+  /* unified dispatch — the reading + answers stream from whichever source is active */
+  async function *aiStream(o){
+    if(AIMODE==='local'){ for await (var d of LocalAI.stream(o)) yield d; return; }
+    for await (var d of streamWire(o)) yield d;
+  }
+  function aiReady(){ return (AIMODE==='switchboard'&&AI.connected) || (AIMODE==='local'&&LocalAI.isReady()); }
+  function pickText(d){
+    if(d==null) return '';
+    if(typeof d==='string') return d;
+    if(typeof d.text==='string') return d.text;
+    if(d.delta){ if(typeof d.delta==='string')return d.delta; if(typeof d.delta.text==='string')return d.delta.text; }
+    if(typeof d.completion==='string') return d.completion;
+    if(typeof d.content==='string') return d.content;
+    if(Object.prototype.toString.call(d.content)==='[object Array]') return d.content.map(function(b){return (b&&(b.text||(b.delta&&b.delta.text)))||'';}).join('');
+    if(d.message) return pickText(d.message);
+    if(d.choices&&d.choices[0]){ var c=d.choices[0]; return pickText(c.delta||c.message||c); }
+    return '';
+  }
+  function toWire(o){
+    var msgs=(o.messages||[]).map(function(m){return {role:m.role,content:m.content};});
+    if(o.system){
+      if(msgs.length&&msgs[0].role==='user'){ msgs[0]={role:'user',content:o.system+'\n\n'+msgs[0].content}; }
+      else { msgs.unshift({role:'user',content:o.system}); }
+    }
+    var p={model:o.model||'claude-sonnet-5',maxTokens:o.maxTokens||800,max_tokens:o.maxTokens||800,messages:msgs};
+    if(o.attachments&&o.attachments.length)p.attachments=o.attachments; /* Switchboard image attachments {role,data} */
+    return p;
+  }
+  async function *streamOnce(o){
+    var params=toWire(o),res=null;
+    try{ res=window.claude.request({method:'claude_stream',params:params}); }catch(e){ res=null; }
+    if(res&&typeof res.then==='function'){ try{ res=await res; }catch(e){ res=null; } }
+    if(res&&res[Symbol.asyncIterator]){
+      var any=false;
+      for await (var d of res){ if(!d)continue; var t2=pickText(d); if(t2){ any=true; yield {text:t2}; } }
+      if(any) return;
+    }
+    var out=await window.claude.request({method:'claude_complete',params:params});
+    var text=pickText(out);
+    if(text){ yield {text:text}; return; }
+    var raw=''; try{ raw=JSON.stringify(out); }catch(e){ raw=String(out); }
+    throw new Error('empty response · '+String(raw).slice(0,300));
+  }
+  async function *streamWire(o){
+    var emitted=0;
+    try{ for await (var d of streamOnce(o)){ emitted++; yield d; } }
+    catch(e){
+      if(emitted===0 && o.model!=='claude-haiku-4-5'){
+        var o2={}; for(var k in o)o2[k]=o[k]; o2.model='claude-haiku-4-5';
+        for await (var d2 of streamOnce(o2)){ yield d2; }
+      } else throw e;
+    }
+  }
+  var CORE='Write my reading for today as a confident forecast — commit to it. Predict what the day holds and how it will land, plainly and specifically: where you can, name a time of day (morning, mid-afternoon, after dark), a kind of moment, or a person-shaped situation. Do NOT hedge — avoid "maybe", "might", "probably", "you may", "tends to", "could", "you’ll likely"; at most ONE soft word in the whole reading. State the day. Open with ONE short, vivid headline on its own line — at most 7 words — that captures today with an image or a stance; do NOT start it with "Expect", and never generic (aim for lines like "The day pulls you home." or "You can push today, and win."). Then a blank line, then two short paragraphs that read my day to me with conviction: ground the day in something concrete — a likely moment, a domain (a message, money, a person, work, rest, a decision), a time of day — so it reads written for today, not any day. Say what happens, what I notice, how it lands. This is a reading, NOT advice — describe, don’t instruct; never say "you should". Keep it simple: short sentences, plain everyday words like texting a friend. No poetic phrases (nothing like "inward gravity"), no jargon, no emojis. At the very end, on its own line, write DO: then one small concrete thing to do today.';
+  function sysPrompt(){
+    var L=[];
+    L.push('You are Prophexy, a personal oracle instrument. Speak in first person as the instrument. Plain, warm, specific. Never generic, no emojis.');
+    L.push('SUBJECT: '+(fullname||'unnamed')+', born '+dob+((person&&person.tob)?(' at '+person.tob):'')+((place)?(' in '+place):'')+'.');
+    L.push('TONIGHT: '+phase+' ('+illum+'% lit) in '+msign+'; '+ruler+' rules the day; personal day '+pd+' ('+(NW[pd]||'')+'); life path '+lifePath+'; sun in '+wsun+'.');
+    L.push('TIMING ANCHORS (use these to name real windows): personal year '+pyear+' — '+(PYTHEME[pyear]||'')+'; personal month '+pmonth+'. Classic cycle years: love/marriage/commitment falls in a 6 year (next: '+nextPY(6)+'), partnership in a 2 year (next: '+nextPY(2)+'), big change or a move in a 5 year (next: '+nextPY(5)+'), money/career in an 8 year (next: '+nextPY(8)+'). The current calendar year is '+now.getFullYear()+'.');
+    L.push('BE DEFINITIVE. When I ask a question — especially a "when" question — commit to a concrete window: a number of weeks, a named month or season, a number of months, or a specific year, reasoned from the timing anchors and cycles above. NEVER answer "soon", "sooner than you think", "in time", or "when you are ready". Give the single most likely window, plus a shorter/longer bracket, and name the reason in one clause (e.g. "most likely around autumn '+nextPY(6)+', your next 6 year; earliest late this year, at the outside two years out"). Predict a real answer; do not hedge it into nothing.');
+    try{var dm=JSON.parse(localStorage.getItem('prophexy.dreams::'+pid))||[]; if(dm.length)L.push('LATEST DREAM: '+String(dm[dm.length-1].t||'').slice(0,220));}catch(e){}
+    try{var mm=JSON.parse(localStorage.getItem('prophexy.mood::'+pid))||[]; if(mm.length)L.push('RECENT MOODS: '+mm.slice(-3).map(function(x){return x.m;}).join(', ')+'.');}catch(e){}
+    try{var jj=JSON.parse(localStorage.getItem('prophexy.journal::'+pid))||[]; if(jj.length)L.push('LAST JOURNAL LINE: '+String(jj[jj.length-1].t||'').slice(0,180));}catch(e){}
+    try{var cc=JSON.parse(localStorage.getItem('prophexy.calib::'+pid))||[]; if(cc.length){var okc=cc.filter(function(x){return x.v===1||x.v===true;}).length; L.push('CALIBRATION: they confirmed '+okc+' readings and corrected '+(cc.length-okc)+'.');}}catch(e){}
+    return L.join('\n');
+  }
+  function updateAIUI(){
+    var b=$('aiConnectBtn'); if(b)b.hidden=true; /* the picker owns source selection now */
+    if(aiReady()){ $('askNote').textContent='A decision, a person, a fear — I answer against your whole chart.'; }
+    else if(AIMODE==='switchboard'||AIMODE==='local'){ $('askNote').textContent='Connecting your source — I answer here once it’s ready.'; }
+    else { $('askNote').textContent='Reading on the chart. Pick a source above and I’ll answer your questions.'; }
+    renderSource();
+    if(window.__refreshBodyBtn)window.__refreshBodyBtn();
+  }
+  function renderSource(){
+    var lbl=AIMODE==='local'?'on your device':(AIMODE==='switchboard'?'your Claude':'computed');
+    var n=$('srcNow'); if(n)n.textContent=lbl;
+    [['srcSB','switchboard'],['srcDev','local'],['srcNone','computed']].forEach(function(pair){
+      var el=$(pair[0]); if(!el)return;
+      var on=(AIMODE===pair[1])||(!AIMODE&&pair[1]==='computed');
+      el.classList.toggle('cur',on); var tk=el.querySelector('.tick'); if(tk)tk.hidden=!on;
+    });
+    var dev=$('srcDev'); if(dev){ var ok=LocalAI.supported(); dev.disabled=!ok&&AIMODE!=='local';
+      if(!ok){ var dd=dev.querySelector('.so-d'); if(dd)dd.textContent='Needs WebGPU · not available in this browser'; } }
+    var sb=$('srcSB'); if(sb&&!AI.installed){ sb.disabled=true; var sd=sb.querySelector('.so-d'); if(sd)sd.textContent='Switchboard not detected in this browser'; }
+  }
+  function closePanel(){ var p=$('srcPanel'); if(p)p.hidden=true; var t=$('srcToggle'); if(t)t.classList.remove('open'); }
+  function showComputed(){
+    AIMODE='computed'; try{localStorage.setItem('prophexy.aimode','computed');}catch(e){}
+    $('kick').innerHTML='<b>Tonight&rsquo;s reading</b> · computed';
+    $('hl').textContent=HL[pd]||'The day is being read.';
+    $('lede').textContent=MEANING[pd]||MEANING[5];
+    updateAIUI();
+  }
+  function loadLocalThenRead(){
+    var prog=$('srcProg'), fill=$('srcProgFill'), txt=$('srcProgTxt');
+    if(prog)prog.hidden=false; if(txt)txt.textContent='Loading the on-device model…';
+    LocalAI.load(function(r){ if(!r)return; var p=(r.progress!=null)?Math.round(r.progress*100):null;
+        if(fill&&p!=null)fill.style.width=p+'%'; if(txt)txt.textContent=String(r.text||'Loading…').slice(0,90); })
+      .then(function(){ if(txt)txt.textContent='On-device model ready.'; updateAIUI(); readNow(); closePanel(); })
+      .catch(function(e){ if(txt)txt.textContent='(Load failed: '+String(e&&e.message||e).slice(0,90)+')'; });
+  }
+  function setSource(mode){
+    if(mode==='computed'){ showComputed(); closePanel(); return; }
+    if(mode==='switchboard'){
+      if(!AI.installed){ renderSource(); return; }
+      AIMODE='switchboard'; try{localStorage.setItem('prophexy.aimode','switchboard');}catch(e){}
+      renderSource();
+      if(AI.connected){ readNow(); closePanel(); updateAIUI(); }
+      else AI.connect().then(function(){ updateAIUI(); readNow(); closePanel(); })
+        .catch(function(e){ $('askNote').textContent='(Could not connect: '+String(e&&e.message||e).slice(0,140)+')'; });
+      return;
+    }
+    if(mode==='local'){
+      if(!LocalAI.supported()){ renderSource(); var t=$('srcProgTxt'); if(t){t.textContent='This browser has no WebGPU — on-device model unavailable.'; $('srcProg').hidden=false;} return; }
+      AIMODE='local'; try{localStorage.setItem('prophexy.aimode','local');}catch(e){}
+      renderSource();
+      if(LocalAI.isReady()){ readNow(); closePanel(); updateAIUI(); }
+      else loadLocalThenRead();
+    }
+  }
+  (function(){
+    var t=$('srcToggle'); if(t)t.addEventListener('click',function(){ var p=$('srcPanel'); if(!p)return;
+      p.hidden=!p.hidden; this.classList.toggle('open',!p.hidden); renderSource(); });
+    var a=$('srcSB'); if(a)a.addEventListener('click',function(){ setSource('switchboard'); });
+    var b2=$('srcDev'); if(b2)b2.addEventListener('click',function(){ setSource('local'); });
+    var c=$('srcNone'); if(c)c.addEventListener('click',function(){ setSource('computed'); });
+    renderSource();
+  })();
+  /* source status + picker on the identify form — so you choose/see the source BEFORE the reading */
+  function updateIdentSrc(){
+    var st=$('idSrcStatus'); if(!st)return;
+    var sb=$('idSrcSB'), dev=$('idSrcDev'); var sbOK=AI.installed, devOK=LocalAI.supported();
+    if(sb)sb.disabled=!sbOK; if(dev)dev.disabled=!devOK;
+    [['idSrcSB','switchboard'],['idSrcDev','local'],['idSrcNone','computed']].forEach(function(p){
+      var el=$(p[0]); if(el)el.classList.toggle('cur',(AIMODE||'computed')===p[1]); });
+    if(AIMODE==='switchboard') st.textContent=AI.connected?'Your Claude · connected':'Your Claude';
+    else if(AIMODE==='local') st.textContent='On your device';
+    else st.textContent=sbOK?'Computed · your Claude is available':(devOK?'Computed · on-device available':'Computed only in this browser');
+  }
+  (function(){
+    var sb=$('idSrcSB'), dev=$('idSrcDev'), none=$('idSrcNone');
+    function persist(m){ AIMODE=m; try{localStorage.setItem('prophexy.aimode',m);}catch(e){} }
+    if(none)none.addEventListener('click',function(){ persist('computed'); updateIdentSrc(); });
+    if(dev)dev.addEventListener('click',function(){ if(!LocalAI.supported())return; persist('local'); updateIdentSrc(); });
+    if(sb)sb.addEventListener('click',function(){
+      if(!AI.installed){ updateIdentSrc(); return; }
+      if(AI.connected){ persist('switchboard'); updateIdentSrc(); return; } /* already approved — no re-prompt */
+      sb.disabled=true; var st=$('idSrcStatus'); if(st)st.textContent='Connecting your Claude…';
+      AI.connect().then(function(){ persist('switchboard'); sb.disabled=false; updateIdentSrc(); })
+        .catch(function(){ sb.disabled=false; persist('computed'); if(st)st.textContent='Could not connect · computed'; updateIdentSrc(); });
+    });
+    updateIdentSrc();
+  })();
+  (function(){
+    function ready(){ if(window.claude&&window.claude.isRelay)return Promise.resolve(window.claude);
+      return new Promise(function(res){ var done=false,fin=function(){ if(done)return; done=true;
+        res(window.claude&&window.claude.isRelay?window.claude:null); };
+        window.addEventListener('claude#initialized',fin,{once:true}); setTimeout(fin,1600); }); }
+    ready().then(function(cl){
+      if(cl){
+        AI.installed=true;
+        AI.connect=function(){ return window.claude.request({method:'claude_connect',params:{
+          models:['claude-sonnet-5','claude-haiku-4-5'],
+          reason:'Read your chart across every system and answer your questions, as your personal oracle'}})
+          .then(function(){ AI.connected=true; try{localStorage.setItem('prophexy.sbok','1');}catch(e){} }); };
+      }
+      function grantThen(cb){
+        if(!cl){ cb(false); return; }
+        window.claude.request({method:'claude_permissions',params:{}}).then(function(perm){
+          cb(!!(perm&&perm.models&&perm.models.length));
+        }).catch(function(){ var seen=false; try{seen=localStorage.getItem('prophexy.sbok')==='1';}catch(e){} cb(seen); });
+      }
+      grantThen(function(granted){
+        /* pick up where the user left off; first-time default follows what's available */
+        if(!AIMODE){ AIMODE = granted ? 'switchboard' : 'computed'; }
+        if(typeof updateIdentSrc==='function') updateIdentSrc();
+        if(AIMODE==='switchboard' && AI.installed){
+          if(granted){
+            /* already approved before — connect silently, never re-prompt */
+            AI.connected=true; try{localStorage.setItem('prophexy.sbok','1');}catch(e){}
+            updateAIUI(); if(!daily) readNow(); else if(window.__enrichSystems) window.__enrichSystems();
+          } else {
+            /* first time only: this prompts for approval */
+            AI.connect().then(function(){ updateAIUI(); if(!daily) readNow(); else if(window.__enrichSystems) window.__enrichSystems(); })
+              .catch(function(){ AIMODE='computed'; updateAIUI(); });
+          }
+        } else if(AIMODE==='local' && LocalAI.supported()){
+          updateAIUI(); if(!daily) loadLocalThenRead(); else if(window.__enrichSystems) window.__enrichSystems();
+        } else {
+          if(AIMODE==='switchboard'||AIMODE==='local') AIMODE='computed'; /* source no longer available here */
+          if(daily && daily.src && daily.src!=='computed'){ showComputed(); } else { updateAIUI(); }
+        }
+      });
+    });
+  })();
+  function readNow(){
+    $('kick').innerHTML='<b>Tonight&rsquo;s reading</b> · '+(AIMODE==='local'?'on your device':'your Claude');
+    $('hl').textContent='Reading you\u2026'; $('lede').innerHTML=eyeLoader('reading you\u2026');
+    (async function(){
+      var acc='';
+      try{
+        for await (var d of aiStream({system:sysPrompt(),messages:[{role:'user',content:CORE}],maxTokens:700})){
+          if(d&&d.text){ acc+=d.text; $('lede').textContent=acc.slice(0,1400); } }
+        var ft=acc.trim();
+        var doM=ft.match(/(^|\n)\s*DO:\s*([\s\S]+?)\s*$/i); var act=doM?doM[2].trim():'';
+        var body=ft.replace(/(^|\n)\s*DO:\s*[\s\S]+?\s*$/i,'').trim();
+        var nl=body.indexOf('\n'); var line=(nl>0?body.slice(0,nl):body).trim();
+        $('hl').textContent=capWords(line,13);
+        $('lede').textContent=(nl>0?body.slice(nl).trim():body).slice(0,700);
+        if(act)$('move').textContent=act;
+        try{ localStorage.setItem('prophexy.daily::'+pid, JSON.stringify({day:tk(),base:body,line:line,act:act,src:(AIMODE==='local'?'local':'switchboard'),thread:[]})); }catch(e){}
+        AIchat=[{role:'user',content:CORE},{role:'assistant',content:body}];
+        if(window.__enrichSystems)window.__enrichSystems();
+      }catch(e){
+        $('hl').textContent=HL[pd]||'The day is being read.';
+        $('lede').textContent='(Reading failed: '+String(e&&e.message||e).slice(0,300)+' — '+(AIMODE==='local'?'on-device model':'via Switchboard')+')';
+      }
+    })();
+  }
+  $('aiConnectBtn').addEventListener('click',function(){
+    var b=this; b.textContent='Connecting\u2026'; b.disabled=true;
+    AI.connect().then(function(){ updateAIUI(); if(!daily) readNow(); })
+      .catch(function(e){ b.textContent='Use my Claude'; b.disabled=false;
+        $('askNote').textContent='(Could not connect: '+String(e&&e.message||e).slice(0,140)+')'; });
+  });
+  (function(){ if(daily&&daily.thread&&daily.thread.length){ var th=$('askThread');
+    daily.thread.forEach(function(m){ var el=document.createElement('div');
+      el.className='aq '+(m.r==='user'?'you':'me'); el.textContent=m.c; th.appendChild(el); }); } })();
+  $('askGo').addEventListener('click',function(){
+    var q=($('askQ').value||'').trim(); if(!q)return;
+    if(!aiReady()){ updateAIUI(); return; }
+    $('askQ').value='';
+    var th=$('askThread');
+    var qd=document.createElement('div'); qd.className='aq you'; qd.textContent=q; th.appendChild(qd);
+    var ad=document.createElement('div'); ad.className='aq me'; ad.innerHTML=eyeLoader('reading\u2026'); th.appendChild(ad);
+    if(!AIchat.length&&daily&&daily.base)AIchat=[{role:'user',content:CORE},{role:'assistant',content:daily.base}];
+    AIchat.push({role:'user',content:q});
+    /* only send the base reading + the last few turns, so a long thread doesn't resend everything each time */
+    var sendMsgs=(AIchat.length<=10)?AIchat:AIchat.slice(0,2).concat(AIchat.slice(-8));
+    (async function(){
+      var acc='';
+      try{
+        for await (var d of aiStream({system:sysPrompt(),messages:sendMsgs,maxTokens:450})){
+          if(d&&d.text){ acc+=d.text; ad.textContent=acc; } }
+        AIchat.push({role:'assistant',content:acc});
+        try{ var k='prophexy.daily::'+pid; var dd=JSON.parse(localStorage.getItem(k))||{day:tk(),thread:[]};
+          dd.thread=dd.thread||[]; dd.thread.push({r:'user',c:q},{r:'assistant',c:acc});
+          localStorage.setItem(k,JSON.stringify(dd)); }catch(e){}
+      }catch(e){ ad.textContent='(Failed: '+String(e&&e.message||e).slice(0,220)+')'; }
+    })();
+  });
+
+  /* ================= identify — who am I reading? ================= */
+  (function(){
+    var idv=$('ident'); if(!idv)return;
+    var ppl=[]; try{ ppl=JSON.parse(localStorage.getItem('prophexy.people'))||[]; if(!Array.isArray(ppl))ppl=[]; }catch(e){}
+    function slug(n,d2){return ((n||'')+'|'+(d2||'')).toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,28)||'anon';}
+    function choose(id2){ try{localStorage.setItem('prophexy.activeId',id2);}catch(e){} location.reload(); }
+    function render(){
+      $('peopleCards').innerHTML = ppl.length
+        ? '<div class="mono" style="margin:8px 0 4px">I know these people</div>'+
+          ppl.map(function(p){ return '<button class="pcard" data-id="'+p.id+'"><span class="sig">'+esc(p.name)+'</span><span class="meta mono">'+esc((p.dob||''))+(p.place?(' · '+esc(p.place)):'')+'</span></button>'; }).join('')+
+          '<div class="mono" style="margin:30px 0 2px">Or someone new</div>'
+        : '';
+      [].slice.call(idv.querySelectorAll('.pcard')).forEach(function(b){
+        b.addEventListener('click',function(){ choose(b.dataset.id); }); });
+    }
+    window.__openIdent=function(){ idv.hidden=false; render(); window.scrollTo(0,0); };
+    if(!person){ window.__openIdent(); }
+    var who=$('who'); who.style.cursor='pointer'; who.setAttribute('title','Switch person');
+    who.addEventListener('click',window.__openIdent);
+    $('fGo').addEventListener('click',function(){
+      var nm=($('fName').value||'').trim();
+      if(!nm){ $('fNote').textContent='A name is required — your number is made from it.'; $('fName').focus(); return; }
+      /* if reading through Claude, do NOT proceed until access is approved */
+      if(AIMODE==='switchboard'){
+        if(!AI.installed){ $('fNote').textContent='Switchboard isn\u2019t detected here \u2014 pick On device or Computed above.'; return; }
+        if(!AI.connected){
+          $('fNote').textContent='Approve Claude access to read with your Claude\u2026';
+          var self=this;
+          AI.connect().then(function(){ if(typeof updateIdentSrc==='function')updateIdentSrc(); self.click(); })
+            .catch(function(){ $('fNote').textContent='Claude access is needed to read with your Claude. Approve it, or switch the source above.'; });
+          return;
+        }
+      }
+      var d2=$('fDob').value||'1992-10-01', t2=$('fTob').value||'', plq=($('fPlace').value||'').trim();
+      $('fNote').textContent='Finding that place\u2026';
+      function fin(loc){
+        var p={name:nm,dob:d2,tob:t2||'12:00',tmode:t2?'exact':'unknown',lat:loc.lat,lng:loc.lng,place:loc.place};
+        p.id=slug(nm,d2);
+        var i=-1; for(var j2=0;j2<ppl.length;j2++)if(ppl[j2].id===p.id)i=j2;
+        if(i>=0)ppl[i]=p; else ppl.push(p);
+        try{ localStorage.setItem('prophexy.people',JSON.stringify(ppl));
+             localStorage.setItem('prophexy.activeId',p.id); }catch(e){}
+        location.reload();
+      }
+      if(!plq){ fin({lat:28.61,lng:77.21,place:'\u2014'}); return; }
+      var done=false;
+      var to=setTimeout(function(){ if(!done){done=true; fin({lat:28.61,lng:77.21,place:plq});} },6000);
+      fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(plq))
+        .then(function(r2){return r2.json();})
+        .then(function(a){ if(done)return; done=true; clearTimeout(to);
+          var h=a&&a[0]; fin(h?{lat:+h.lat,lng:+h.lon,place:plq}:{lat:28.61,lng:77.21,place:plq}); })
+        .catch(function(){ if(done)return; done=true; clearTimeout(to); fin({lat:28.61,lng:77.21,place:plq}); });
+    });
+  })();
+
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+})();
+</script>
+<script>
+/* new approach: analysis reveal + on-demand gated sections. Additive — moves each section's
+   already-rendered content into a hidden body, gates it behind a button + dramatic scan. Removes nothing. */
+(function(){
+  var $=function(i){return document.getElementById(i);};
+  var AC; function actx(){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended')AC.resume(); }catch(e){} return AC; }
+  function tone(f,d,v,t){ var c=actx(); if(!c)return; try{ var o=c.createOscillator(),g=c.createGain(); o.type=t||'sine'; o.frequency.value=f; g.gain.value=v||0.04; o.connect(g); g.connect(c.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+(d||0.4)); o.stop(c.currentTime+(d||0.4)); }catch(e){} }
+
+  /* hero = reading only: the reasoning evidence chips move out (they live in "Why", now gated) */
+  var ev=$('evidence'); if(ev) ev.style.display='none';
+
+  /* entry ceremony — the 10-step acquisition sequence plays on entry (once we know who we're reading) */
+  var ident=$('ident');
+  if((!ident || ident.hidden) && typeof window.__playCeremony==='function'){ window.__playCeremony(true); }
+
+  /* gate every deeper section behind a "run the analysis" button + a dramatic scan */
+  /* sections now show openly — the entry ceremony is the analysis moment, and the
+     input-driven sections (Ask, Cards, Check-in, photos) carry their own controls.
+     Leave this empty to gate nothing; add {id:'label'} here to re-gate a section. */
+  var GATES={};
+  var SCANTXT={'s-why':'Tracing the signals','s-sky':'Casting the chart','s-numbers':'Reducing the numbers','s-you':'Finding your core','s-ways':'Aligning four systems','s-checkin':'Opening check-in','s-cards':'Shuffling the deck','s-cure':'Choosing your cure','s-timing':'Mapping the hours','s-week':'Weighing the week'};
+  Object.keys(GATES).forEach(function(id){
+    var sec=$(id); if(!sec)return; var lb=sec.querySelector('.seclb'); if(!lb)return;
+    var body=document.createElement('div'); body.className='gatebody';
+    var n=lb.nextSibling; while(n){ var nx=n.nextSibling; body.appendChild(n); n=nx; }
+    var gate=document.createElement('div'); gate.className='gate';
+    gate.innerHTML='<button class="gatebtn" type="button">'+GATES[id]+' &rarr;</button>'+
+      '<div class="gatestage" hidden><div class="scan"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="atxt">'+SCANTXT[id]+'&hellip;</div></div>';
+    sec.appendChild(gate); sec.appendChild(body);
+    var btn=gate.querySelector('.gatebtn'), stage=gate.querySelector('.gatestage');
+    btn.addEventListener('click',function(){
+      btn.hidden=true; stage.hidden=false;
+      var ticks=setInterval(function(){ tone(150+Math.random()*230,0.05,0.03,'triangle'); },110);
+      setTimeout(function(){ clearInterval(ticks); gate.style.display='none'; body.classList.add('shown'); tone(720,0.5,0.05); }, 1700);
+    });
+  });
+})();
+</script>
+<script src="deck.js"></script>
+<script>
+/* ================= the old tarot — full interactive deck (ported) ================= */
+(function(){
+  var $=function(i){return document.getElementById(i);};
+  if(!$('deckRow'))return;
+  var PX=window.__PX||{name:'',first:'you',dob:'2000-01-01',pd:5,npd:'',phase:'',msign:'',ruler:'',illum:0,mode:function(){return '';}};
+  function firstName(n){return String(n||'').trim().split(/\s+/)[0]||'';}
+  function pad(n){return n<10?'0'+n:''+n;}
+  /* timing spreads name a real window, not "soon" */
+  var MON3=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function addM(n){ var d=new Date(); d.setDate(1); d.setMonth(d.getMonth()+n); return d; }
+  function fmtM(d){ return MON3[d.getMonth()]+' '+d.getFullYear(); }
+  function timingWindow(score){ var lo,hi;
+    if(score>=2){ lo=1;hi=3; } else if(score>=0){ lo=3;hi=6; } else { lo=8;hi=14; }
+    var mid=Math.round((lo+hi)/2), v='around <em>'+fmtM(addM(mid))+'</em>.';
+    var lead=(score>=2
+      ? 'What was holding it has lost its grip — look for it inside the next '+hi+' months, most likely between '+fmtM(addM(lo))+' and '+fmtM(addM(mid))+'.'
+      : score>=0
+      ? 'Nothing turns on its own here — once you move first, expect it in about '+lo+'–'+hi+' months, most likely around '+fmtM(addM(mid))+'.'
+      : 'Not on this attempt. The real window opens later — roughly '+lo+'–'+hi+' months out, near '+fmtM(addM(mid))+', once the block clears.');
+    return {v:v,lead:lead}; }
+
+  /* ---- audio (self-contained, optional-safe) ---- */
+  var AC=null,MASTER=null;
+  function A(){ if(AC)return AC; try{ AC=new (window.AudioContext||window.webkitAudioContext)();
+    MASTER=AC.createGain(); MASTER.gain.value=0.5; MASTER.connect(AC.destination); }catch(e){AC=null;} return AC; }
+  function toRev(){}
+  function bell(f,g,t){ if(!A())return; t=t||AC.currentTime; try{ [1,2,3].forEach(function(h,i){
+    var o=AC.createOscillator(),ga=AC.createGain(); o.type='sine'; o.frequency.value=f*h;
+    var gv=(g||0.1)/(i+1); ga.gain.setValueAtTime(0.0001,t); ga.gain.exponentialRampToValueAtTime(gv,t+0.01);
+    ga.gain.exponentialRampToValueAtTime(0.0001,t+0.9); o.connect(ga).connect(MASTER); o.start(t); o.stop(t+0.95); }); }catch(e){} }
+  function blip(f,dur,g){ if(!A())return; var t=AC.currentTime; try{ var o=AC.createOscillator(),ga=AC.createGain();
+    o.type='sine'; o.frequency.value=f; ga.gain.setValueAtTime(0.0001,t); ga.gain.exponentialRampToValueAtTime(g||0.08,t+0.008);
+    ga.gain.exponentialRampToValueAtTime(0.0001,t+(dur||0.09)); o.connect(ga).connect(MASTER); o.start(t); o.stop(t+(dur||0.09)+0.02); }catch(e){} }
+  function noise(dur,g,freq,q){ if(!A())return; var t=AC.currentTime; var len=Math.floor(AC.sampleRate*(dur||0.1));
+    try{ var b=AC.createBuffer(1,len,AC.sampleRate),d=b.getChannelData(0); for(var i=0;i<len;i++)d[i]=Math.random()*2-1;
+    var s=AC.createBufferSource(); s.buffer=b; var bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=freq||1200; bp.Q.value=q||1;
+    var ga=AC.createGain(); ga.gain.setValueAtTime(g||0.05,t); ga.gain.exponentialRampToValueAtTime(0.0001,t+(dur||0.1));
+    s.connect(bp).connect(ga).connect(MASTER); s.start(t); s.stop(t+(dur||0.1)); }catch(e){} }
+  function riffle(){ for(var i=0;i<18;i++)(function(k){ setTimeout(function(){ noise(0.03,0.03,800+Math.random()*1600,2); },k*12); })(i); }
+  function sweep(){ noise(0.4,0.04,1400,0.7); }
+  function swell(base){ if(!A())return; var t=AC.currentTime; try{ var o=AC.createOscillator(),g=AC.createGain(); o.type='sine';
+    o.frequency.setValueAtTime((base||523)/4,t); o.frequency.exponentialRampToValueAtTime((base||523)/2.5,t+0.5);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.12,t+0.06); g.gain.exponentialRampToValueAtTime(0.0001,t+0.7);
+    o.connect(g).connect(MASTER); o.start(t); o.stop(t+0.75); }catch(e){} }
+  function shimmerSnd(base){ if(!A())return; base=base||523.25; [0,4,7,11,14].forEach(function(st,i){ bell(base*Math.pow(2,st/12),0.05,AC.currentTime+i*0.07); }); }
+  function resolveTone(){ if(!A())return; var t=AC.currentTime; bell(110,0.2,t); bell(164.81,0.16,t+0.02);
+    var voices=[[110,110],[130.81,138.59],[164.81,164.81],[220,277.18],[329.63,329.63]];
+    voices.forEach(function(v,i){ try{ var o=AC.createOscillator(); o.type=i<2?'triangle':'sine'; o.frequency.setValueAtTime(v[0],t);
+      o.frequency.exponentialRampToValueAtTime(v[1],t+2.2); var g=AC.createGain(); g.gain.setValueAtTime(0.0001,t+i*0.06);
+      g.gain.exponentialRampToValueAtTime(0.13/(1+i*0.35),t+i*0.06+0.05); g.gain.exponentialRampToValueAtTime(0.0001,t+6.5-i*0.3);
+      o.connect(g).connect(MASTER); o.start(t+i*0.06); o.stop(t+6.6); }catch(e){} });
+    [659.25,783.99,987.77,1318.51].forEach(function(f,i){ try{ var tt=t+0.5+i*0.16,o=AC.createOscillator(); o.type='sine'; o.frequency.value=f;
+      var g=AC.createGain(); g.gain.setValueAtTime(0.0001,tt); g.gain.exponentialRampToValueAtTime(0.05,tt+0.03); g.gain.exponentialRampToValueAtTime(0.0001,tt+2.6);
+      o.connect(g).connect(MASTER); o.start(tt); o.stop(tt+2.7); }catch(e){} }); }
+
+  /* ---- deck data ---- */
+  var ARCANA=[['0','The Fool','a leap of faith; trust the unknown'],['I','The Magician','you already hold the tools; will makes it real'],['II','The High Priestess','listen inward; the answer sits below the surface'],['III','The Empress','let it grow; nurture rather than force'],['IV','The Emperor','take structure and authority; set the rules'],['V','The Hierophant','the proven path, or a mentor, holds the key'],['VI','The Lovers','a true choice of the heart; align, then commit'],['VII','The Chariot','drive and will win; steer hard'],['VIII','Strength','gentle courage beats force; patience is power'],['IX','The Hermit','withdraw; the light you want is inside'],['X','Wheel of Fortune','a turning point; ride the cycle'],['XI','Justice','truth and consequence; act fairly'],['XII','The Hanged Man','surrender; the pause is the point'],['XIII','Death','an ending that clears the way'],['XIV','Temperance','balance and blend; walk the middle'],['XV','The Devil','name the thing that binds you'],['XVI','The Tower','a false structure breaks; truth erupts'],['XVII','The Star','hope and renewal; keep the faith'],['XVIII','The Moon','do not trust the surface; fear distorts'],['XIX','The Sun','joy and clarity; the yes you hoped for'],['XX','Judgement','a reckoning; answer the call and rise'],['XXI','The World','completion; a cycle closes whole'],
+    ['A','Ace of Wands','a spark of creative fire; begin it'],['2','Two of Wands','planning your reach; the first move'],['3','Three of Wands','your ships coming in; expansion'],['4','Four of Wands','a homecoming, a celebration'],['5','Five of Wands','scrappy friction; everyone competing'],['6','Six of Wands','public victory and recognition'],['7','Seven of Wands','stand your ground; hold the line'],['8','Eight of Wands','things move fast; news in the air'],['9','Nine of Wands','worn but still standing; nearly there'],['10','Ten of Wands','carrying too much; put some down'],['P','Page of Wands','an eager spark of an idea'],['Kn','Knight of Wands','bold, headlong action'],['Q','Queen of Wands','warm, magnetic confidence'],['Kg','King of Wands','visionary leadership; own the fire'],['A','Ace of Cups','love overflowing; an open heart'],['2','Two of Cups','a true connection, a mutual pledge'],['3','Three of Cups','friendship, joy, celebration'],['4','Four of Cups','apathy; you are ignoring an offer'],['5','Five of Cups','grief over what was spilled'],['6','Six of Cups','sweetness, nostalgia, innocence'],['7','Seven of Cups','too many tempting illusions'],['8','Eight of Cups','walking away to seek something truer'],['9','Nine of Cups','contentment; a wish granted'],['10','Ten of Cups','lasting joy, harmony at home'],['P','Page of Cups','a tender, creative feeling stirs'],['Kn','Knight of Cups','romance; follow the heart'],['Q','Queen of Cups','deep compassion and intuition'],['Kg','King of Cups','calm mastery of your feelings'],['A','Ace of Swords','a breakthrough of clarity; truth cuts through'],['2','Two of Swords','a stalemate; a choice you keep avoiding'],['3','Three of Swords','heartbreak; a painful truth'],['4','Four of Swords','rest and recovery; step back to heal'],['5','Five of Swords','a hollow win; conflict costs you'],['6','Six of Swords','moving toward calmer water'],['7','Seven of Swords','getting away with something; be careful'],['8','Eight of Swords','trapped by your own thinking'],['9','Nine of Swords','anxiety; sleepless dread'],['10','Ten of Swords','rock bottom; an ending, then dawn'],['P','Page of Swords','curiosity and watchfulness'],['Kn','Knight of Swords','charging in fast, all mind'],['Q','Queen of Swords','clear, honest, unsentimental judgement'],['Kg','King of Swords','authority earned through truth'],['A','Ace of Pentacles','a solid new opportunity lands'],['2','Two of Pentacles','juggling; keeping your balance'],['3','Three of Pentacles','skilled collaboration; good work'],['4','Four of Pentacles','holding on too tightly'],['5','Five of Pentacles','hard times; you feel left out in the cold'],['6','Six of Pentacles','generosity flowing both ways'],['7','Seven of Pentacles','patience while it slowly grows'],['8','Eight of Pentacles','diligent craft; mastery through practice'],['9','Nine of Pentacles','earned comfort and independence'],['10','Ten of Pentacles','legacy; lasting security'],['P','Page of Pentacles','a practical new venture'],['Kn','Knight of Pentacles','steady, reliable, unglamorous effort'],['Q','Queen of Pentacles','nurturing, grounded abundance'],['Kg','King of Pentacles','prosperity; grounded success']];
+  var POLARITY=[1,1,0,1,1,0,1,1,1,0,1,0,-1,-1,1,-1,-1,1,-1,1,1,1,1,0,1,1,-1,1,0,1,0,-1,1,0,1,1,1,1,1,-1,-1,1,-1,0,1,1,1,1,1,1,1,-1,-1,0,-1,1,-1,-1,-1,-1,0,0,1,1,1,0,1,-1,-1,1,0,1,1,1,1,1,1,1];
+  var SPREADS={
+    yesno:{label:'Yes or no',hint:'Ask something that can actually be answered yes or no. The middle seat is the one you can act on, so it counts double.',pos:['The situation','What to do','Where it leads'],ph:'Should I take the offer?',w:[1,2,1]},
+    choice:{label:'This or that',hint:'Name both options in your question. The first two seats weigh each path; the third names what actually decides it.',pos:['If you choose the first','If you choose the second','What decides it'],ph:'Stay in the job, or go full-time on this?',w:[1,1,1]},
+    timing:{label:'When',hint:'Timing spreads do not give dates. They tell you what is holding the clock and what releases it.',pos:['What holds it','What moves it','The window'],ph:'When will this finally land?',w:[-1,1,1]},
+    block:{label:'What&rsquo;s blocking me',hint:'This spread assumes the obstacle is real. It looks for the root under it and the way through.',pos:['The block','Its root','The way through'],ph:'Why am I stuck on this?',w:[-1,-1,2]},
+    blind:{label:'What am I missing',hint:'The hardest spread to read honestly &mdash; the second seat is the one you did not want to see.',pos:['What you see','What you are missing','What it costs you'],ph:'What am I not seeing here?',w:[1,-1,-1]}
+  };
+  var SPREAD='yesno',POS=SPREADS.yesno.pos,deckOrder=[],picked=[];
+  var LOGO='<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 24 Q24 10 42 24 Q24 38 6 24Z"/><circle cx="24" cy="24" r="6"/><circle cx="24" cy="24" r="1.8" fill="currentColor" stroke="none"/></svg>';
+
+  function cardBackSVG(){ var s='<svg viewBox="0 0 60 94" fill="none" stroke-width="1">';
+    s+='<rect x="2" y="2" width="56" height="90" stroke="#33333d"/><rect x="5.5" y="5.5" width="49" height="83" stroke="#1c1c23"/>';
+    s+='<path d="M2 9 L2 2 L9 2 M51 2 L58 2 L58 9 M58 85 L58 92 L51 92 M9 92 L2 92 L2 85" stroke="#ffab4d" stroke-width="1.1"/>';
+    for(var y=12;y<=82;y+=5){ s+='<line x1="5.5" y1="'+y+'" x2="8" y2="'+y+'" stroke="#2b2b34"/><line x1="52" y1="'+y+'" x2="54.5" y2="'+y+'" stroke="#2b2b34"/>'; }
+    s+='<circle cx="30" cy="47" r="15" stroke="#54545f"/><circle cx="30" cy="47" r="9.5" stroke="#33333d"/>';
+    s+='<path d="M8.5 47 Q30 33 51.5 47 Q30 61 8.5 47 Z" stroke="#8c8c99"/><circle cx="30" cy="47" r="4.4" stroke="#f0f0fa"/>';
+    s+='<path d="M30 43.4 L31 46 L33.6 47 L31 48 L30 50.6 L29 48 L26.4 47 L29 46 Z" fill="#ffab4d" stroke="none"/>';
+    s+='<path d="M30 32 v-3 M30 62 v3 M13 47 h-3 M47 47 h3" stroke="#54545f"/>'; return s+'</svg>'; }
+
+  var _deckAdv=30;
+  function buildDeck(){ deckOrder=[]; for(var i=0;i<ARCANA.length;i++)deckOrder.push(i);
+    for(var j=deckOrder.length-1;j>0;j--){ var k=Math.floor(Math.random()*(j+1)),t=deckOrder[j];deckOrder[j]=deckOrder[k];deckOrder[k]=t; }
+    var row=$('deckRow');row.className='deckrow';row.innerHTML='';
+    var cardW=82,avail=(row.clientWidth||document.body.clientWidth||700);
+    _deckAdv=Math.max(6,Math.min(30,(avail-cardW-12)/(deckOrder.length-1)));
+    var mid=(deckOrder.length-1)/2;
+    deckOrder.forEach(function(cardIdx,pos){ var d=document.createElement('div');d.className='dcard';
+      d.style.marginRight=(pos===deckOrder.length-1?0:-(cardW-_deckAdv))+'px';
+      var frac=mid?(pos-mid)/mid:0;
+      d.style.transform='rotate('+(frac*15).toFixed(2)+'deg) translateY('+(frac*frac*26).toFixed(1)+'px)';
+      d.dataset.card=cardIdx;d.innerHTML=cardBackSVG();
+      d.addEventListener('click',function(){pickCard(d);}); row.appendChild(d); }); }
+
+  function pickCard(el){ if(picked.length>=3||el.classList.contains('taken'))return;
+    el.classList.add('taken'); var cardIdx=+el.dataset.card,inv=Math.random()<0.25; picked.push({r:cardIdx,inv:inv});
+    A();sweep(); document.body.classList.add('casting');
+    var baseN=[523.25,659.25,783.99][picked.length-1]; bell(baseN,0.16); bell(baseN*1.5,0.08,AC?AC.currentTime+0.04:0); swell(baseN);
+    layPlate(picked.length-1,picked[picked.length-1]); flyCard(el,cardIdx,inv,$('plates').lastChild);
+    $('deckHint').innerHTML=picked.length<3?'Chosen <b>'+picked.length+'</b> of 3 &mdash; '+(3-picked.length)+' to go':'Three drawn &middot; reading below';
+    if(picked.length===3){ $('deckRow').classList.add('locked'); setTimeout(function(){shimmerSnd(523.25);},350); setTimeout(verdict,1100); } }
+
+  function flyCard(src,idx,inv,plate){ if(!src||!plate)return;
+    if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches){plate.classList.add('landing');return;}
+    var s=src.getBoundingClientRect(),fig=plate.querySelector('figure'),t=(fig?fig:plate).getBoundingClientRect();
+    var img=(window.PXCARDS&&window.PXCARDS[idx])?window.PXCARDS[idx]:'';
+    var fc=document.createElement('div');fc.className='flycard';
+    fc.style.left=s.left+'px';fc.style.top=s.top+'px';fc.style.width=s.width+'px';fc.style.height=s.height+'px';
+    fc.innerHTML='<div class="fcin"><div class="fcback">'+cardBackSVG()+'</div><div class="fcface">'+(img?'<img class="'+(inv?'inv':'')+'" alt="" src="'+img+'">':'')+'</div></div>';
+    document.body.appendChild(fc);
+    var dx=(t.left+t.width/2)-(s.left+s.width/2),dy=(t.top+t.height/2)-(s.top+s.height/2),sc=Math.max(t.width/s.width,t.height/s.height);
+    var rot=(Math.random()*10-5).toFixed(1);
+    setTimeout(function(){ fc.classList.add('flip'); fc.style.transform='translate('+dx.toFixed(1)+'px,'+dy.toFixed(1)+'px) scale('+sc.toFixed(3)+') rotate('+rot+'deg)'; },24);
+    setTimeout(function(){ plate.classList.add('landing'); bell(1046.5,0.05); },700);
+    setTimeout(function(){ fc.classList.add('gone'); },720);
+    setTimeout(function(){ if(fc.parentNode)fc.parentNode.removeChild(fc); },1080); }
+
+  function forcePlate(el){ if(!el)return; el.classList.remove('dev');el.classList.remove('sweeping');el.classList.add('on');
+    el.style.opacity='1';el.style.transform='none'; var im=el.querySelector('img'); if(im){im.style.filter='grayscale(1) contrast(1.06)';im.style.opacity='1';} }
+
+  function guillocheSVG(seed){ var pts1='',pts2='',W=300,H=16;
+    for(var x=0;x<=W;x+=3){ var y1=8+Math.sin((x/W)*Math.PI*2*7+seed)*5.4+Math.sin((x/W)*Math.PI*2*11+seed*1.7)*2.0;
+      var y2=8+Math.sin((x/W)*Math.PI*2*7+seed+Math.PI)*5.4+Math.sin((x/W)*Math.PI*2*13+seed*2.3)*1.7;
+      pts1+=(x?' L':'M')+x+' '+y1.toFixed(2); pts2+=(x?' L':'M')+x+' '+y2.toFixed(2); }
+    return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" fill="none" stroke-width=".6"><path d="'+pts1+'" stroke="#54545f"/><path d="'+pts2+'" stroke="#33333d"/></svg>'; }
+  function castRef(cardIdx,i){ var d=new Date(),base=(d.getFullYear()*372+(d.getMonth()+1)*31+d.getDate());
+    var nameSum=0,n=(PX.name||'').toUpperCase().replace(/[^A-Z]/g,''); for(var k=0;k<n.length;k++)nameSum+=n.charCodeAt(k)-64;
+    var hex=((base*97+nameSum*13+cardIdx*7+i)%4096).toString(16).toUpperCase(); while(hex.length<3)hex='0'+hex; return hex+'-'+ARCANA[cardIdx][0]; }
+  function layPlate(i,c){ var a=ARCANA[c.r],img=(window.PXCARDS&&window.PXCARDS[c.r])?window.PXCARDS[c.r]:'',dt=new Date(),who=PX.first||firstName(PX.name)||'you';
+    var el=document.createElement('div');el.className='plate dev';
+    el.innerHTML='<div class="frameA"></div><div class="frameB"></div><i class="brk tl"></i><i class="brk tr"></i><i class="brk bl"></i><i class="brk br"></i>'+
+      '<div class="inner"><div class="numeral">'+a[0]+'</div><div class="ph"><span class="pn">Plate '+['I','II','III'][i]+'</span><span class="px">'+POS[i]+'</span></div>'+
+      '<figure><span class="tickrail"></span><span class="tickrail r"></span><span class="scan"></span><span class="sheen"></span><span class="foil"></span>'+(img?'<img alt="" src="'+img+'" class="'+(c.inv?'inv':'')+'">':'')+'</figure>'+
+      '<div class="cap"><div class="nm">'+a[1]+'</div><div class="mn">'+(c.inv?'<span class="invtag">Inverted &mdash;</span> ':'')+a[2]+'</div></div>'+
+      '<div class="guilloche">'+guillocheSVG(c.r*1.7+i)+'</div>'+
+      '<div class="stamp">'+LOGO+'<span>Cast for <b>'+who+'</b> &middot; '+pad(dt.getDate())+'.'+pad(dt.getMonth()+1)+' '+((dt.getHours()%12)||12)+':'+pad(dt.getMinutes())+(dt.getHours()<12?'am':'pm')+'</span><span class="ref">REF '+castRef(c.r,i)+'</span></div>'+
+      '</div>';
+    $('plates').appendChild(el);
+    setTimeout(function(){el.classList.add('on');},20); setTimeout(function(){el.classList.add('sweeping');},260);
+    setTimeout(function(){el.classList.remove('dev');},450); setTimeout(function(){el.classList.remove('sweeping');},2100); setTimeout(function(){forcePlate(el);},2600); }
+
+  function liveForce(){ var f='today reads as a '+PX.pd+'-day'+(PX.npd?(' &mdash; '+PX.npd):'');
+    if(PX.phase&&PX.msign)f+=', with a '+String(PX.phase).toLowerCase()+' in '+PX.msign; if(PX.ruler)f+=' and '+PX.ruler+' ruling'; return f; }
+
+  function verdict(){ var S=SPREADS[SPREAD],w=S.w,score=0,p=[];
+    picked.forEach(function(c,i){ var v=POLARITY[c.r]*(c.inv?-1:1); p.push(v); score+=v*w[i]; });
+    var maxAbs=w.reduce(function(a,b){return a+Math.abs(b);},0);
+    var who=PX.first||firstName(PX.name)||'',force=liveForce();
+    var qraw=($('q')&&$('q').value||'').trim().replace(/[<>]/g,''),qc=qraw?(' against &ldquo;'+qraw+'&rdquo;'):'';
+    var c=[0,1,2].map(function(i){ var a=ARCANA[picked[i].r]; return {n:a[1],m:a[2],inv:picked[i].inv,pos:S.pos[i].toLowerCase()}; });
+    var cardline='<b>'+c[0].n+'</b>'+(c[0].inv?' (inverted)':'')+' fell in &ldquo;'+c[0].pos+'&rdquo;, <b>'+c[1].n+'</b>'+(c[1].inv?' (inverted)':'')+' at the centre, <b>'+c[2].n+'</b>'+(c[2].inv?' (inverted)':'')+' in &ldquo;'+c[2].pos+'&rdquo;.';
+    var cruxIdx=({yesno:1,choice:2,timing:1,block:2,blind:1})[SPREAD]; if(cruxIdx==null)cruxIdx=1; var crux=c[cruxIdx];
+    var v,lead;
+    if(SPREAD==='yesno'){ if(score>=3){v='yes<em>.</em>';lead='Three seats agree.';}
+      else if(score>=1){v='yes<em>, with one condition.</em>';lead='The way is open, but priced.';}
+      else if(score===0){v='not yet<em>.</em>';lead='The board is balanced &mdash; nothing refused, nothing ready.';}
+      else if(score>=-2){v='not in this form<em>.</em>';lead='The want is sound; the shape is wrong.';}
+      else{v='no<em>.</em>';lead='The board is against this one.';} }
+    else if(SPREAD==='choice'){ if(p[0]>p[1]){v='the <em>first</em>.';lead='The first path reads stronger &mdash; but the deciding seat is neither option.';}
+      else if(p[1]>p[0]){v='the <em>second</em>.';lead='The second path reads stronger &mdash; but the deciding seat is neither option.';}
+      else{v='<em>neither, yet</em>.';lead='Both paths weigh the same, so the choice is not the real question.';} }
+    else if(SPREAD==='timing'){ var tw=timingWindow(score); v=tw.v; lead=tw.lead; }
+    else if(SPREAD==='block'){ if(score>=2){v='it is <em>already lifting</em>.';lead='The way through outweighs the block.';}
+      else if(score>=0){v='the root is <em>within your reach</em>.';lead='Nothing outside is doing this to you.';}
+      else{v='the block is <em>structural</em>.';lead='Effort will not shift this &mdash; the arrangement has to change.';} }
+    else{ if(score>=1){v='<em>less</em> than you fear.';lead='What you are missing is not against you.';}
+      else if(score>=-1){v='the <em>obvious thing</em>.';lead='You already suspect it.';}
+      else{v='<em>the cost</em>.';lead='You have seen the opportunity, not the price.';} }
+    var tip=(score>0?'tips it your way':score<0?'tips it against you':'holds it at a standstill');
+    var reason=lead+' '+cardline+' '+'This reading is yours, not a template &mdash; '+force+(who?(', for '+who):'')+qc+'. '+
+      'That live pressure is what '+tip+'. '+'Your move is in &ldquo;'+S.pos[cruxIdx].toLowerCase()+'&rdquo; &mdash; <b>'+crux.n+'</b>'+(crux.inv?', inverted,':'')+': '+crux.m+'. '+
+      '<span class="scoremeta">Weighted '+(score>0?'+':'')+score+' of &plusmn;'+maxAbs+'.</span>';
+    $('vv').innerHTML=v; $('verdict').classList.add('on'); resolveTone();
+    interpretDraw(reason,{v:v,score:score,maxAbs:maxAbs,cards:c,S:S,cruxIdx:cruxIdx,crux:crux,force:force,who:who,qraw:qraw});
+    shimmerSnd(score>=0?523.25:392); setTimeout(function(){document.body.classList.remove('casting');},1600); }
+
+  function aiUsable(){ return !!(PX.aiReady&&PX.aiReady()); }
+  function setVBadge(mode){ var bd=$('vBadge'); if(!bd)return;
+    if(mode==='computed'){ bd.textContent='Computed'; bd.className='srcbadge'; }
+    else{ var m=PX.mode?PX.mode():''; bd.textContent=(m==='local'?'On your device':m==='switchboard'?'Your Claude':'AI reading'); bd.className='srcbadge ai'; } }
+  function tarotDrawPrompt(ev){ var seats=ev.cards.map(function(cd,i){ var seat=(i===1?'centre':ev.S.pos[i]); return '- '+seat+': '+cd.n+(cd.inv?' (reversed)':'')+' — '+cd.m; }).join('\n');
+    var ans=String(ev.v).replace(/<[^>]+>/g,'').replace(/[.\s]+$/,''); var q=ev.qraw?('"'+ev.qraw+'"'):'the question I am already carrying';
+    return 'I just drew three cards for myself. I asked: '+q+'.\nThe cards, in their seats:\n'+seats+'\n'+
+      'The mechanical weighing lands on "'+ans+'" (weighted '+(ev.score>0?'+':'')+ev.score+' of ±'+ev.maxAbs+'). '+
+      'What is live for me right now: '+String(ev.force).replace(/&[a-z]+;/g,'').replace(/<[^>]+>/g,'')+'.\n\n'+
+      'Read THIS specific draw for me in 3 or 4 sentences. Weave the three cards together — do not list them back. '+
+      'Tell me what they say about my question, why, and the one real thing to do. Land on the same answer ("'+ans+'"). Speak straight to me, warm and specific, plain language, no tarot jargon.'+
+      (SPREAD==='timing'?' This is a WHEN question: commit to the concrete window in the answer ("'+ans+'") — a named month or a season and year — and do NOT soften it to "soon" or "sooner than you think".':''); }
+  function interpretDraw(fallback,ev){ var el=$('vr'); if(!el)return;
+    if(!aiUsable()){ el.innerHTML=fallback; setVBadge('computed'); return; }
+    setVBadge('ai'); el.innerHTML=(PX.eyeLoader?PX.eyeLoader('reading the cards…'):'…');
+    (async function(){ var acc='';
+      try{ for await(var d of PX.aiStream({system:PX.sysPrompt(),messages:[{role:'user',content:tarotDrawPrompt(ev)}],maxTokens:340})){ if(d&&d.text){ acc+=d.text; el.textContent=acc; } }
+        acc=acc.trim();
+        if(acc.replace(/[()\s]/g,'').length>8){ el.textContent=acc; setVBadge('ai');
+          var ln=document.createElement('div'); ln.className='vevidence';
+          ln.innerHTML='Weighted '+(ev.score>0?'+':'')+ev.score+' of &plusmn;'+ev.maxAbs+' &middot; '+ev.cards.map(function(cd){return cd.n+(cd.inv?' rev.':'');}).join(' &middot; '); el.appendChild(ln);
+        } else { el.innerHTML=fallback; setVBadge('computed'); }
+      }catch(e){ el.innerHTML=fallback; setVBadge('computed'); } })(); }
+
+  function setSpread(k){ SPREAD=k; POS=SPREADS[k].pos;
+    document.querySelectorAll('#qtypes button').forEach(function(b){ b.classList.toggle('on',b.dataset.s===k); });
+    $('qhint').innerHTML=SPREADS[k].hint; $('q').placeholder=SPREADS[k].ph;
+    picked=[]; $('plates').innerHTML=''; $('verdict').classList.remove('on'); document.body.classList.remove('casting');
+    $('deckHint').innerHTML='Shuffle the deck, then choose three cards';
+    var row=$('deckRow'); if(row){ row.className='deckrow'; row.innerHTML=''; }
+    setVBadge('computed'); $('draw').textContent='Shuffle'; }
+  document.querySelectorAll('#qtypes button').forEach(function(b){ b.addEventListener('click',function(){ A();blip(700,0.09,0.1); setSpread(b.dataset.s); }); });
+  setSpread('yesno');
+
+  function fanTransform(off){ var mid=(ARCANA.length-1)/2,frac=mid?off/mid:0; return 'rotate('+(frac*15).toFixed(2)+'deg) translateY('+(frac*frac*26).toFixed(1)+'px)'; }
+  var _shufBusy=false;
+  $('draw').addEventListener('click',function(){ if(_shufBusy)return; _shufBusy=true;
+    A(); if(AC&&AC.state==='suspended')AC.resume();
+    var btn=this; picked=[]; btn.disabled=true; document.body.classList.add('casting');
+    $('plates').innerHTML=''; $('verdict').classList.remove('on'); buildDeck();
+    var qtext=$('q').value.trim();
+    $('qecho').innerHTML=qtext?('Asked: <b>'+qtext.replace(/[<>]/g,'')+'</b>'):'No question set &mdash; the cards will answer the one you are already carrying.';
+    var row=$('deckRow'),cards=[].slice.call(row.querySelectorAll('.dcard')),n=cards.length,mid=(n-1)/2,STEP=_deckAdv;
+    $('deckHint').innerHTML='Shuffling&hellip;'; cards.forEach(function(d){d.classList.add('shuffling');});
+    function at(ms,fn){setTimeout(fn,ms);}
+    cards.forEach(function(d,i){ d.style.transition='transform .42s cubic-bezier(.3,1,.4,1)'; d.style.transform='translateX('+((mid-i)*STEP).toFixed(1)+'px)'; });
+    bell(174.6,0.13);
+    [520,980,1440].forEach(function(t0){ at(t0,function(){ riffle();
+        cards.forEach(function(d,i){ var side=(i%2?1:-1); d.style.transition='transform .17s ease';
+          d.style.transform='translateX('+(((mid-i)*STEP)+side*(46+Math.random()*34)).toFixed(1)+'px) translateY('+(-34-Math.random()*22).toFixed(1)+'px) rotate('+(side*(7+Math.random()*9)).toFixed(1)+'deg)'; }); });
+      at(t0+190,function(){ cards.forEach(function(d,i){ setTimeout(function(){ d.style.transition='transform .2s cubic-bezier(.3,1,.4,1)';
+          d.style.transform='translateX('+((mid-i)*STEP).toFixed(1)+'px)'; if(i%4===0)bell([392,440,523.25][Math.floor(Math.random()*3)],0.04); },(i*6)%150); }); }); });
+    at(1900,function(){ cards.forEach(function(d,i){ d.style.transition='transform .55s cubic-bezier(.3,1,.4,1)'; d.style.transform=fanTransform(i-mid); });
+      var g=$('deckGlow'); if(g){ g.classList.remove('sweep'); void g.offsetWidth; g.classList.add('sweep'); } shimmerSnd(659.25); });
+    at(2500,function(){ cards.forEach(function(d){ d.classList.remove('shuffling'); d.style.transition=''; });
+      $('deckHint').innerHTML='All '+ARCANA.length+' cards shuffled &middot; <b>choose three</b>'; btn.textContent='Reshuffle'; btn.disabled=false; _shufBusy=false; }); });
+})();
+</script>
+</body>
+</html>
