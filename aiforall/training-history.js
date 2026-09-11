@@ -174,14 +174,6 @@ export const verifiedTrainingHistory = {
 export function initTrainingHistory(root, history=verifiedTrainingHistory) {
   const locations=history.locations.filter(item=>item.name&&Number.isFinite(item.lat)&&Math.abs(item.lat)<=90&&Number.isFinite(item.lon)&&Math.abs(item.lon)<=180);
   const organisations=history.organisations.filter(item=>item.name&&item.logo&&item.source);
-  const region=root.querySelector('#reach-evidence');
-  region.hidden=locations.length===0;
-  root.querySelector('#training-reach').classList.toggle('has-locations',locations.length>0);
-  const list=root.querySelector('#learner-locations');
-  list.replaceChildren(...locations.map(item=>{
-    const li=document.createElement('li'),name=document.createElement('strong'),institutions=document.createElement('small');
-    name.textContent=item.name;institutions.textContent=item.institutions.join(' · ');li.append(name,institutions);return li;
-  }));
   const section=root.querySelector('#learner-organisations');
   section.hidden=organisations.length===0;
   const track=root.querySelector('#logo-track');

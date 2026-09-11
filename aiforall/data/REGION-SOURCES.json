@@ -1,0 +1,270 @@
+{
+  "retrieved": "2026-09-11",
+  "boundaries": {
+    "publisher": "National Water Informatics Centre, Ministry of Jal Shakti",
+    "sourceAgency": "Survey of India (each feature src_agency)",
+    "resource": "https://nwdp.nwic.gov.in/dataset/state-boundary/resource/f039e721-132c-4a24-9e5e-07af03064b4d",
+    "download": "https://nwdp.nwic.gov.in/dataset/dd960900-34cc-4486-a95c-83200d2f2c7b/resource/f039e721-132c-4a24-9e5e-07af03064b4d/download/state_nwic_geojson.zip",
+    "updated": "2025-05-01",
+    "license": "Other (Open), as declared by NWIC",
+    "sha256": "a932ea29e7afd0fea1e1068f3beeeadb760e6b2baae9783f5822bbefd4224ebd",
+    "inputCRS": "EPSG:7755 (from file, not WGS84 coordinates)",
+    "outputCRS": "EPSG:4326",
+    "method": "Transform original MultiPolygons to WGS84. Sample a common 0.32-degree grid inside each state, retaining points on small disconnected components. Detail dots use each original geometry. No hand-drawn or generated boundaries. Globe displays India as represented in the official source."
+  },
+  "names": {
+    "english": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2289900",
+    "hindi": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2290028",
+    "overrides": {
+      "AN": {
+        "local": "अंडमान एवं निकोबार द्वीप समूह",
+        "source": "https://www.mha.gov.in/hi/division_of_mha/AGMUT_Cadre_Management",
+        "reason": "Correct duplicated word in Hindi PIB table using MHA name."
+      },
+      "CG": {
+        "local": "छत्तीसगढ़",
+        "source": "https://cgstate.gov.in/hi"
+      },
+      "DL": {
+        "text": "National Capital Territory of Delhi",
+        "local": "राष्ट्रीय राजधानी क्षेत्र दिल्ली",
+        "source": "https://delhi.gov.in/hi"
+      },
+      "DH": {
+        "text": "Dadra and Nagar Haveli and Daman and Diu",
+        "source": "https://ddd.gov.in/",
+        "reason": "Remove table’s leading article The."
+      }
+    }
+  },
+  "statistics": {
+    "source": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2289900",
+    "table": "Annexure A, first table; SOAR columns only",
+    "reportedDate": "2026-07-27",
+    "dataAsOf": null,
+    "dateNote": "The annexure does not specify a separate as-of date. Display the publication date as Reported, not As of. The release narrative contains different headline totals; the site consistently uses the annexure’s rows and totals.",
+    "nationalEnrolled": 496755,
+    "nationalCertified": 94604,
+    "totalsVerifiedBySum": true,
+    "meaning": "Programme participation counts, not a population AI-literacy rate. Government programme data, not our training totals.",
+    "sha256": "f86139bf9427243636a9e6197896406b9883133c67292dbfab927c55985527b2"
+  },
+  "regionMappings": [
+    {
+      "id": "AP",
+      "english": "Andhra Pradesh",
+      "hindi": "आंध्र प्रदेश",
+      "kind": "State"
+    },
+    {
+      "id": "AR",
+      "english": "Arunachal Pradesh",
+      "hindi": "अरुणाचल प्रदेश",
+      "kind": "State"
+    },
+    {
+      "id": "AS",
+      "english": "Assam",
+      "hindi": "असम",
+      "kind": "State"
+    },
+    {
+      "id": "BR",
+      "english": "Bihar",
+      "hindi": "बिहार",
+      "kind": "State"
+    },
+    {
+      "id": "CG",
+      "english": "Chhattisgarh",
+      "hindi": "छत्तीसगढ़",
+      "kind": "State"
+    },
+    {
+      "id": "GA",
+      "english": "Goa",
+      "hindi": "गोवा",
+      "kind": "State"
+    },
+    {
+      "id": "GJ",
+      "english": "Gujarat",
+      "hindi": "गुजरात",
+      "kind": "State"
+    },
+    {
+      "id": "HR",
+      "english": "Haryana",
+      "hindi": "हरियाणा",
+      "kind": "State"
+    },
+    {
+      "id": "HP",
+      "english": "Himachal Pradesh",
+      "hindi": "हिमाचल प्रदेश",
+      "kind": "State"
+    },
+    {
+      "id": "JH",
+      "english": "Jharkhand",
+      "hindi": "झारखंड",
+      "kind": "State"
+    },
+    {
+      "id": "KA",
+      "english": "Karnataka",
+      "hindi": "कर्नाटक",
+      "kind": "State"
+    },
+    {
+      "id": "KL",
+      "english": "Kerala",
+      "hindi": "केरल",
+      "kind": "State"
+    },
+    {
+      "id": "MP",
+      "english": "Madhya Pradesh",
+      "hindi": "मध्य प्रदेश",
+      "kind": "State"
+    },
+    {
+      "id": "MH",
+      "english": "Maharashtra",
+      "hindi": "महाराष्ट्र",
+      "kind": "State"
+    },
+    {
+      "id": "MN",
+      "english": "Manipur",
+      "hindi": "मणिपुर",
+      "kind": "State"
+    },
+    {
+      "id": "ML",
+      "english": "Meghalaya",
+      "hindi": "मेघालय",
+      "kind": "State"
+    },
+    {
+      "id": "MZ",
+      "english": "Mizoram",
+      "hindi": "मिजोरम",
+      "kind": "State"
+    },
+    {
+      "id": "NL",
+      "english": "Nagaland",
+      "hindi": "नागालैंड",
+      "kind": "State"
+    },
+    {
+      "id": "OD",
+      "english": "Odisha",
+      "hindi": "ओडिशा",
+      "kind": "State"
+    },
+    {
+      "id": "PB",
+      "english": "Punjab",
+      "hindi": "पंजाब",
+      "kind": "State"
+    },
+    {
+      "id": "RJ",
+      "english": "Rajasthan",
+      "hindi": "राजस्थान",
+      "kind": "State"
+    },
+    {
+      "id": "SK",
+      "english": "Sikkim",
+      "hindi": "सिक्किम",
+      "kind": "State"
+    },
+    {
+      "id": "TN",
+      "english": "Tamil Nadu",
+      "hindi": "तमिलनाडु",
+      "kind": "State"
+    },
+    {
+      "id": "TS",
+      "english": "Telangana",
+      "hindi": "तेलंगाना",
+      "kind": "State"
+    },
+    {
+      "id": "TR",
+      "english": "Tripura",
+      "hindi": "त्रिपुरा",
+      "kind": "State"
+    },
+    {
+      "id": "UP",
+      "english": "Uttar Pradesh",
+      "hindi": "उत्तर प्रदेश",
+      "kind": "State"
+    },
+    {
+      "id": "UK",
+      "english": "Uttarakhand",
+      "hindi": "उत्तराखंड",
+      "kind": "State"
+    },
+    {
+      "id": "WB",
+      "english": "West Bengal",
+      "hindi": "पश्चिम बंगाल",
+      "kind": "State"
+    },
+    {
+      "id": "AN",
+      "english": "Andaman and Nicobar Islands",
+      "hindi": "अंडमान एवं निकोबार द्वीप समूह",
+      "kind": "Union territory"
+    },
+    {
+      "id": "CH",
+      "english": "Chandigarh",
+      "hindi": "चंडीगढ़",
+      "kind": "Union territory"
+    },
+    {
+      "id": "DH",
+      "english": "Dadra and Nagar Haveli and Daman and Diu",
+      "hindi": "दादरा और नगर हवेली और दमन और दीव",
+      "kind": "Union territory"
+    },
+    {
+      "id": "JK",
+      "english": "Jammu and Kashmir",
+      "hindi": "जम्मू और कश्मीर",
+      "kind": "Union territory"
+    },
+    {
+      "id": "LK",
+      "english": "Ladakh",
+      "hindi": "लद्दाख",
+      "kind": "Union territory"
+    },
+    {
+      "id": "LD",
+      "english": "Lakshadweep",
+      "hindi": "लक्षद्वीप",
+      "kind": "Union territory"
+    },
+    {
+      "id": "DL",
+      "english": "National Capital Territory of Delhi",
+      "hindi": "राष्ट्रीय राजधानी क्षेत्र दिल्ली",
+      "kind": "Union territory"
+    },
+    {
+      "id": "PY",
+      "english": "Puducherry",
+      "hindi": "पुदुचेरी",
+      "kind": "Union territory"
+    }
+  ]
+}

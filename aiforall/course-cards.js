@@ -1,7 +1,7 @@
-export function initCourseCards(track){
+export function initCourseCards(track,controls={}){
  if(!track)return {destroy(){}};
- const cards=[...track.querySelectorAll('[data-course]')];
- const previous=document.querySelector('#course-prev'),next=document.querySelector('#course-next'),range=document.querySelector('#course-range');
+ const cards=[...track.querySelectorAll('[data-course],[data-audience]')];
+ const previous=controls.previous||document.querySelector('#course-prev'),next=controls.next||document.querySelector('#course-next'),range=controls.range||document.querySelector('#course-range');
  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
  let frame=0;
  function positions(){const left=track.getBoundingClientRect().left;return cards.map(card=>card.getBoundingClientRect().left-left+track.scrollLeft);}
@@ -27,5 +27,5 @@ export function initCourseCards(track){
  previous.addEventListener('click',back);next.addEventListener('click',forward);track.addEventListener('scroll',request,{passive:true});track.addEventListener('keydown',key);
  const resize=new ResizeObserver(request);resize.observe(track);
  update();
- return {destroy(){cancelAnimationFrame(frame);resize.disconnect();previous.removeEventListener('click',back);next.removeEventListener('click',forward);track.removeEventListener('scroll',request);track.removeEventListener('keydown',key);}};
+ return {goTo:go,destroy(){cancelAnimationFrame(frame);resize.disconnect();previous.removeEventListener('click',back);next.removeEventListener('click',forward);track.removeEventListener('scroll',request);track.removeEventListener('keydown',key);}};
 }
