@@ -79,6 +79,17 @@
 @media(prefers-reduced-motion:reduce){#lp-full-comic *{animation:none!important;transition:none!important}}
 #lp-full-comic .fc-caption + .fc-caption:not(.fc-speech){margin-top:12px}
 
+#lp-full-comic .fc-lab-ending{max-width:740px;margin:80px auto 0;padding:66px 22px 76px;border-top:1px solid #493853;text-align:center}
+#lp-full-comic .fc-lab-ending h2{max-width:620px;margin:0 auto;font:500 clamp(32px,5.8vw,48px)/1.16 'Barlow Condensed',Arial,sans-serif;letter-spacing:-.01em;text-wrap:balance;color:var(--fc-paper)}
+#lp-full-comic .fc-lab-ending h2 span{color:var(--fc-lime)}
+#lp-full-comic .fc-lab-journey{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:13px;margin:28px 0 34px;font:400 12px/1.7 'DM Mono',monospace;color:var(--fc-lilac)}
+#lp-full-comic .fc-lab-journey strong{font-weight:400;color:var(--fc-lime)}
+#lp-full-comic .fc-switchboard-entry{display:inline-flex;align-items:center;justify-content:center;gap:28px;min-height:50px;padding:14px 23px;background:var(--fc-lime);color:#10160b;text-decoration:none;font:700 18px/1.2 'Comic Neue',Arial,sans-serif;border:1px solid var(--fc-lime);box-shadow:4px 4px 0 #3b442a}
+#lp-full-comic .fc-switchboard-entry:hover{background:#e4f9b8}
+#lp-full-comic .fc-switchboard-entry:focus-visible{outline:3px solid var(--fc-lilac);outline-offset:6px}
+@media(max-width:480px){#lp-full-comic .fc-lab-ending{margin-top:55px;padding:44px 8px 48px}#lp-full-comic .fc-lab-journey{gap:8px;font-size:11px}}
+
+
 html,body{margin:0;min-height:100%;background:#050505}
 </style>
 </head>
@@ -414,6 +425,12 @@ html,body{margin:0;min-height:100%;background:#050505}
 
 
  <footer class="fc-footer"><span>The Last Prompt</span><span>53 illustrated moments</span></footer>
+
+ <section class="fc-lab-ending" aria-label="The Last Prompt AI lab">
+  <h2>The Last Prompt is an AI lab using superintelligence to <span>build sci-fi.</span></h2>
+  <p class="fc-lab-journey"><span>Prompt</span><span aria-hidden="true">→</span><span>Primed</span><span aria-hidden="true">→</span><strong>Promptless AI</strong></p>
+  <a class="fc-switchboard-entry" href="/switchboard/">Enter Switchboard <span aria-hidden="true">↗</span></a>
+ </section>
 </article>
 <script>(()=>{const root=document.getElementById('lp-full-comic');if(!root)return;const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;if('IntersectionObserver' in window&&!reduced){const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){entry.target.classList.add('fc-arrived');observer.unobserve(entry.target);}},{threshold:.15});root.querySelectorAll('.fc-panel').forEach(panel=>observer.observe(panel));}})();</script>
 
