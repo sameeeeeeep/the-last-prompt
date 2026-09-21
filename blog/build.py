@@ -100,3 +100,23 @@ def build(site):
         d=out/p['slug']; d.mkdir(exist_ok=True); (d/'index.html').write_text(page(p['title']+' — '+('The Last Prompt' if site=='tlp' else 'Switchboard'),p['summary'],body,f'https://thelastprompt.ai{base}{p["slug"]}/'))
     print(site,len(ps),'posts →',out)
 build('tlp'); build('switchboard')
+
+
+# ---------------- sitemap (regenerated on every blog build so it can't go stale) ----------------
+CORE_PAGES = [
+    ('', None), ('manifesto/', None), ('switchboard/', None), ('workshops/', None),
+    ('aiforall/', None), ('capabilities', None), ('autoclawd', None),
+    ('blog/', None), ('switchboard/blog/', None),
+]
+def sitemap():
+    today = datetime.date.today().isoformat()
+    rows = []
+    for path, lastmod in CORE_PAGES:
+        rows.append(f'  <url>\n    <loc>https://thelastprompt.ai/{path}</loc>\n    <lastmod>{lastmod or today}</lastmod>\n  </url>')
+    for m in posts:
+        base = 'blog' if m.get('site') == 'tlp' else 'switchboard/blog'
+        rows.append(f"  <url>\n    <loc>https://thelastprompt.ai/{base}/{m['slug']}/</loc>\n    <lastmod>{m['date']}</lastmod>\n  </url>")
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + '\n'.join(rows) + '\n</urlset>\n'
+    (ROOT/'sitemap.xml').write_text(xml)
+    print(f'sitemap {len(rows)} urls -> {ROOT}/sitemap.xml')
+sitemap()
