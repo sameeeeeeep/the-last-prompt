@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900&family=Fragment+Mono&display=swap">
+<link rel="stylesheet" href="vision.css">
 <style>
   :root{
     --void:#000; --ink:#f5f5fc; --dust:#dcdce4; --faint:#9c9ca8;
@@ -150,6 +151,65 @@
   .savednote{color:var(--faint);font-family:'Fragment Mono',monospace;font-size:10.5px;
     letter-spacing:.14em;text-transform:uppercase}
 
+
+  /* your life */
+  .ltoday{margin-bottom:var(--s3);max-width:52ch}
+  .lintro{border-top:1px solid var(--rule);padding-top:var(--s3)}
+  .lintro h3{font-size:clamp(26px,6vw,36px);margin-bottom:16px;max-width:18ch}
+  .lintro .body{max-width:52ch}
+  .lsub{display:flex;align-items:center;gap:14px;margin:var(--s5) 0 var(--s2)}
+  .lsub .mono{color:#b6b6c2;font-size:12px}
+  .lss{margin-top:0}
+  .llink{background:none;border:0;padding:0;cursor:pointer;color:var(--faint);font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-decoration:underline;text-underline-offset:4px}
+  .llink:hover{color:var(--amber)}
+  .lpeople{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .lp{background:var(--void);padding:18px;display:flex;flex-direction:column;gap:6px}
+  .lp .nm{font-size:18px;font-weight:460;color:var(--ink)}
+  .lp .mt{font-size:10.5px}
+  .lp .tx{font-size:15px;line-height:1.55;color:var(--dust);margin-top:4px}
+  .lp .sy{font-size:13.5px;line-height:1.5;color:var(--faint)}
+  .lp .lk{font-size:10px;text-transform:none;letter-spacing:.06em;margin-top:6px}
+  .lareas{margin-top:var(--s4)}
+  .larea{border-top:1px solid var(--rule);padding:var(--s3) 0 var(--s4)}
+  .lahd{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .lahd .mono b{color:var(--amber)}
+  .lbadge{margin-left:auto;font-size:10px;border:1px solid var(--rule);padding:3px 9px}
+  .larea h3{font-size:clamp(24px,5.4vw,32px);margin-bottom:14px;max-width:22ch}
+  .larea .body{max-width:56ch}
+  .lunder{margin-top:16px;font-size:16px;line-height:1.65;color:var(--dust);max-width:56ch}
+  .lunder .mono{display:block;margin-bottom:6px;font-size:10.5px}
+  .lmove{display:flex;gap:18px;align-items:baseline;flex-wrap:wrap;margin-top:18px;padding-top:14px;border-top:1px dashed var(--rule)}
+  .lwhen{font-family:'Fragment Mono',monospace;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+  .ldo{font-size:16px;color:var(--ink);flex:1;min-width:200px}
+  .lwhy{margin-top:14px;font-size:10.5px;text-transform:none;letter-spacing:.06em;line-height:1.6}
+  .lload{padding:var(--s2) 0}
+  .lhyp{border-top:1px solid var(--rule);padding:18px 0;display:grid;grid-template-columns:78px 1fr;gap:6px 16px;align-items:start}
+  .lhyp p{font-size:17px;line-height:1.55;color:var(--ink)}
+  .lhyp .la{padding-top:4px;font-size:10.5px}
+  .lans{grid-column:2;display:flex;gap:8px;margin-top:6px}
+  .lans button{background:none;border:1px solid var(--rule);color:var(--faint);font-family:'Fragment Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;padding:8px 13px;cursor:pointer}
+  .lans button:hover{color:var(--ink);border-color:var(--faint)}
+  .lans button.on{border-color:var(--amber);color:var(--amber)}
+  @media(max-width:560px){.lhyp{grid-template-columns:1fr}.lans{grid-column:1}}
+  .lev{display:grid;grid-template-columns:74px 1fr;gap:16px;padding:16px 0;border-top:1px solid var(--rule)}
+  .lev .ld{color:var(--amber);padding-top:3px}
+  .lev .lt{font-size:16px;line-height:1.6;color:var(--dust)}
+  .lev .lt b{color:var(--ink);font-weight:500}
+  .lev .lw{display:block;margin-top:6px;font-size:10.5px;text-transform:none;letter-spacing:.06em}
+  .led{border-top:1px solid var(--amber);margin-top:var(--s4);padding-top:6px}
+  .lchips{margin-top:0}
+  .lchips .chip{padding:10px 14px}
+  .lin{width:100%;background:#06060a;border:1px solid var(--rule);color:var(--ink);font-family:'Archivo',sans-serif;font-size:16px;padding:13px 14px;margin-top:12px}
+  .lin:focus{outline:none;border-color:var(--faint)}
+  .lin::placeholder{color:var(--faint)}
+  .lfl{display:block;margin:16px 0 8px;font-size:10.5px}
+  .ladd{border:1px solid var(--rule);padding:16px;margin-top:14px}
+  .ladd .lchips:first-of-type{margin-top:12px}
+  .lprow{border-top:1px solid var(--rule);padding:12px 0}
+  .lprh{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+  .lprh b{font-weight:500;color:var(--ink);font-size:16px}
+  .lprh .llink{margin-left:auto}
+  .lprow p{font-size:14px;color:var(--faint);margin-top:4px}
   /* capture + vision */
   .capgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);
     border:1px solid var(--rule);margin-top:var(--s3)}
@@ -513,7 +573,9 @@
 
 <nav class="snav" aria-label="Sections"><div class="snavin" id="snav">
   <a class="stab on" href="#s-tonight">Tonight</a>
+  <a class="stab" href="#s-tomorrow">Tomorrow ✦</a>
   <a class="stab" href="#s-move">Move</a>
+  <a class="stab" href="#s-life">Your life</a>
   <a class="stab" href="#s-why">Why</a>
   <a class="stab" href="#s-sky">Sky</a>
   <a class="stab" href="#s-numbers">Numbers</a>
@@ -570,10 +632,22 @@
       </div>
     </div>
     <p class="body" id="lede">One honest paragraph about your day lands here.</p>
+    <a class="tomorrow-tease" href="#s-tomorrow">See tomorrow, drawn in 3D <span aria-hidden="true">↗</span></a>
     <div class="evidence" id="evidence"></div>
     <div class="askrow"><input id="askQ" placeholder="Ask me anything about today&hellip;"><button id="askGo">Ask</button></div>
     <p class="movenote" id="askNote">A decision, a person, a fear — I answer against your whole chart.</p>
     <div id="askThread"></div>
+  </section>
+
+  <section class="tomorrow-section" id="s-tomorrow" aria-labelledby="tomorrow-title">
+    <div class="tomorrow-overline mono"><span class="dot lit"></span> The next local day <span id="tomorrow-date"></span></div>
+    <div class="tomorrow-title-row"><h2 class="display" id="tomorrow-title">Tomorrow,<br><em>drawn.</em></h2><p id="tomorrow-for"></p></div>
+    <div class="tomorrow-stage">
+      <div class="tomorrow-cosmos" id="tomorrow-cosmos"><canvas id="tomorrow-canvas" aria-hidden="true"></canvas><div class="tomorrow-fallback" id="tomorrow-fallback" hidden><span>◐</span><p>The sky is still readable below.</p></div><span class="tomorrow-coordinate top">THE SKY AT LOCAL NOON</span><span class="tomorrow-coordinate bottom">DRAG TO TURN · SELECT A PLANET</span></div>
+      <div class="tomorrow-reading"><span class="mono">01 / THE READING</span><h3 class="display" id="tomorrow-headline">Drawing the next day…</h3><p id="tomorrow-summary"></p><div class="tomorrow-rule"></div><span class="mono">THE SKY BEHIND IT</span><div class="tomorrow-planets" id="tomorrow-planets" role="group" aria-label="Inspect tomorrow's planets"></div><div id="tomorrow-planet-detail" aria-live="polite"></div><button id="tomorrow-motion" type="button" aria-pressed="false">Pause motion</button></div>
+    </div>
+    <div class="tomorrow-signals" id="tomorrow-signals"></div>
+    <p class="tomorrow-method" id="tomorrow-method"></p>
   </section>
 
   <section id="s-move">
@@ -582,6 +656,11 @@
     <h2 class="display" id="move">&mdash;</h2>
     <div class="movewhen"><span class="mono">Best stretch</span><span class="t" id="movewhen">tonight</span></div>
     <p class="movenote">Not a rule — just the stretch that suits this kind of move. Too big? Make it smaller until it isn&rsquo;t.</p>
+  </section>
+
+  <section id="s-life">
+    <div class="seclb"><span class="mono">Your life, right now</span></div>
+    <div id="lifeRoot"></div>
   </section>
 
   <section id="s-why">
@@ -809,7 +888,7 @@
   var pyear=red(red(+dp[1])+red(+dp[2])+red(now.getFullYear()));
   var pmonth=red(pyear+red(now.getMonth()+1));
   var PYTHEME={1:'new starts and momentum',2:'partnership, patience, waiting',3:'expression, social life, creativity',4:'building and steady work',5:'change, freedom, the unexpected, moves',6:'love, home, marriage, commitment, responsibility',7:'reflection and inner work — a slower year',8:'money, power, career leaps',9:'endings and clearing the way',11:'intuition and a spiritual step-up',22:'building something lasting'};
-  function nextPY(target){ for(var i=0;i<9;i++){ var y=now.getFullYear()+i; if(red(red(+dp[1])+red(+dp[2])+red(y))===target) return y; } return null; }
+  function nextPY(target){ for(var i=0;i<10;i++){ var y=now.getFullYear()+i, v=red(red(+dp[1])+red(+dp[2])+red(y)); if(v===target||(target===2&&v===11)||(target===4&&v===22)) return y; } return null; }
   var PY={A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8};
   var nameNum=fullname?red(fullname.toUpperCase().replace(/[^A-Z]/g,'').split('').reduce(function(a,c){return a+(PY[c]||0);},0)):0;
   var NW={1:'a beginning',2:'patience',3:'expression',4:'foundation',5:'change',6:'care',7:'the inner life',8:'power',9:'completion',11:'insight',22:'building big'};
@@ -1490,7 +1569,7 @@
       } else throw e;
     }
   }
-  var CORE='Write my reading for today as a confident forecast — commit to it. Predict what the day holds and how it will land, plainly and specifically: where you can, name a time of day (morning, mid-afternoon, after dark), a kind of moment, or a person-shaped situation. Do NOT hedge — avoid "maybe", "might", "probably", "you may", "tends to", "could", "you’ll likely"; at most ONE soft word in the whole reading. State the day. Open with ONE short, vivid headline on its own line — at most 7 words — that captures today with an image or a stance; do NOT start it with "Expect", and never generic (aim for lines like "The day pulls you home." or "You can push today, and win."). Then a blank line, then two short paragraphs that read my day to me with conviction: ground the day in something concrete — a likely moment, a domain (a message, money, a person, work, rest, a decision), a time of day — so it reads written for today, not any day. Say what happens, what I notice, how it lands. This is a reading, NOT advice — describe, don’t instruct; never say "you should". Keep it simple: short sentences, plain everyday words like texting a friend. No poetic phrases (nothing like "inward gravity"), no jargon, no emojis. At the very end, on its own line, write DO: then one small concrete thing to do today.';
+  var CORE='Write my reading for today as a confident forecast — commit to it. Predict what the day holds and how it will land, plainly and specifically: where you can, name a time of day (morning, mid-afternoon, after dark), a kind of moment, or a person-shaped situation. Do NOT hedge — avoid "maybe", "might", "probably", "you may", "tends to", "could", "you’ll likely"; at most ONE soft word in the whole reading. State the day. Open with ONE short, vivid headline on its own line — at most 7 words — that captures today with an image or a stance; do NOT start it with "Expect", and never generic (aim for lines like "The day pulls you home." or "You can push today, and win."). Then a blank line, then two short paragraphs that read my day to me with conviction: ground the day in something concrete — a likely moment, a domain (a message, money, a person, work, rest, a decision), a time of day — so it reads written for today, not any day. Say what happens, what I notice, how it lands. This is a reading, NOT advice — describe, don’t instruct; never say "you should". Keep it simple: short sentences, plain everyday words like texting a friend. No poetic phrases (nothing like "inward gravity"), no jargon, no emojis. If you know the people in my life, the reading is about THEM too: name at least one of them and say what specifically happens with them today, and land the day on the part of my life the Moon is in today. At the very end, on its own line, write DO: then one small concrete thing to do today.';
   function sysPrompt(){
     var L=[];
     L.push('You are Prophexy, a personal oracle instrument. Speak in first person as the instrument. Plain, warm, specific. Never generic, no emojis.');
@@ -1498,6 +1577,7 @@
     L.push('TONIGHT: '+phase+' ('+illum+'% lit) in '+msign+'; '+ruler+' rules the day; personal day '+pd+' ('+(NW[pd]||'')+'); life path '+lifePath+'; sun in '+wsun+'.');
     L.push('TIMING ANCHORS (use these to name real windows): personal year '+pyear+' — '+(PYTHEME[pyear]||'')+'; personal month '+pmonth+'. Classic cycle years: love/marriage/commitment falls in a 6 year (next: '+nextPY(6)+'), partnership in a 2 year (next: '+nextPY(2)+'), big change or a move in a 5 year (next: '+nextPY(5)+'), money/career in an 8 year (next: '+nextPY(8)+'). The current calendar year is '+now.getFullYear()+'.');
     L.push('BE DEFINITIVE. When I ask a question — especially a "when" question — commit to a concrete window: a number of weeks, a named month or season, a number of months, or a specific year, reasoned from the timing anchors and cycles above. NEVER answer "soon", "sooner than you think", "in time", or "when you are ready". Give the single most likely window, plus a shorter/longer bracket, and name the reason in one clause (e.g. "most likely around autumn '+nextPY(6)+', your next 6 year; earliest late this year, at the outside two years out"). Predict a real answer; do not hedge it into nothing.');
+    try{ if(window.__lifeContext)L.push(window.__lifeContext()); }catch(e){}
     try{var dm=JSON.parse(localStorage.getItem('prophexy.dreams::'+pid))||[]; if(dm.length)L.push('LATEST DREAM: '+String(dm[dm.length-1].t||'').slice(0,220));}catch(e){}
     try{var mm=JSON.parse(localStorage.getItem('prophexy.mood::'+pid))||[]; if(mm.length)L.push('RECENT MOODS: '+mm.slice(-3).map(function(x){return x.m;}).join(', ')+'.');}catch(e){}
     try{var jj=JSON.parse(localStorage.getItem('prophexy.journal::'+pid))||[]; if(jj.length)L.push('LAST JOURNAL LINE: '+String(jj[jj.length-1].t||'').slice(0,180));}catch(e){}
@@ -1658,6 +1738,7 @@
       }
     })();
   }
+  window.__readNow=readNow;
   $('aiConnectBtn').addEventListener('click',function(){
     var b=this; b.textContent='Connecting\u2026'; b.disabled=true;
     AI.connect().then(function(){ updateAIUI(); if(!daily) readNow(); })
@@ -1787,6 +1868,9 @@
   });
 })();
 </script>
+<script src="sky.js"></script>
+<script src="life.js"></script>
+<script type="module" src="vision.js"></script>
 <script src="deck.js"></script>
 <script>
 /* ================= the old tarot — full interactive deck (ported) ================= */
