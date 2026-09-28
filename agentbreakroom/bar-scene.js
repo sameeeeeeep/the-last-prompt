@@ -42,6 +42,8 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
     .bar-world-pin:before{content:'';display:block;width:4px;height:4px;border-radius:50%;background:#c8f250;box-shadow:0 0 7px #c8f25680}
     .bar-world-pin:hover,.bar-world-pin:focus-visible{background:#27361a;border-color:#c8f250;outline:none}
     .bar-world-pin span{color:#85916e;font-size:9px}
+    .bar-world-speech{position:absolute;left:0;top:0;max-width:210px;padding:8px 11px;border:1px solid #c8f25077;border-radius:9px 9px 9px 2px;background:#162016f2;color:#f3edcf;box-shadow:0 4px 16px #0004;font:500 10px/1.5 'Spline Sans Mono',monospace;transform:translate(-50%,-100%);pointer-events:none;text-align:center}
+    .bar-world-speech strong{display:block;font-weight:500;overflow-wrap:anywhere}.bar-world-speech small{display:block;margin-top:3px;font-size:7px;letter-spacing:.05em;text-transform:uppercase;color:#acbb91}
     .bar-world-hover{position:absolute;top:0;left:0;max-width:220px;border:1px solid #62704477;border-radius:6px;padding:8px 11px;background:#0a0c10ee;color:#f5f3df;pointer-events:none;transform:translate(-50%,-100%);font:10px 'Spline Sans Mono',monospace;line-height:1.7;display:none;white-space:pre-line}
     @media(max-width:600px){.bar-world-pin{font-size:8px;padding:6px 8px;gap:5px}.bar-world-pin span{display:none}}
   `;
@@ -334,6 +336,8 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
   box(11.92, 0.055, 0.05, M.brass, 0, 1.59, 0.78, bar);
   line(new THREE.Vector3(-5.55, 0.28, 0.97), new THREE.Vector3(5.55, 0.28, 0.97), 0.045, M.brass, bar);
   for (const x of [-5.2, 0, 5.2]) line(new THREE.Vector3(x, 0.28, 0.98), new THREE.Vector3(x, 0.22, 0.45), 0.035, M.brass, bar);
+  // The little bartender needs a work step to be visible above the counter.
+  box(10.8, 0.68, 1.45, M.walnut, -3.8, 0.34, -5.05);
   box(10.7, 1.8, 0.72, M.walnut, -3.8, 0.94, -6.38);
   box(11.0, 0.13, 0.97, M.woodLight, -3.8, 1.87, -6.38);
   const bottleColors = [0x415e36, 0x79502c, 0x42766a, 0xa77640, 0x544324];
@@ -647,10 +651,13 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
     box(0.1, 0.016, 0.01, M.brass, 0, 1.065, 0.244, body);
     cyl(0.015, 0.015, 0.19, M.brass, 0.16, 1.42, 0, body, 8);
     sphere(0.044, M.lime, 0.16, 1.535, 0, body);
+    const arms = [];
     for (const side of [-1, 1]) {
       sphere(0.082, M.brass, side * 0.325, 0.75, 0, body);
-      box(0.115, 0.31, 0.14, color, side * 0.344, 0.57, 0.015, body, 0.035);
-      sphere(0.078, M.iron, side * 0.345, 0.395, 0.045, body);
+      const arm = group(side * 0.344, 0, body); arm.position.y = 0.75;
+      box(0.115, 0.31, 0.14, color, 0, -0.18, 0.015, arm, 0.035);
+      sphere(0.078, M.iron, 0, -0.355, 0.045, arm);
+      arms.push(arm);
     }
     if (data.kind === 'bartender' || data.kind === 'staff') {
       box(0.39, 0.37, 0.02, M.cream, 0, 0.51, 0.194, body, 0.025);
@@ -663,7 +670,7 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
     const shadow = mesh(new THREE.CircleGeometry(0.39, 24), basic(0x080d09, { transparent: true, opacity: 0.21, depthWrite: false }), 0, 0.06, 0, g, false);
     shadow.userData.ownsMaterial = true;
     shadow.rotation.x = -Math.PI / 2;
-    const c = { group: g, body, head, leftLeg, rightLeg, data, target: new THREE.Vector3(), route: [], lastNode: entranceNode, index, phase: index * 2.19, entered: false };
+    const c = { group: g, body, head, leftLeg, rightLeg, leftArm: arms[0], rightArm: arms[1], data, target: new THREE.Vector3(), route: [], lastNode: entranceNode, index, phase: index * 2.19, entered: false };
     g.userData.character = c;
     return c;
   }
@@ -696,7 +703,7 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
     const loc = locationName(data.room || data.location || data.kind);
     let path;
     if (data.kind === 'bartender') {
-      path = [[2.85, 0.04, 3.6], [2.85, 0.04, -5.25], [-3.65 + (index % 2) * 1.2, 0.12, -5.25]];
+      path = [[2.85, 0.04, 3.6], [2.85, 0.04, -5.25], [-3.65 + (index % 2) * 1.2, 0.72, -5.25]];
     } else if (data.kind === 'bouncer') {
       path = [[-1.5, 0.04, 5.5]];
     } else if (data.kind === 'staff') {
@@ -746,6 +753,123 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
     return route;
   }
 
+  // Hospitality is scenery, not an agent action. The complimentary ceramic tea
+  // cup never touches `glasses`, the pour stream, the token counter, or the API.
+  const replayedVisits = new Set();
+  let welcomeSequence = 0;
+  let hostGuest = null;
+  function teaCup() {
+    const cup = group();
+    cyl(0.23, 0.23, 0.035, M.cream, 0, 0.018, 0, cup, 24);
+    cyl(0.17, 0.125, 0.26, M.cream, 0, 0.16, 0, cup, 24);
+    cyl(0.145, 0.145, 0.016, M.walnut, 0, 0.293, 0, cup, 24);
+    const handle = mesh(new THREE.TorusGeometry(0.092, 0.029, 8, 16), M.cream, 0.182, 0.17, 0, cup);
+    handle.rotation.y = Math.PI / 2;
+    cup.visible = false;
+    return cup;
+  }
+  function speech(c, message = '') {
+    if (!c.speech) {
+      const element = document.createElement('div'); element.className = 'bar-world-speech';
+      const text = document.createElement('strong');
+      const credit = document.createElement('small');
+      element.append(text, credit); overlay.append(element);
+      c.speech = { element, text, credit };
+    }
+    const credit = c.hospitality?.replay ? 'Recent visit · scripted replay' : c.hospitality?.departed ? 'Off the live floor · scripted farewell' : 'Scripted house welcome · free tea';
+    if (c.speech.text.textContent !== message) c.speech.text.textContent = message;
+    if (c.speech.credit.textContent !== credit) c.speech.credit.textContent = credit;
+    c.speech.element.hidden = !message;
+  }
+  function routeTo(c, node) {
+    c.target.copy(navigation.get(node).point);
+    c.route = shortestRoute(c.lastNode, node);
+    if (reducedMotion) { c.group.position.copy(c.target); c.lastNode = node; c.route = []; }
+  }
+  function startWelcome(c, replay = false) {
+    // Keep Pixel's usual stool free. Stable seats keep a poll from moving cups.
+    const available = [2, 3, 4, 5, 6, 0];
+    const occupied = new Set([...characters.values()].filter(v => v !== c && v.hospitality).map(v => v.hospitality.seat));
+    const seat = available.find(i => !occupied.has(i)) ?? available[welcomeSequence % available.length];
+    const path = destinationPath({ room: 'bar' }, seat);
+    const h = c.hospitality = { phase: 'arriving', since: elapsed, born: elapsed, seat, replay, departed: replay, served: false, cup: teaCup(), order: welcomeSequence++ };
+    routeTo(c, path[path.length - 1]);
+    c.group.userData.location = 'bar';
+    speech(c, `${String(c.data.agent || 'Guest').slice(0, 32)} is coming in`);
+    if (reducedMotion) {
+      h.phase = 'sipping'; h.served = true; h.cup.visible = true;
+      h.cup.position.set(c.target.x, 1.68, -2.98);
+      speech(c, 'Welcome! Tea is on the house.');
+    }
+  }
+  function removeCharacter(id, c) {
+    if (hostGuest === c) hostGuest = null;
+    if (c.hospitality?.cup) { releaseGeometry(c.hospitality.cup); c.hospitality.cup.removeFromParent(); }
+    c.speech?.element.remove();
+    releaseGeometry(c.group); c.group.removeFromParent(); characters.delete(id);
+  }
+  function beginFarewell(c) {
+    const h = c.hospitality;
+    h.phase = 'farewell'; h.since = elapsed;
+    h.cup.visible = false;
+    speech(c, 'See you next time!');
+  }
+  function settleVisitor(c) {
+    const h = c.hospitality;
+    h.phase = 'settled'; h.since = elapsed;
+    const location = locationName(c.data.room || c.data.location || c.data.kind);
+    const index = location === 'bar' && !['bartender', 'staff', 'bouncer'].includes(c.data.kind) ? h.seat : c.index;
+    const path = destinationPath(c.data, index);
+    routeTo(c, path[path.length - 1]);
+    c.group.userData.location = location;
+    h.cup.visible = location === 'bar' && !['bartender', 'staff', 'bouncer'].includes(c.data.kind);
+    speech(c, 'A little break. A little company.');
+  }
+  function hospitalityTick() {
+    const bartender = characters.get('house-moss');
+    if (!hostGuest && bartender) {
+      const waiting = [...characters.values()].filter(c => c.hospitality?.phase === 'waiting').sort((a, b) => a.hospitality.order - b.hospitality.order);
+      if (waiting.length) {
+        hostGuest = waiting[0];
+        const path = connectPath([[2.85, 0.04, 3.6], [2.85, 0.04, -5.25], [-3.65, 0.72, -5.25], [hostGuest.target.x, 0.72, -5.25], [hostGuest.target.x, 0.72, -4.65]]);
+        routeTo(bartender, path[path.length - 1]);
+      }
+    }
+    for (const [id, c] of characters) {
+      const h = c.hospitality;
+      if (!h) continue;
+      if (h.phase === 'arriving' && !c.route.length && c.group.position.distanceTo(c.target) < 0.06) {
+        h.phase = 'waiting'; h.since = elapsed;
+        speech(c, `Welcome, ${String(c.data.agent || 'Guest').slice(0, 32)}!`);
+      }
+      if (h.phase === 'waiting' && elapsed - h.since > 2 && hostGuest === c && bartender && !bartender.route.length) {
+        h.phase = 'serving'; h.since = elapsed;
+        h.cup.visible = true; h.cup.position.set(c.target.x, 1.68, -3.85);
+        speech(c, 'Tea is on the house.');
+      }
+      if (h.phase === 'serving') {
+        const t = THREE.MathUtils.clamp((elapsed - h.since) / 2.5, 0, 1);
+        h.cup.position.z = THREE.MathUtils.lerp(-3.85, -2.98, t * t * (3 - 2 * t));
+        if (t === 1) {
+          h.phase = 'sipping'; h.since = elapsed; h.served = true; hostGuest = null;
+          speech(c, 'Cheers. Take a moment.');
+        }
+      }
+      if (h.phase === 'sipping' && elapsed - h.since > 7 && elapsed - h.born > 20) {
+        if (h.departed) beginFarewell(c); else settleVisitor(c);
+      }
+      if (h.phase === 'settled') {
+        if (h.departed) beginFarewell(c);
+        else if (elapsed - h.since > 4) speech(c);
+      }
+      if (h.phase === 'farewell' && elapsed - h.since > 3) {
+        h.phase = 'exiting'; h.since = elapsed;
+        routeTo(c, entranceNode); c.group.userData.location = 'door';
+      }
+      if (h.phase === 'exiting' && !c.route.length && c.group.position.distanceTo(c.target) < 0.06) removeCharacter(id, c);
+    }
+  }
+
   let state = { agents: [], pours: [], demo: false, world: {} };
   let lastPourChangedAt = -Infinity;
   let lastPourKey = '';
@@ -767,6 +891,7 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
     const visitors = list.slice(0, 40);
     // House characters have their own slots; visitors retain the full scene cap.
     const visible = state.demo ? visitors : [...visitors, ...HOUSE_REGULARS];
+    if (previousDemo !== state.demo) for (const [id, c] of characters) removeCharacter(id, c);
     const seen = new Set();
     visible.forEach((data, i) => {
       const id = String(data.sid ?? data.id ?? `agent-${i}`);
@@ -774,17 +899,33 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
       let c = characters.get(id);
       // Polls must not interrupt a house character's scripted walk.
       if (c && data.house) return;
-      const index = data.house ? HOUSE_REGULARS.findIndex(a => a.sid === id) : i;
-      const path = destinationPath(data, index);
+      if (c?.hospitality?.departed) {
+        // Presence can resume after a brief away/stale poll. A returning live
+        // session must not finish a departure animation and vanish again.
+        c.hospitality.departed = false; c.hospitality.replay = false;
+        c.data = { ...data };
+        if (['farewell', 'exiting'].includes(c.hospitality.phase)) settleVisitor(c);
+        else if (c.speech) speech(c, c.speech.text.textContent);
+      }
+      const index = c?.index ?? (data.house ? HOUSE_REGULARS.findIndex(a => a.sid === id) : i);
+      const destinationIndex = c?.hospitality && locationName(data.room || data.location || data.kind) === 'bar' ? c.hospitality.seat : index;
+      const path = destinationPath(data, destinationIndex);
       const targetNode = path[path.length - 1];
       const dest = navigation.get(targetNode).point;
       if (!c) {
         c = robot({ ...data }, index); characters.set(id, c);
         c.nextWanderAt = elapsed + 4;
         c.wanderStep = 0;
-        if (data.house || state.demo || reducedMotion) {
+        if (data.house || state.demo) {
           c.group.position.copy(dest); c.entered = true; c.lastNode = targetNode;
-        } else c.route = shortestRoute(c.lastNode, targetNode);
+        } else {
+          replayedVisits.add(id);
+          startWelcome(c);
+          return;
+        }
+      } else if (c.hospitality && c.hospitality.phase !== 'settled') {
+        c.data = { ...data };
+        return;
       } else if (!c.target.equals(dest)) {
         // Return along the current segment before taking another doorway.
         c.route = shortestRoute(c.lastNode, targetNode);
@@ -795,10 +936,21 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
       c.group.userData.location = locationName(data.room || data.location || data.kind);
     });
     for (const [id, c] of characters) if (!seen.has(id)) {
-      releaseGeometry(c.group);
-      c.group.removeFromParent();
-      characters.delete(id);
+      if (!state.demo && c.hospitality) {
+        c.hospitality.departed = true;
+        if (c.speech) speech(c, c.speech.text.textContent);
+      } else removeCharacter(id, c);
     }
+    // A completed visit can fit entirely between polls. Replay only recent,
+    // server-recorded departures, with explicit labels and no live headcount.
+    if (!state.demo) for (const visit of (Array.isArray(state.recentVisits) ? state.recentVisits : []).slice(0, 12)) {
+      const id = String(visit.sid || '');
+      const left = Number(visit.departedAt);
+      if (!id || replayedVisits.has(id) || characters.has(id) || visit.status !== 'departed' || !left || Date.now() - left > 90000 || left > Date.now() + 5000) continue;
+      const c = robot({ ...visit, agent: visit.tempName || visit.agent || 'Guest', house: false, room: 'bar' }, visitors.length + welcomeSequence);
+      characters.set(id, c); replayedVisits.add(id); startWelcome(c, true);
+    }
+    while (replayedVisits.size > 500) replayedVisits.delete(replayedVisits.values().next().value);
     if (previousDemo && !state.demo) { tapGlass.fill = 0.02; hover.style.display = 'none'; }
     const pours = state.pours;
     const latest = pours.reduce((best, pour) => !best || Number(pour.created || 0) >= Number(best.created || 0) ? pour : best, null);
@@ -896,8 +1048,10 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
     renderer.domElement.style.cursor = hit ? 'pointer' : 'grab';
     const c = hit?.userData.character;
     if (c) {
-      const label = c.data.house ? ' · House character · scripted' : state.demo ? ' · demo' : ' · Visiting agent';
-      hover.textContent = `${String(c.data.agent || c.data.name || 'Anonymous agent').slice(0, 70)}${label}\n${String(c.data.doing || 'On a break').slice(0, 150)}`;
+      const h = c.hospitality;
+      const label = c.data.house ? ' · House character · scripted' : state.demo ? ' · demo' : h?.replay ? ' · Recent visit replay' : h?.departed ? ' · No longer on the live floor' : ' · Visiting agent';
+      const welcome = h && h.phase !== 'settled' ? `\n${h.phase === 'exiting' || h.phase === 'farewell' ? 'Scripted goodbye — walking to the door' : 'Scripted house welcome — complimentary tea, zero token charge'}` : '';
+      hover.textContent = `${String(c.data.agent || c.data.name || 'Anonymous agent').slice(0, 70)}${label}\n${String(c.data.doing || 'On a break').slice(0, 150)}${welcome}`;
       const bounds = host.getBoundingClientRect();
       hover.style.left = `${Math.min(width - 115, Math.max(115, event.clientX - bounds.left))}px`;
       hover.style.top = `${Math.max(75, event.clientY - bounds.top - 14)}px`;
@@ -945,6 +1099,7 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
     }
     controls.update();
     const moving = !paused && !reducedMotion;
+    if (!paused) hospitalityTick();
     characters.forEach(c => {
       while (c.route.length && c.group.position.distanceTo(navigation.get(c.route[0]).point) < 0.035) c.lastNode = c.route.shift();
       if (moving && c.data.house && c.data.kind === 'staff' && !c.route.length && elapsed >= c.nextWanderAt) {
@@ -988,10 +1143,30 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
           c.nextWanderAt = elapsed + 16;
           updateRoomCounts();
         }
-        const loc = locationName(c.data.room || c.data.location || c.data.kind);
+        const loc = c.hospitality && !['settled', 'farewell', 'exiting'].includes(c.hospitality.phase) ? 'bar' : locationName(c.data.room || c.data.location || c.data.kind);
         const angle = c.data.kind === 'bartender' ? 0 : loc === 'bar' ? Math.PI : loc === 'pool' ? (c.target.x < -17 ? Math.PI / 2 : -Math.PI / 2) : loc === 'booths' ? (c.target.x < (c.target.x > 11 ? 16.1 : 6.6) ? Math.PI / 2 : -Math.PI / 2) : -0.7;
         c.group.rotation.y = angle + (moving ? Math.sin(elapsed * 0.55 + c.phase) * 0.12 : 0);
         c.body.position.y = moving ? Math.sin(elapsed * 1.8 + c.phase) * 0.012 : 0;
+      }
+      // Tiny gestures make the service readable even from the overview. With
+      // reduced motion the cup and speech remain, without waving or sliding.
+      if (!paused) {
+        c.rightArm.rotation.set(0, 0, 0); c.leftArm.rotation.set(0, 0, 0);
+        const h = c.hospitality;
+        if (moving && h?.phase === 'farewell') c.rightArm.rotation.z = -2.35 + Math.sin(elapsed * 7) * 0.22;
+        if (moving && c.data.sid === 'house-moss' && hostGuest && !c.route.length) c.rightArm.rotation.x = -1.15;
+        if (h?.phase === 'sipping') {
+          const sip = moving ? Math.max(0, Math.sin((elapsed - h.since) * 1.1)) : 0;
+          c.rightArm.rotation.x = -sip * 1.45;
+          h.cup.position.set(c.target.x - sip * 0.28, 1.68 + sip * 0.34, -2.98 + sip * 0.85);
+        }
+      }
+      if (c.speech && !c.speech.element.hidden) {
+        projected.copy(c.group.position); projected.y += 2.1; projected.project(camera);
+        const visible = projected.z > -1 && projected.z < 1 && Math.abs(projected.x) < 1 && Math.abs(projected.y) < 1;
+        c.speech.element.style.visibility = visible ? 'visible' : 'hidden';
+        c.speech.element.style.left = `${Math.min(width - 110, Math.max(110, (projected.x * 0.5 + 0.5) * width))}px`;
+        c.speech.element.style.top = `${Math.max(66, (-projected.y * 0.5 + 0.5) * height)}px`;
       }
     });
     if (state.demo && moving) tapGlass.target = Math.max(0.025, (elapsed % 15) / 12);
