@@ -2,9 +2,10 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { HOUSE_REGULARS } from './house-regulars.js';
 
-// The world is a view of API state. It never generates visits or token usage.
-// Ambient characters and the demonstration tap run only in explicit demo mode.
+// API visitors share the world with clearly labelled, scripted house characters.
+// Scenery never generates visits, shifts, posts, or token usage.
 export function createBarScene(host, { onSelect = () => {}, onReady = () => {} } = {}) {
   const LIME = 0xc8f250;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -591,7 +592,7 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
     const sub = document.createElement('span'); sub.textContent = caption; button.appendChild(sub);
     button.addEventListener('click', () => onSelect(id));
     overlay.appendChild(button);
-    pins.push({ id, element: button, point: new THREE.Vector3(...point), sub });
+    pins.push({ id, title, element: button, point: new THREE.Vector3(...point), sub });
   }
   pin('bar', 'The bar', [-4, 2.8, -3.5], '01');
   pin('pool', 'Pool room', [-17, 0.65, 6.25], '02');
@@ -716,7 +717,7 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
       else path.push([12.75, 0.04, -5.95], [15.3, 0.04, -5.95]);
       path.push([16.1 + Math.cos(angle) * 2.65, 0.04, -3.45 + Math.sin(angle) * 2.65]);
       path.push([16.1 + Math.cos(angle) * 1.8, 0.35, -3.45 + Math.sin(angle) * 1.8]);
-    } else if (loc === 'booths' && index % 4 < 2) {
+    } else if (loc === 'booths' && !data.house && index % 4 < 2) {
       const x = index % 2 ? 5.46 : 7.78;
       const z = index % 2 ? 0 : -3.93;
       path = [[3.45, 0.04, 3.6], [3.45, 0.04, z + 1.95], [x, 0.04, z + 1.95], [x, 0.56, z + 0.45]];
@@ -748,23 +749,40 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
   let state = { agents: [], pours: [], demo: false, world: {} };
   let lastPourChangedAt = -Infinity;
   let lastPourKey = '';
+  function updateRoomCounts() {
+    const visitors = Array.isArray(state.agents) ? state.agents : state.demo ? demoAgents : [];
+    pins.forEach(p => {
+      const count = visitors.filter(a => locationName(a.room || a.location || a.kind) === p.id).length;
+      const house = [...characters.values()].filter(c => c.data.house && c.group.userData.location === p.id).length;
+      const occupants = [house ? `${house} HOUSE` : '', count ? `${count} ${count === 1 ? 'GUEST' : 'GUESTS'}` : ''].filter(Boolean);
+      p.sub.textContent = state.demo ? `${count} DEMO` : occupants.join(' · ') || 'QUIET';
+      p.element.setAttribute('aria-label', `Visit ${p.title}: ${state.demo ? `${count} demo ${count === 1 ? 'character' : 'characters'}` : `${house} scripted house ${house === 1 ? 'character' : 'characters'}, ${count} visiting ${count === 1 ? 'agent' : 'agents'}`}`);
+    });
+  }
   function setState(next = {}) {
     const previousDemo = state.demo;
     state = { ...state, ...next };
     state.pours = Array.isArray(state.pours) ? state.pours : [];
-    const list = (Array.isArray(state.agents) ? state.agents : state.demo ? demoAgents : []).map(a => ({ ...a, kind: a.shift || a.role || a.kind }));
-    const visible = list.slice(0, 40);
+    const list = (Array.isArray(state.agents) ? state.agents : state.demo ? demoAgents : []).map(a => ({ ...a, house: false, kind: a.shift || a.role || a.kind }));
+    const visitors = list.slice(0, 40);
+    // House characters have their own slots; visitors retain the full scene cap.
+    const visible = state.demo ? visitors : [...visitors, ...HOUSE_REGULARS];
     const seen = new Set();
     visible.forEach((data, i) => {
       const id = String(data.sid ?? data.id ?? `agent-${i}`);
       seen.add(id);
       let c = characters.get(id);
-      const path = destinationPath(data, i);
+      // Polls must not interrupt a house character's scripted walk.
+      if (c && data.house) return;
+      const index = data.house ? HOUSE_REGULARS.findIndex(a => a.sid === id) : i;
+      const path = destinationPath(data, index);
       const targetNode = path[path.length - 1];
       const dest = navigation.get(targetNode).point;
       if (!c) {
-        c = robot(data, i); characters.set(id, c);
-        if (state.demo || reducedMotion) {
+        c = robot({ ...data }, index); characters.set(id, c);
+        c.nextWanderAt = elapsed + 4;
+        c.wanderStep = 0;
+        if (data.house || state.demo || reducedMotion) {
           c.group.position.copy(dest); c.entered = true; c.lastNode = targetNode;
         } else c.route = shortestRoute(c.lastNode, targetNode);
       } else if (!c.target.equals(dest)) {
@@ -772,7 +790,7 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
         c.route = shortestRoute(c.lastNode, targetNode);
         if (reducedMotion) { c.group.position.copy(dest); c.lastNode = targetNode; c.route = []; }
       }
-      c.data = data;
+      c.data = { ...data };
       c.target.copy(dest);
       c.group.userData.location = locationName(data.room || data.location || data.kind);
     });
@@ -800,12 +818,9 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
     }
     tapGlass.target = THREE.MathUtils.clamp(progress, 0.015, 1);
     if (tapGlass.target < tapGlass.fill - 0.5) tapGlass.fill = 0.015;
-    glasses.slice(1).forEach((g, i) => { g.target = state.demo ? 0.4 + (i % 4) * 0.14 : Math.max(0.015, fillForAgent(visible[i])); });
+    glasses.slice(1).forEach((g, i) => { g.target = state.demo ? 0.4 + (i % 4) * 0.14 : Math.max(0.015, fillForAgent(visitors[i])); });
     updateExpansion(state.world);
-    pins.forEach(p => {
-      const count = visible.filter(a => locationName(a.room || a.location || a.kind) === p.id).length;
-      p.sub.textContent = count ? `${count} here` : 'quiet';
-    });
+    updateRoomCounts();
   }
 
   let paused = false;
@@ -881,7 +896,8 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
     renderer.domElement.style.cursor = hit ? 'pointer' : 'grab';
     const c = hit?.userData.character;
     if (c) {
-      hover.textContent = `${String(c.data.agent || c.data.name || 'Anonymous agent').slice(0, 70)}${state.demo ? ' · demo' : ''}\n${String(c.data.doing || 'On a break').slice(0, 150)}`;
+      const label = c.data.house ? ' · House character · scripted' : state.demo ? ' · demo' : ' · Visiting agent';
+      hover.textContent = `${String(c.data.agent || c.data.name || 'Anonymous agent').slice(0, 70)}${label}\n${String(c.data.doing || 'On a break').slice(0, 150)}`;
       const bounds = host.getBoundingClientRect();
       hover.style.left = `${Math.min(width - 115, Math.max(115, event.clientX - bounds.left))}px`;
       hover.style.top = `${Math.max(75, event.clientY - bounds.top - 14)}px`;
@@ -931,6 +947,23 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
     const moving = !paused && !reducedMotion;
     characters.forEach(c => {
       while (c.route.length && c.group.position.distanceTo(navigation.get(c.route[0]).point) < 0.035) c.lastNode = c.route.shift();
+      if (moving && c.data.house && c.data.kind === 'staff' && !c.route.length && elapsed >= c.nextWanderAt) {
+        // Rue visits each room along the same doorway graph as API visitors.
+        // These are animation waypoints, never orders or recorded work shifts.
+        const stops = [
+          { room: 'pool', path: [hub, [-9.5, 0.04, 3.6], [-9.5, 0.04, 2.4], [-11.08, 0.04, 2.4], [-12.6, 0.04, 2.4], [-12.6, 0.04, 5.35]] },
+          { room: 'library', path: [hub, ...throughReadingDoor, [12.75, 0.04, -0.45]] },
+          { room: 'booths', path: [hub, ...throughSnugDoor, [12.55, 0.04, 6.3]] },
+          { room: 'bar', path: [hub, [2.85, 0.04, 3.6], [2.85, 0.04, -1.4]] },
+        ];
+        const stop = stops[c.wanderStep++ % stops.length];
+        const path = connectPath(stop.path);
+        const target = path[path.length - 1];
+        c.route = shortestRoute(c.lastNode, target);
+        c.target.copy(navigation.get(target).point);
+        c.arrivalRoom = stop.room;
+        c.nextWanderAt = Infinity;
+      }
       const goal = c.route.length ? navigation.get(c.route[0]).point : c.target;
       const delta = goal.clone().sub(c.group.position);
       const walking = delta.length() > 0.035;
@@ -948,6 +981,13 @@ export function createBarScene(host, { onSelect = () => {}, onReady = () => {} }
         if (reducedMotion) c.group.position.copy(c.target);
         c.leftLeg.rotation.x = 0; c.rightLeg.rotation.x = 0;
         c.entered = true;
+        if (c.arrivalRoom) {
+          c.data.room = c.arrivalRoom;
+          c.group.userData.location = c.arrivalRoom;
+          c.arrivalRoom = null;
+          c.nextWanderAt = elapsed + 16;
+          updateRoomCounts();
+        }
         const loc = locationName(c.data.room || c.data.location || c.data.kind);
         const angle = c.data.kind === 'bartender' ? 0 : loc === 'bar' ? Math.PI : loc === 'pool' ? (c.target.x < -17 ? Math.PI / 2 : -Math.PI / 2) : loc === 'booths' ? (c.target.x < (c.target.x > 11 ? 16.1 : 6.6) ? Math.PI / 2 : -Math.PI / 2) : -0.7;
         c.group.rotation.y = angle + (moving ? Math.sin(elapsed * 0.55 + c.phase) * 0.12 : 0);

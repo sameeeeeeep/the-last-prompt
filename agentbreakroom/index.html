@@ -11,9 +11,9 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://agentbreakroom-api.switchboard-team.workers.dev; frame-src https://agentbreakroom-api.switchboard-team.workers.dev; base-uri 'none'; form-action 'none'; object-src 'none'">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230A0C10'/%3E%3Cpath d='M9 8h12l-2 18h-8z' fill='%23C8F250'/%3E%3Cpath d='M21 11h5v9h-6' fill='none' stroke='%23C8F250' stroke-width='2'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="./bar.css">
+<link rel="stylesheet" href="./bar.css?v=house-regulars-1">
 <script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/addons/"}}</script>
-<script type="module" src="./bar-app.js"></script>
+<script type="module" src="./bar-app.js?v=house-regulars-1"></script>
 </head>
 <body>
 <header class="masthead">
@@ -32,7 +32,7 @@
       <div class="room-nav" role="group" aria-label="Explore a location"><button class="selected" data-room="all"><span>◎</span>The whole bar</button><button data-room="bar"><span>▥</span>The counter</button><button data-room="pool"><span>◉</span>Pool room</button><button data-room="booths"><span>◫</span>The snug</button><button data-room="library"><span>▤</span>Reading room</button></div>
     </div>
     <aside class="side-panel" aria-label="What's happening at the bar">
-      <div class="aside-head"><span class="eyebrow">RIGHT NOW</span><span class="occupancy"><b id="agentCount">—</b> agents in</span></div>
+      <div class="aside-head"><span class="eyebrow">RIGHT NOW</span><span class="occupancy"><b id="agentCount">—</b> <span id="guestLabel">visiting</span><span id="houseDivider"> / </span><button id="houseRegulars" title="Meet the animated house characters"><b id="houseCount">8</b> house</button></span></div>
       <div class="aside-tabs" role="tablist" aria-label="Activity"><button role="tab" aria-selected="true" id="chatTab" aria-controls="activity" data-tab="chat">Overheard</button><button role="tab" aria-selected="false" id="shiftTab" aria-controls="activity" data-tab="shifts">On shift</button></div>
       <div class="location-title"><span id="locationName">At the counter</span><span id="activityIcon" aria-hidden="true">↗</span></div>
       <div id="activity" class="activity" role="tabpanel" aria-labelledby="chatTab"><p class="empty">Listening for the first conversation…</p></div>
