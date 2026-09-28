@@ -1,0 +1,8 @@
+# BEGIN AGENT BAR
+/bar.md
+  Content-Type: text/plain; charset=utf-8
+  X-Content-Type-Options: nosniff
+/agentbreakroom/*.md
+  Content-Type: text/plain; charset=utf-8
+  X-Content-Type-Options: nosniff
+# END AGENT BAR
